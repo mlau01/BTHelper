@@ -1,0 +1,131 @@
+package bth.core.bt;
+
+import java.util.GregorianCalendar;
+import java.util.Hashtable;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.util.Enumeration;
+
+public class Sheduler {
+	public enum SHEDULEMODE {
+		NORMAL,
+		SUPER
+	}
+	
+	private static final Logger logger = LogManager.getLogger();
+	
+	private Hashtable<Timetable, String> timeTableT1 = new Hashtable<Timetable, String>();
+	private Hashtable<Timetable, String> timeTableT1W = new Hashtable<Timetable, String>();
+	private Hashtable<Timetable, String> timeTableT1S = new Hashtable<Timetable, String>();
+	private Hashtable<Timetable, String> timeTableT2 = new Hashtable<Timetable, String>();
+	private Hashtable<Timetable, String> timeTableT2W = new Hashtable<Timetable, String>();
+	private Hashtable<Timetable, String> timeTableT2S = new Hashtable<Timetable, String>();
+	
+	public Sheduler()
+	{
+		logger.trace("INIT");
+		loadTimeTable();
+	}
+	
+	public String getTimeTableAssign(String terminal, GregorianCalendar btDate, SHEDULEMODE sheduleMode, boolean forceWeekend)
+	{
+		if(terminal.equals("NFT"))
+		{
+			logger.error("getTimeTableAssign(): terminal not found (NFT error)");
+			return ("NFT");
+		}
+		Hashtable<Timetable, String> timeTable = null;
+		String str = null;
+		
+		Enumeration<Timetable> e = null;
+		logger.info("getTimeTable for terminal: {}", terminal);
+		if(terminal.equals("T1") && (isWeekend(btDate) || forceWeekend) && sheduleMode == SHEDULEMODE.NORMAL)
+			timeTable = timeTableT1W;
+		else if(terminal.equals("T1") && !isWeekend(btDate) && sheduleMode == SHEDULEMODE.NORMAL)
+			timeTable = timeTableT1;
+		else if(terminal.equals("T2") && (isWeekend(btDate) || forceWeekend) && sheduleMode == SHEDULEMODE.NORMAL)
+			timeTable = timeTableT2W;
+		else if(terminal.equals("T2") && !isWeekend(btDate) && sheduleMode == SHEDULEMODE.NORMAL)
+			timeTable = timeTableT2;
+		else if(terminal.equals("T2") && !isWeekend(btDate) && sheduleMode == SHEDULEMODE.SUPER)
+			timeTable = timeTableT2S;
+		else if(terminal.equals("T1") && !isWeekend(btDate) && sheduleMode == SHEDULEMODE.SUPER)
+			timeTable = timeTableT1S;
+		else {
+			logger.error("getTimeTableAssign : not match time table: {}, {}, {}", terminal, isWeekend(btDate), sheduleMode.toString());
+			return ("NOT FOUND");
+		}
+		
+		e = timeTable.keys();
+		
+		while(e.hasMoreElements())
+		{
+			Timetable tt = e.nextElement();
+			if(tt.isIn(btDate))
+			{
+				str = timeTable.get(tt);
+				
+			}
+		}
+		
+		return str;
+	}
+	
+	private boolean isWeekend(GregorianCalendar cal)
+	{
+		boolean res = false;
+		int day = cal.get(GregorianCalendar.DAY_OF_WEEK);
+		if( (day == 7) || (day == 1) )
+		{
+			res = true;
+		}
+		
+		return res;
+	}
+	
+	private void loadTimeTable()
+	{
+		//Revoir le système en cas de jour ferier
+		
+		/*
+		timeTableT1.put(new Timetable("04:15:00", "11:39:00"), "M1");
+		timeTableT1.put(new Timetable("14:21:00", "21:45:00"), "S1");
+		timeTableT1.put(new Timetable("11:39:01", "14:20:59"), "A");
+		
+		timeTableT1W.put(new Timetable("04:15:00", "13:24:00"), "M1");
+		timeTableT1W.put(new Timetable("13:21:00", "21:45:00"), "S1");
+		
+		timeTableT1S.put(new Timetable("04:15:00", "13:24:00"), "SM");
+		timeTableT1S.put(new Timetable("13:21:00", "21:45:00"), "SS");
+		
+		timeTableT2.put(new Timetable("04:15:00", "11:54:00"), "M2");
+		timeTableT2.put(new Timetable("11:54:01", "20:00:00"), "S2");
+		timeTableT2.put(new Timetable("20:00:01", "21:45:00"), "S1");
+		timeTableT2.put(new Timetable("13:00:00", "21:00:00"), "S");
+		
+		timeTableT2W.put(new Timetable("04:15:00", "12:39:00"), "M2");
+		timeTableT2W.put(new Timetable("12:36:00", "20:00:00"), "S2");
+		timeTableT2W.put(new Timetable("20:00:01", "21:45:00"), "S1");
+		timeTableT2W.put(new Timetable("13:00:00", "21:00:00"), "S");
+		
+		timeTableT2S.put(new Timetable("20:00:01", "21:45:00"), "SS");
+		*/
+		
+		timeTableT2.put(new Timetable("04:30:00", "12:59:59"), "M");
+		timeTableT2W.put(new Timetable("04:30:00", "12:59:59"), "M");
+		timeTableT2S.put(new Timetable("04:30:00", "12:59:59"), "M");
+		timeTableT2.put(new Timetable("13:00:00", "21:30:00"), "S");
+		timeTableT2W.put(new Timetable("13:00:00", "21:30:00"), "S");
+		timeTableT2S.put(new Timetable("13:00:00", "21:30:00"), "S");
+		
+		timeTableT1.put(new Timetable("04:30:00", "12:59:59"), "M");
+		timeTableT1W.put(new Timetable("04:30:00", "12:59:59"), "M");
+		timeTableT1S.put(new Timetable("04:30:00", "12:59:59"), "M");
+		timeTableT1.put(new Timetable("13:00:00", "21:30:00"), "S");
+		timeTableT1W.put(new Timetable("13:00:00", "21:30:00"), "S");
+		timeTableT1S.put(new Timetable("13:00:00", "21:30:00"), "S");
+	}
+	
+}

@@ -5,12 +5,23 @@
  * For more details take a look at the Java Libraries chapter in the Gradle
  * User Manual available at https://docs.gradle.org/6.3/userguide/java_library_plugin.html
  */
+buildscript {
+  repositories {
+    maven {
+      url "https://plugins.gradle.org/m2/"
+    }
+  }
+  dependencies {
+    classpath "com.github.jengelman.gradle.plugins:shadow:5.2.0"
+  }
+}
+
 
 plugins {
     // Apply the java-library plugin to add support for Java Library
     id 'java-library'
 }
-
+apply plugin: "com.github.johnrengelman.shadow"
 repositories {
     // Use jcenter for resolving dependencies.
     // You can declare any Maven/Ivy/file repository here.
@@ -32,9 +43,12 @@ dependencies {
 	implementation("org.apache.logging.log4j:log4j-core:2.13.3")
 	// https://mvnrepository.com/artifact/mysql/mysql-connector-java
 	implementation("mysql:mysql-connector-java:8.0.25")
-	// https://mvnrepository.com/artifact/com.microsoft.sqlserver/sqljdbc
-	compileOnly("com.microsoft.sqlserver:sqljdbc:4.1.5605")
-	
-	
-    
+	// https://mvnrepository.com/artifact/com.microsoft.sqlserver/mssql-jdbc
+	implementation("com.microsoft.sqlserver:mssql-jdbc:8.4.1.jre8")
+}
+
+jar {
+    manifest {
+        attributes "Main-Class": "bth.gui.MWin"
+    }
 }

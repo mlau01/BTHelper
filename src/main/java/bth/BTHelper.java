@@ -58,7 +58,7 @@ public class BTHelper {
 	public final static String defaultMaximoLogin = "unisys";
 	public final static String defaultMaximoPassword = "";
 	
-	public final static String defaultHttpUrl = "http://unisysnice.noip.me/intrav2/plannings/";
+	public final static String defaultHttpUrl = "http://nce1dbmain.free.fr";
 	public final static String defaultHttpUser = "unisys";
 	public final static String defaultHttpPassword = "Nce2x";
 	

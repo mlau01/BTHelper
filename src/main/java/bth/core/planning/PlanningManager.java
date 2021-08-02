@@ -22,17 +22,24 @@ public class PlanningManager {
 	private final ArrayList<Planning> planList;
 	
 	private final TechnicianManager tecMan;
-	private final CoreManager interact;
+	private final Properties properties;
 	private final static Logger logger = LogManager.getLogger();
 	
-	public PlanningManager(final CoreManager p_interact)
+	public PlanningManager(final Properties p_properties)
 	{
-		if(verboseLevel >= 2) System.out.println(this.getClass().getName() + " -> INIT");
-		
-		interact = p_interact;
-		
+		properties = p_properties;
 		planList = new ArrayList<Planning>();
 		tecMan = new TechnicianManager();
+	}
+
+	public String buildUrl(final String hostname, final MONTH month) {
+		String extension = ".htm";
+		if(hostname.endsWith("/")){
+			return hostname + month.toString() + extension;
+		}
+		else {
+			return hostname + "/" + month.toString() + extension;
+		}
 	}
 	
 	public Planning get(final MONTH month) throws PlanningException
@@ -46,25 +53,24 @@ public class PlanningManager {
 		//At this stage, no planning was founded in memory, so we try to get it by other way
 		logger.info("Getting new planning : " + month);
 		
-		final Properties conf = interact.getProperties();
-		
 		HttpContent targetData = null;
 		Planning newPlan = null;
+		final String user = properties.getProperty(BTHelper.HttpUser);
+		final String passwd = properties.getProperty(BTHelper.HttpPasswd);
+		final String hostname = properties.getProperty(BTHelper.HttpUrl);
+		final String useProxy = properties.getProperty(BTHelper.HttpUseProxy);
+		String proxyHost;
+		if(useProxy.equals("true")) {
+			proxyHost = properties.getProperty(BTHelper.HttpProxyHost);
+		}
+		else {
+			proxyHost = null;
+		}
 		try {
-			final String user = conf.getProperty(BTHelper.HttpUser);
-			final String passwd = conf.getProperty(BTHelper.HttpPasswd); 
-			final String site = conf.getProperty(BTHelper.HttpUrl);
-			final String useProxy = conf.getProperty(BTHelper.HttpUseProxy);
-			String proxyHost;
-			if(useProxy.equals("true")) proxyHost = conf.getProperty(BTHelper.HttpProxyHost);
-			else proxyHost = null;
-			
-			String url = site + month.toString() + ".htm";
-			
-			targetData = HttpConnection.getTargetContent(url, user, passwd, proxyHost);
+			targetData = HttpConnection.getTargetContent(buildUrl(hostname, month), user, passwd, proxyHost);
 		} catch (HttpConnectionException e)
 		{
-			logger.error("Cannot reach target: ", e.getMessage());
+			logger.error("Cannot reach target: {}", e.getMessage());
 			newPlan = deserialize(month);
 			if(newPlan != null) newPlan.setLocalMode();
 		}

@@ -42,7 +42,7 @@ public class CoreManager implements Observable {
 		properties = p_properties;
 		observers = new ArrayList<Observer>();
 		verbose = p_verbose;
-		pMan = new PlanningManager(this);
+		pMan = new PlanningManager(properties);
 		
 		if(Boolean.parseBoolean(properties.getProperty(BTHelper.SqlUsed)))
 			DBMan = new SQLManager(this, observers, properties);

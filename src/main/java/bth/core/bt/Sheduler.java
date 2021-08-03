@@ -41,18 +41,24 @@ public class Sheduler {
 		
 
 		logger.info("getTimeTable for terminal: {}", terminal);
-		if(terminal.equals("T1") && (isWeekend(btDate) || forceWeekend) && sheduleMode == SHEDULEMODE.NORMAL)
+		if(terminal.equals("T1") && (isWeekend(btDate) || forceWeekend) && sheduleMode == SHEDULEMODE.NORMAL) {
 			timeTable = timeTableT1W;
-		else if(terminal.equals("T1") && !isWeekend(btDate) && sheduleMode == SHEDULEMODE.NORMAL)
+		}
+		else if(terminal.equals("T1") && !isWeekend(btDate) && sheduleMode == SHEDULEMODE.NORMAL) {
 			timeTable = timeTableT1;
-		else if(terminal.equals("T2") && (isWeekend(btDate) || forceWeekend) && sheduleMode == SHEDULEMODE.NORMAL)
+		}
+		else if(terminal.equals("T2") && (isWeekend(btDate) || forceWeekend) && sheduleMode == SHEDULEMODE.NORMAL) {
 			timeTable = timeTableT2W;
-		else if(terminal.equals("T2") && !isWeekend(btDate) && sheduleMode == SHEDULEMODE.NORMAL)
+		}
+		else if(terminal.equals("T2") && !isWeekend(btDate) && sheduleMode == SHEDULEMODE.NORMAL) {
 			timeTable = timeTableT2;
-		else if(terminal.equals("T2") && !isWeekend(btDate) && sheduleMode == SHEDULEMODE.SUPER)
+		}
+		else if(terminal.equals("T2") && sheduleMode == SHEDULEMODE.SUPER) {
 			timeTable = timeTableT2S;
-		else if(terminal.equals("T1") && !isWeekend(btDate) && sheduleMode == SHEDULEMODE.SUPER)
+		}
+		else if(terminal.equals("T1") && !isWeekend(btDate) && sheduleMode == SHEDULEMODE.SUPER) {
 			timeTable = timeTableT1S;
+		}
 		else {
 			logger.error("getTimeTableAssign : not match time table: {}, {}, {}", terminal, isWeekend(btDate), sheduleMode.toString());
 			return ("NOT FOUND");
@@ -73,17 +79,20 @@ public class Sheduler {
 		
 		return str;
 	}
-	
-	private boolean isWeekend(GregorianCalendar cal)
+
+	/**
+	 * Check if a date day is a weekend day
+	 * @param cal Date to check
+	 * @return true if the day is a weekend day
+	 */
+	public boolean isWeekend(GregorianCalendar cal)
 	{
-		boolean res = false;
 		int day = cal.get(GregorianCalendar.DAY_OF_WEEK);
-		if( (day == 7) || (day == 1) )
-		{
-			res = true;
+		if( (day == 7) || (day == 1) ) {
+			return true;
 		}
 		
-		return res;
+		return false;
 	}
 	
 	private void loadTimeTable()

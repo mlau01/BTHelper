@@ -39,7 +39,7 @@ public class Sheduler {
 		Hashtable<Timetable, String> timeTable = null;
 		String str = null;
 		
-		Enumeration<Timetable> e = null;
+
 		logger.info("getTimeTable for terminal: {}", terminal);
 		if(terminal.equals("T1") && (isWeekend(btDate) || forceWeekend) && sheduleMode == SHEDULEMODE.NORMAL)
 			timeTable = timeTableT1W;
@@ -57,7 +57,8 @@ public class Sheduler {
 			logger.error("getTimeTableAssign : not match time table: {}, {}, {}", terminal, isWeekend(btDate), sheduleMode.toString());
 			return ("NOT FOUND");
 		}
-		
+
+		Enumeration<Timetable> e = null;
 		e = timeTable.keys();
 		
 		while(e.hasMoreElements())

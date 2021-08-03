@@ -40,21 +40,27 @@ public class Sheduler {
 
 		logger.info("getTimeTable for terminal: {}", terminal);
 		if(terminal.equals("T1") && (isWeekend(btDate) || forceWeekend) && sheduleMode == SHEDULEMODE.NORMAL) {
+			logger.info("Timetable selected: T1 Weekend");
 			timeTable = timeTableT1W;
 		}
 		else if(terminal.equals("T1") && !isWeekend(btDate) && sheduleMode == SHEDULEMODE.NORMAL) {
+			logger.info("Timetable selected: T1 Normal");
 			timeTable = timeTableT1;
 		}
 		else if(terminal.equals("T2") && (isWeekend(btDate) || forceWeekend) && sheduleMode == SHEDULEMODE.NORMAL) {
+			logger.info("Timetable selected: T2 Weekend");
 			timeTable = timeTableT2W;
 		}
 		else if(terminal.equals("T2") && !isWeekend(btDate) && sheduleMode == SHEDULEMODE.NORMAL) {
+			logger.info("Timetable selected: T2 Normal");
 			timeTable = timeTableT2;
 		}
 		else if(terminal.equals("T2") && sheduleMode == SHEDULEMODE.SUPER) {
+			logger.info("Timetable selected: T2 Super");
 			timeTable = timeTableT2S;
 		}
 		else if(terminal.equals("T1")  && sheduleMode == SHEDULEMODE.SUPER) {
+			logger.info("Timetable selected: T1 Super");
 			timeTable = timeTableT1S;
 		}
 		else {
@@ -68,7 +74,7 @@ public class Sheduler {
 			}
 		}
 
-		return ("NFT");
+		return null;
 	}
 
 	/**
@@ -114,14 +120,17 @@ public class Sheduler {
 		timeTableT2S.put(new Timetable("20:00:01", "21:45:00"), "SS");
 		*/
 
+		timeTableT1.put(new Timetable("04:15:00", "06:59:59"), "M2");
 		timeTableT1.put(new Timetable("07:00:00", "13:30:00"), "M1");
 		timeTableT1.put(new Timetable("13:30:00", "19:59:59"), "S1");
 		timeTableT1.put(new Timetable("20:00:00", "23:30:00"), "S2");
 
+		timeTableT1W.put(new Timetable("04:15:00", "06:59:59"), "M2");
 		timeTableT1W.put(new Timetable("07:00:00", "13:30:00"), "M1");
 		timeTableT1W.put(new Timetable("13:30:00", "20:00:00"), "S1");
 		timeTableT1W.put(new Timetable("20:00:00", "23:30:00"), "S2");
 
+		timeTableT1S.put(new Timetable("04:15:00", "06:59:59"), "SM");
 		timeTableT1S.put(new Timetable("20:00:00", "23:30:00"), "SS");
 
 		timeTableT2.put(new Timetable("04:30:00", "11:29:59"), "M2");

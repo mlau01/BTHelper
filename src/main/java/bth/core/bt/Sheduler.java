@@ -112,7 +112,30 @@ public class Sheduler {
 		
 		timeTableT2S.put(new Timetable("20:00:01", "21:45:00"), "SS");
 		*/
-		
+
+		timeTableT1.put(new Timetable("07:00:00", "13:30:00"), "M1");
+		timeTableT1.put(new Timetable("13:30:00", "19:59:59"), "S1");
+		timeTableT1.put(new Timetable("20:00:00", "23:30:00"), "S2");
+
+		timeTableT1W.put(new Timetable("07:00:00", "13:30:00"), "M1");
+		timeTableT1W.put(new Timetable("13:30:00", "20:00:00"), "S1");
+		timeTableT1W.put(new Timetable("20:00:00", "23:30:00"), "S2");
+
+
+		timeTableT2.put(new Timetable("04:30:00", "11:29:59"), "M2");
+		timeTableT2.put(new Timetable("11:30:00", "16:29:59"), "A");
+		timeTableT2.put(new Timetable("16:30:00", "23:30:00"), "S2");
+
+		timeTableT2W.put(new Timetable("04:30:00", "13:59:00"), "SM");
+		timeTableT2W.put(new Timetable("14:00:00", "23:30:00"), "SS");
+		timeTableT2W.put(new Timetable("04:30:00", "13:59:00"), "M2");
+		timeTableT2W.put(new Timetable("14:00:00", "23:30:00"), "S2");
+
+		timeTableT2S.put(new Timetable("04:30:00", "13:59:00"), "SM");
+		timeTableT2S.put(new Timetable("14:00:00", "23:30:00"), "SS");
+
+
+		/*
 		timeTableT2.put(new Timetable("04:30:00", "12:59:59"), "M");
 		timeTableT2W.put(new Timetable("04:30:00", "12:59:59"), "M");
 		timeTableT2S.put(new Timetable("04:30:00", "12:59:59"), "M");
@@ -126,6 +149,8 @@ public class Sheduler {
 		timeTableT1.put(new Timetable("13:00:00", "21:30:00"), "S");
 		timeTableT1W.put(new Timetable("13:00:00", "21:30:00"), "S");
 		timeTableT1S.put(new Timetable("13:00:00", "21:30:00"), "S");
+
+		 */
 	}
 	
 }

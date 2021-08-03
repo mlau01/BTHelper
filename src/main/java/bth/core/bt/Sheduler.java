@@ -37,8 +37,6 @@ public class Sheduler {
 			return ("NFT");
 		}
 		Hashtable<Timetable, String> timeTable = null;
-		String str = null;
-		
 
 		logger.info("getTimeTable for terminal: {}", terminal);
 		if(terminal.equals("T1") && (isWeekend(btDate) || forceWeekend) && sheduleMode == SHEDULEMODE.NORMAL) {
@@ -56,7 +54,7 @@ public class Sheduler {
 		else if(terminal.equals("T2") && sheduleMode == SHEDULEMODE.SUPER) {
 			timeTable = timeTableT2S;
 		}
-		else if(terminal.equals("T1") && !isWeekend(btDate) && sheduleMode == SHEDULEMODE.SUPER) {
+		else if(terminal.equals("T1")  && sheduleMode == SHEDULEMODE.SUPER) {
 			timeTable = timeTableT1S;
 		}
 		else {
@@ -64,20 +62,13 @@ public class Sheduler {
 			return ("NOT FOUND");
 		}
 
-		Enumeration<Timetable> e = null;
-		e = timeTable.keys();
-		
-		while(e.hasMoreElements())
-		{
-			Timetable tt = e.nextElement();
-			if(tt.isIn(btDate))
-			{
-				str = timeTable.get(tt);
-				
+		for(Timetable terminalTimeTable : timeTable.keySet()){
+			if(terminalTimeTable.isIn(btDate)) {
+				return timeTable.get(terminalTimeTable);
 			}
 		}
-		
-		return str;
+
+		return ("NFT");
 	}
 
 	/**
@@ -131,6 +122,7 @@ public class Sheduler {
 		timeTableT1W.put(new Timetable("13:30:00", "20:00:00"), "S1");
 		timeTableT1W.put(new Timetable("20:00:00", "23:30:00"), "S2");
 
+		timeTableT1S.put(new Timetable("20:00:00", "23:30:00"), "SS");
 
 		timeTableT2.put(new Timetable("04:30:00", "11:29:59"), "M2");
 		timeTableT2.put(new Timetable("11:30:00", "16:29:59"), "A");

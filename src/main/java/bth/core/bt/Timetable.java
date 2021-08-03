@@ -21,21 +21,25 @@ public class Timetable {
 			if(verboseLevel >= 1) System.out.println(this.getClass().getName() + " -> contructor(...): " + e.getMessage());
 		}
 	}
-	
+
+	/**
+	 * Check if the time in the calendar given is in this timetable
+	 * @param cal
+	 * @return true if the time is inner this timetable, false otherwise
+	 */
 	public boolean isIn(GregorianCalendar cal)
 	{
-		boolean res = false;
 		try {
 			Date pres = new SimpleDateFormat("HH:mm:ss")
 			.parse(cal.get(GregorianCalendar.HOUR_OF_DAY) + ":" + cal.get(GregorianCalendar.MINUTE) + ":" + cal.get(GregorianCalendar.SECOND));
 			if(pres.after(beg) && pres.before(end))
 			{
-				res = true;
+				return true;
 			}
 		} catch (ParseException e)
 		{
 			if(verboseLevel >= 1) System.out.println(this.getClass().getName() + " -> isIn(...): " + e.getMessage());
 		}	
-		return (res);
+		return false;
 	}
 }

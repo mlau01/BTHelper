@@ -42,5 +42,12 @@ public class ShedulerTest {
                 true);
 
         assertEquals("SS", timetable);
+
+        timetable = sheduler.getTimeTableAssign("T1",
+                new GregorianCalendar(2021, 7, 1, 22,18),
+                Sheduler.SHEDULEMODE.SUPER,
+                true);
+
+        assertEquals("SS", timetable);
     }
 }

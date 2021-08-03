@@ -3,6 +3,7 @@ package bth.core.bt;
 import java.util.GregorianCalendar;
 import java.util.Hashtable;
 
+import bth.core.exception.TimetableException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -28,44 +29,57 @@ public class Sheduler {
 		logger.trace("INIT");
 		loadTimeTable();
 	}
-	
-	public String getTimeTableAssign(String terminal, GregorianCalendar btDate, SHEDULEMODE sheduleMode, boolean forceWeekend)
-	{
-		if(terminal.equals("NFT"))
-		{
-			logger.error("getTimeTableAssign(): terminal not found (NFT error)");
-			return ("NFT");
-		}
-		Hashtable<Timetable, String> timeTable = null;
+
+	/**
+	 * Should return the correct timetable for the date and terminal given
+	 * @param terminal can be T1 or T2
+	 * @param btDate The date of the bt, time in date is user to find correct timetable
+	 * @param sheduleMode if this is a Super timetable or Normal time table
+	 * @param forceWeekend set to true if you want to force a week end timetable
+	 * @return  timetable selected by the logic
+	 * @throws TimetableException when params matches to no logic
+	 */
+	public Hashtable<Timetable, String> getCorrectTimetable(String terminal, GregorianCalendar btDate, SHEDULEMODE sheduleMode, boolean forceWeekend) throws TimetableException {
 
 		logger.info("getTimeTable for terminal: {}", terminal);
 		if(terminal.equals("T1") && (isWeekend(btDate) || forceWeekend) && sheduleMode == SHEDULEMODE.NORMAL) {
 			logger.info("Timetable selected: T1 Weekend");
-			timeTable = timeTableT1W;
+			return timeTableT1W;
 		}
 		else if(terminal.equals("T1") && !isWeekend(btDate) && sheduleMode == SHEDULEMODE.NORMAL) {
 			logger.info("Timetable selected: T1 Normal");
-			timeTable = timeTableT1;
+			return timeTableT1;
 		}
 		else if(terminal.equals("T2") && (isWeekend(btDate) || forceWeekend) && sheduleMode == SHEDULEMODE.NORMAL) {
 			logger.info("Timetable selected: T2 Weekend");
-			timeTable = timeTableT2W;
+			return timeTableT2W;
 		}
 		else if(terminal.equals("T2") && !isWeekend(btDate) && sheduleMode == SHEDULEMODE.NORMAL) {
 			logger.info("Timetable selected: T2 Normal");
-			timeTable = timeTableT2;
+			return timeTableT2;
 		}
 		else if(terminal.equals("T2") && sheduleMode == SHEDULEMODE.SUPER) {
 			logger.info("Timetable selected: T2 Super");
-			timeTable = timeTableT2S;
+			return timeTableT2S;
 		}
 		else if(terminal.equals("T1")  && sheduleMode == SHEDULEMODE.SUPER) {
 			logger.info("Timetable selected: T1 Super");
-			timeTable = timeTableT1S;
+			return timeTableT1S;
 		}
 		else {
-			logger.error("getTimeTableAssign : not match time table: {}, {}, {}", terminal, isWeekend(btDate), sheduleMode.toString());
-			return ("NOT FOUND");
+			throw new TimetableException("Cannot find timetable for params: " + terminal + ", weekend: " + isWeekend(btDate) + ", Shedule mode: " + sheduleMode.toString());
+		}
+	}
+
+	public String getTimeTableAssign(String terminal, GregorianCalendar btDate, SHEDULEMODE sheduleMode, boolean forceWeekend)
+	{
+		Hashtable<Timetable, String> timeTable = null;
+		try {
+			timeTable = getCorrectTimetable(terminal, btDate, sheduleMode, forceWeekend);
+		} catch (TimetableException e) {
+			logger.error(e.getMessage());
+			e.printStackTrace();
+			return null;
 		}
 
 		for(Timetable terminalTimeTable : timeTable.keySet()){

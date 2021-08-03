@@ -69,4 +69,24 @@ public class ShedulerTest {
 
         assertEquals("M2", timetable);
     }
+
+    @Test
+    public void getTimeTableAssignTest_shouldReturnAssignAForT2Afternoon() {
+        String timetable = sheduler.getTimeTableAssign("T2",
+                new GregorianCalendar(2021, 6, 28, 14,8),
+                Sheduler.SHEDULEMODE.NORMAL,
+                false);
+
+        assertEquals("A", timetable);
+    }
+
+    @Test
+    public void getTimeTableAssignTest_shouldReturnAssignSSForT2SuperAfternoon() {
+        String timetable = sheduler.getTimeTableAssign("T2",
+                new GregorianCalendar(2021, 6, 28, 14,8),
+                Sheduler.SHEDULEMODE.SUPER,
+                false);
+
+        assertEquals("SS", timetable);
+    }
 }

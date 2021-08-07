@@ -11,16 +11,13 @@ buildscript {
       url "https://plugins.gradle.org/m2/"
     }
   }
-  dependencies {
-    classpath "com.github.jengelman.gradle.plugins:shadow:5.2.0"
-  }
+
 }
 
 plugins {
     // Apply the java-library plugin to add support for Java Library
     id 'java-library'
 }
-apply plugin: "com.github.johnrengelman.shadow"
 
 sourceCompatibility = "1.8"
 
@@ -47,6 +44,9 @@ dependencies {
 	implementation("mysql:mysql-connector-java:8.0.25")
 	// https://mvnrepository.com/artifact/com.microsoft.sqlserver/mssql-jdbc
 	implementation("com.microsoft.sqlserver:mssql-jdbc:8.4.1.jre8")
+    // https://mvnrepository.com/artifact/io.github.fvarrui/gradle-launch4j
+    implementation group: 'io.github.fvarrui', name: 'gradle-launch4j', version: '2.4.7'
+
 }
 
 jar {

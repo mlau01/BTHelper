@@ -45,7 +45,7 @@ public class MaximoManager implements Datasource {
 	@Override
 	public ArrayList<Bt> getBts(Object source) throws DatasourceException {
 		
-		max = new MaximoConnection(core,
+		max = new MaximoConnection(
 				prop.getProperty(BTHelper.MaximoUrl),
 				prop.getProperty(BTHelper.MaximoLogin),
 				prop.getProperty(BTHelper.MaximoPassword)

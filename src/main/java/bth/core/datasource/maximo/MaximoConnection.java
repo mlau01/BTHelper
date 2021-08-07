@@ -28,6 +28,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import bth.core.CoreManager;
+import bth.core.exception.LoadBtException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -48,13 +49,9 @@ public class MaximoConnection {
 	private static boolean toF = false;
 	private static final String sql_dateFormat = "yyyy-MM-dd HH:mm:ss.S";
 	private static final String maximo_dateFormat = "dd.MM.yy HH:mm";
-	private final CoreManager core;
 	
-	
-	
-	public MaximoConnection(final CoreManager p_core, final String p_host, final String p_user, final String p_passwd)
+	public MaximoConnection(final String p_host, final String p_user, final String p_passwd)
 	{
-		core = p_core;
 		host = p_host;
 		user = p_user;
 		passwd = p_passwd;
@@ -110,7 +107,11 @@ public class MaximoConnection {
 		queryclick, click,toggle,setvalue,COMP, find, longopcheck
 	}
 	
-	private final HttpURLConnection doRequest(final String url, final String type, final Map<String, String> headers, final Map<String, String> params) throws MalformedURLException, IOException, MaximoConnectionException
+	private final HttpURLConnection doRequest(final String url,
+											  final String type,
+											  final Map<String, String> headers,
+											  final Map<String, String> params)
+			throws MalformedURLException, IOException, MaximoConnectionException
 	{
 		HttpURLConnection con = (HttpURLConnection)new URL(url).openConnection();
 		
@@ -414,6 +415,61 @@ public class MaximoConnection {
 		con.disconnect();
 		
 	}
+
+	/**
+	 * Load the target bt and get some information about checkbox
+	 * @param btid
+	 * @return boolean[] checkArrived at position 0, true if checked, false if not. checkFinished at position 1, same
+	 * @throws MaximoConnectionException
+	 * @throws IOException
+	 */
+	public boolean[] loadBtInfo(String btid) throws MaximoConnectionException, IOException, LoadBtException {
+		boolean[] result = null;
+		boolean arrivedFound = false;
+		boolean finishedFound = false;
+		boolean checkArrived = true;
+		boolean checkFinished = true;
+
+		//Search BT
+		HttpURLConnection con = doEvent(EvT.setvalue, MO.INPUT_QUICKSEARCH.htmlId, btid);
+		//con = doEvent(EvT.find, MO.INPUT_QUICKSEARCH.htmlId, "");
+
+		InputStream response =  con.getInputStream();
+		BufferedReader in = new BufferedReader(new InputStreamReader(response));
+		String line;
+
+		//Search if checkbox "Arrivé sur site" and "Remise en service" are checked or not
+		Pattern p_da = Pattern.compile(".*formatCalendar\\('" + MO.INPUT_DATEARRIVED.getHtmlId() + "',html.decodeEntities\\('\\d.*");
+		Pattern p_df = Pattern.compile(".*formatCalendar\\('" + MO.INPUT_DATEFINISHED.getHtmlId() + "',html.decodeEntities\\('\\d.*");
+
+		//File save = new File(btid + "_find.html");
+		//BufferedWriter writer = Files.newBufferedWriter(save.toPath());
+
+		while((line = in.readLine()) != null)
+		{
+			Matcher m_da = p_da.matcher(line);
+			if(m_da.matches()) {
+				log.info("Arrived checkbox already enable");
+				arrivedFound = true;
+				checkArrived = false;
+			}
+			Matcher m_df = p_df.matcher(line);
+			if(m_df.matches())  {
+				log.info("Finish checkbox already enable");
+				finishedFound = true;
+				checkFinished = false;
+			}
+			if(arrivedFound && finishedFound) {
+				break;
+			}
+		}
+		//writer.close();
+
+		in.close();
+		response.close();
+
+		return new boolean[] {checkArrived, checkFinished};
+	}
 	
 	public void fillBt(String btid,
 					   String gear,
@@ -426,44 +482,9 @@ public class MaximoConnection {
 					   String comment)
 			throws MalformedURLException, IOException, MaximoConnectionException, InterruptedException
 	{
-		HttpURLConnection con;
-		boolean checkArrived = true;
-		boolean checkFinished = true;
-		
-		//Search BT
-		con = doEvent(EvT.setvalue, MO.INPUT_QUICKSEARCH.htmlId, btid);
-		//con = doEvent(EvT.find, MO.INPUT_QUICKSEARCH.htmlId, "");
-		
-		InputStream response =  con.getInputStream();
-		BufferedReader in = new BufferedReader(new InputStreamReader(response));
-		String line;
 
-		//Search if checkbox "Arrivé sur site" and "Remise en service" are checked or not
-		Pattern p_da = Pattern.compile(".*formatCalendar\\('" + MO.INPUT_DATEARRIVED.getHtmlId() + "',html.decodeEntities\\('\\d.*");
-		Pattern p_df = Pattern.compile(".*formatCalendar\\('" + MO.INPUT_DATEFINISHED.getHtmlId() + "',html.decodeEntities\\('\\d.*");
-		
-		//File save = new File(btid + "_find.html");
-		//BufferedWriter writer = Files.newBufferedWriter(save.toPath());
-		
-		while((line = in.readLine()) != null)
-		{
-			//writer.write(line);
-			Matcher m_da = p_da.matcher(line);
-			if(m_da.matches()) {
-				System.out.println("Arrived checkbox already enable");
-				checkArrived = false;
-			}
-			Matcher m_df = p_df.matcher(line);
-			if(m_df.matches())  {
-				System.out.println("Finish checkbox already enable");
-				checkFinished = false;
-			}
-		}
-		//writer.close();
 		Thread.sleep(ThreadLocalRandom.current().nextInt(850, 1050));
-	
-		in.close();
-		response.close();
+
 
 		//Increment dates
 		String dateArrived = incrementDate(btDate, sql_dateFormat, travelTime);

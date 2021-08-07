@@ -172,7 +172,7 @@ public class CoreManager implements Observable {
 	
 	public void w(ArrayList<Bt> btList) throws MaximoConnectionException, IOException, InterruptedException
 	{
-		MaximoConnection max = new MaximoConnection(this, 
+		MaximoConnection max = new MaximoConnection(
 				properties.getProperty(BTHelper.MaximoUrl),
 				properties.getProperty(BTHelper.MaximoLogin),
 				properties.getProperty(BTHelper.MaximoPassword)
@@ -200,7 +200,7 @@ public class CoreManager implements Observable {
 	}
 	public void p(String[] args) throws MaximoConnectionException, IOException, InterruptedException
 	{
-		MaximoConnection max = new MaximoConnection(this, 
+		MaximoConnection max = new MaximoConnection(
 				properties.getProperty(BTHelper.MaximoUrl),
 				properties.getProperty(BTHelper.MaximoLogin),
 				properties.getProperty(BTHelper.MaximoPassword)

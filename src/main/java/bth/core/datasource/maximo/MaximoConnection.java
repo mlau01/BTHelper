@@ -28,10 +28,12 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import bth.core.CoreManager;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class MaximoConnection {
 	
-	private static short verboseLevel = 0;
+	private static final Logger log = LogManager.getLogger();
 	
 	private final String host;
 	private final String user;
@@ -165,7 +167,7 @@ public class MaximoConnection {
 			case HttpURLConnection.HTTP_INTERNAL_ERROR :
 				throw new MaximoConnectionException("HTTP Status-Code 500: Internal Server Error.");
 			default :
-				if(verboseLevel > 0) System.out.println("HttpConnection -> Http response: " + responseCode);
+				log.trace("HttpConnection -> Http response: {}", responseCode);
 		}
 		
 		return con;
@@ -184,8 +186,8 @@ public class MaximoConnection {
 		params.put("j_password", passwd);
 		
 		//Do post
-		String url = host + "/maximo/j_security_check";
-		HttpURLConnection con = doRequest(url,"POST", null, params);
+		String target = host + "/maximo/j_security_check";
+		HttpURLConnection con = doRequest(target,"POST", null, params);
 
 		//Getting the target content and set useful session variable
 		InputStream content =  con.getInputStream();
@@ -194,12 +196,20 @@ public class MaximoConnection {
 		String line;
 		while((line = in.readLine()) != null)
 		{
-			if(core.getVerbose()) { System.out.println(line); }
 			if(line.contains("IFRAMEPAGE"))
 			{
-				String[] idAndToken = getIdAndToken(extractUrl(line));
-				this.uisessionid = idAndToken[0] ;
-				this.csrftoken = idAndToken[1];
+				URL url = extractUrl(line);
+				this.uisessionid = url.getQuery().split("=")[1];
+				break;
+			}
+			if(line.contains("CSRFTOKEN"))
+			{
+
+				this.csrftoken = line.split("\"")[1];
+				break;
+			}
+
+			if(this.uisessionid != null && this.csrftoken != null) {
 				break;
 			}
 		}
@@ -208,10 +218,12 @@ public class MaximoConnection {
 		content.close();
 		con.disconnect();
 		
-		if(uisessionid == null || csrftoken == null)
+		if(uisessionid == null || csrftoken == null) {
 			throw new MaximoConnectionException("cannot retrieve uisessionid");
-		else
-			System.out.println("Loging OK");
+		}
+		else {
+			log.info("Loging OK");
+		}
 	}
 	
 		public final int quickrep() throws MaximoConnectionException, MalformedURLException, IOException
@@ -294,12 +306,7 @@ public class MaximoConnection {
 	
 	/**
 	 * Make an event and send the request
-	 * @param requestType SYNC or ASYNC
-	 * @param eventType 
-	 * @param currentFocus
-	 * @param eventTargetId
 	 * @param eventValue
-	 * @param eventProcessValue
 	 * @return
 	 * @throws MalformedURLException
 	 * @throws IOException
@@ -408,20 +415,30 @@ public class MaximoConnection {
 		
 	}
 	
-	public void fillBt(String btid, String gear, String btDate, String desc, String newDesc, String travelTime, String duration, String issue, String comment) throws MalformedURLException, IOException, MaximoConnectionException, InterruptedException
+	public void fillBt(String btid,
+					   String gear,
+					   String btDate,
+					   String desc,
+					   String newDesc,
+					   String travelTime,
+					   String duration,
+					   String issue,
+					   String comment)
+			throws MalformedURLException, IOException, MaximoConnectionException, InterruptedException
 	{
 		HttpURLConnection con;
 		boolean checkArrived = true;
 		boolean checkFinished = true;
 		
-		
+		//Search BT
 		con = doEvent(EvT.setvalue, MO.INPUT_QUICKSEARCH.htmlId, btid);
-		con = doEvent(EvT.find, MO.INPUT_QUICKSEARCH.htmlId, "");
+		//con = doEvent(EvT.find, MO.INPUT_QUICKSEARCH.htmlId, "");
 		
 		InputStream response =  con.getInputStream();
 		BufferedReader in = new BufferedReader(new InputStreamReader(response));
 		String line;
-		
+
+		//Search if checkbox "Arrivé sur site" and "Remise en service" are checked or not
 		Pattern p_da = Pattern.compile(".*formatCalendar\\('" + MO.INPUT_DATEARRIVED.getHtmlId() + "',html.decodeEntities\\('\\d.*");
 		Pattern p_df = Pattern.compile(".*formatCalendar\\('" + MO.INPUT_DATEFINISHED.getHtmlId() + "',html.decodeEntities\\('\\d.*");
 		
@@ -447,45 +464,52 @@ public class MaximoConnection {
 	
 		in.close();
 		response.close();
-		
+
+		//Increment dates
 		String dateArrived = incrementDate(btDate, sql_dateFormat, travelTime);
 		String dateFinished = incrementDate(dateArrived, maximo_dateFormat, duration);
-		
+
+		//Set new desc if the BTHelper input is filled
 		if( ! desc.equals(newDesc)) {
 			con = doEvent(EvT.setvalue, MO.INPUT_DESCRIPTION.getHtmlId(), newDesc);
 			if(toF) printToFile(con, btid + "_newdesc.html");
 		}
 		Thread.sleep(ThreadLocalRandom.current().nextInt(850, 1050));
-		
+
+		//Check input "Arrivé sur site" if not checked
 		if(checkArrived) { 
 			con = doEvent(EvT.toggle, MO.CHECKBOX_ARRIVED.htmlId, "");
 			if(toF) printToFile(con, btid + "_check_arrived.html");
 			Thread.sleep(ThreadLocalRandom.current().nextInt(850, 1050));
 		}
-		
+
+		//Set input "Date d'arrivé sur site"
 		con = doEvent(EvT.setvalue, MO.INPUT_DATEARRIVED.htmlId, dateArrived);
 		if(toF) printToFile(con, btid + "_set_arrived.html");
 		Thread.sleep(ThreadLocalRandom.current().nextInt(850, 1050));
-		
+
+		//Check input "Remise en service" if not checked
 		if(checkFinished) {
 			con = doEvent(EvT.toggle, MO.CHECKBOX_FINISHED.htmlId, "");
 			if(toF) printToFile(con, btid + "_check_finished.html");
 			Thread.sleep(ThreadLocalRandom.current().nextInt(850, 1050));
 		}
-	
+
+		//Set input "Date de remise en service"
 		con = doEvent(EvT.setvalue, MO.INPUT_DATEFINISHED.htmlId, dateFinished);
 		if(toF) printToFile(con, btid + "_set_finished.html");
 		Thread.sleep(ThreadLocalRandom.current().nextInt(850, 1050));
 	
 	
-		
+		//Set duration input
 		if(Integer.valueOf(duration) < 10) duration = "0:0" + duration;
 		else duration = "0:" + duration;
 		con = doEvent(EvT.click, MO.BUTTON_DURATION_NEWLINE.htmlId, "");
 		Thread.sleep(ThreadLocalRandom.current().nextInt(850, 1050));
 		con = doEvent(EvT.setvalue, MO.INPUT_DURATION_FIRSTLINE.htmlId, duration);
 		Thread.sleep(ThreadLocalRandom.current().nextInt(850, 1050));
-		
+
+		//Set issue input
 		int[] issueMap = Maxi.getIssueMap(gear, issue);
 		if(issueMap != null) {
 			con = doEvent(EvT.click, MO.BUTTON_ISSUE_SET.htmlId,"");
@@ -497,12 +521,11 @@ public class MaximoConnection {
 			}
 			Thread.sleep(ThreadLocalRandom.current().nextInt(850, 1050));
 		} else System.out.println("Equip code not found");
-		
+
+		//Set comment if the BTHelper input is filled
 		if( ! comment.isEmpty()) con = doEvent(EvT.setvalue, MO.INPUT_COMMENT.getHtmlId(), comment);
 		
 		//con = doEvent(EvT.click, MO.BUTTON_SAVE.htmlId, "");
-		
-		
 		con = doEvent(EvT.COMP, MO.PAGE_QUICKREP.getHtmlId(), "");
 		Thread.sleep(ThreadLocalRandom.current().nextInt(750, 1000));
 		con = doEvent(EvT.click, MO.BUTTON_COMPLETE_OK.getHtmlId(), "");
@@ -609,15 +632,6 @@ public class MaximoConnection {
 		}
 		
 		return new URL(urlToDecode.substring(matchStart, matchEnd));
-	}
-	
-	private final String[] getIdAndToken(final URL url)
-	{
-		
-		String query = url.getQuery();
-		String[] params = query.split("&");
-		
-		return new String[] {params[0].split("=")[1], params[1].split("=")[1]};
 	}
 	
 	public static void main(String[] args) throws MaximoConnectionException, IOException, InterruptedException

@@ -12,6 +12,9 @@ repositories {
     }
 }
 
+sourceCompatibility = "1.8"
+targetCompatibility = "1.8"
+
 dependencies {
 	implementation (name:'Mack-1.0', ext:'jar')
 	implementation (name:'sqljdbc4', ext:'jar')

@@ -1,6 +1,7 @@
 package bth.core;
 
 import java.io.IOException;
+import java.net.HttpURLConnection;
 import java.sql.ResultSet;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -180,7 +181,8 @@ public class CoreManager implements Observable {
 				properties.getProperty(BTHelper.MaximoPassword)
 		);
 		
-		max.login();
+		HttpURLConnection login = max.login();
+		max.extractLoginInformations(login);
 	
 		for(Bt bt : btList)
 		{
@@ -208,7 +210,8 @@ public class CoreManager implements Observable {
 				properties.getProperty(BTHelper.MaximoPassword)
 		);
 		
-		max.login();
+		HttpURLConnection login = max.login();
+		max.extractLoginInformations(login);
 		max.loadBtContext();
 		max.doPrev(args);
 	}

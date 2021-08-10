@@ -2,11 +2,11 @@ package bth;
 
 import bth.core.MONTH;
 import bth.core.planning.PlanningManager;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Properties;
-
-import static org.junit.Assert.assertEquals;
 
 public class PlanningManagerTest {
 

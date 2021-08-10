@@ -15,14 +15,13 @@ import bth.core.bt.BtManager;
 import bth.core.datasource.DatasourceException;
 import bth.core.datasource.Datasource;
 import bth.core.datasource.file.FileManager;
-import bth.core.datasource.maximo.MaximoConnection;
-import bth.core.datasource.maximo.MaximoConnectionException;
-import bth.core.datasource.maximo.MaximoManager;
 import bth.core.datasource.sql.SQLManager;
 import bth.core.planning.PlanningManager;
 import bth.core.planning.Technician;
 import bth.core.request.RequestException;
 import bth.core.request.RequestManager;
+import mack.MackConnection;
+import mack.exception.MaximoConnectionException;
 import bth.core.planning.PlanningException;
 import bth.core.planning.HttpConnectionException;
 import bth.core.planning.Planning;
@@ -44,12 +43,15 @@ public class CoreManager implements Observable {
 		verbose = p_verbose;
 		pMan = new PlanningManager(properties);
 		
-		if(Boolean.parseBoolean(properties.getProperty(BTHelper.SqlUsed)))
+		if(Boolean.parseBoolean(properties.getProperty(BTHelper.SqlUsed))) {
 			DBMan = new SQLManager(this, observers, properties);
-		else if(Boolean.parseBoolean(properties.getProperty(BTHelper.FileUsed)))
+		}
+		else if(Boolean.parseBoolean(properties.getProperty(BTHelper.FileUsed))) {
 			DBMan = new FileManager(this, observers, properties);
-		else if(Boolean.parseBoolean(properties.getProperty(BTHelper.MaximoUsed)))
-			DBMan = new MaximoManager(this, observers, properties);
+		}
+		else if(Boolean.parseBoolean(properties.getProperty(BTHelper.MaximoUsed))) {
+			//DBMan = new MaximoManager(this, observers, properties);
+		}
 		
 		btMan = new BtManager(properties, observers, DBMan);
 		
@@ -172,7 +174,7 @@ public class CoreManager implements Observable {
 	
 	public void w(ArrayList<Bt> btList) throws MaximoConnectionException, IOException, InterruptedException
 	{
-		MaximoConnection max = new MaximoConnection(
+		MackConnection max = new MackConnection(
 				properties.getProperty(BTHelper.MaximoUrl),
 				properties.getProperty(BTHelper.MaximoLogin),
 				properties.getProperty(BTHelper.MaximoPassword)
@@ -200,7 +202,7 @@ public class CoreManager implements Observable {
 	}
 	public void p(String[] args) throws MaximoConnectionException, IOException, InterruptedException
 	{
-		MaximoConnection max = new MaximoConnection(
+		MackConnection max = new MackConnection(
 				properties.getProperty(BTHelper.MaximoUrl),
 				properties.getProperty(BTHelper.MaximoLogin),
 				properties.getProperty(BTHelper.MaximoPassword)

@@ -9,8 +9,7 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableColumn;
 
 import bth.core.bt.Bt;
-import bth.core.datasource.maximo.Maxi;
-import bth.core.datasource.maximo.Maxi.ISSUE;
+import mack.MackConfig.ISSUE;
 
 public class BtTableModel extends AbstractTableModel{
 	
@@ -39,7 +38,7 @@ public class BtTableModel extends AbstractTableModel{
 		
 		TableColumn col = table.getColumnModel().getColumn(C_ISSUE);
 		JComboBox<ISSUE> combo = new JComboBox<ISSUE>();
-		ISSUE[] list = Maxi.ISSUE.values();
+		ISSUE[] list = ISSUE.values();
 		for(ISSUE is : list)
 		{
 			combo.addItem(is);

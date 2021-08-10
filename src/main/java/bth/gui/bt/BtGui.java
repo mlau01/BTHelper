@@ -31,9 +31,9 @@ import javax.swing.table.TableColumnModel;
 
 import bth.core.CoreManager;
 import bth.core.bt.Bt;
-import bth.core.datasource.maximo.MaximoConnectionException;
 import bth.gui.Fillable;
 import bth.gui.MWin;
+import mack.exception.MaximoConnectionException;
 
 import javax.swing.JLabel;
 import javax.swing.BoxLayout;

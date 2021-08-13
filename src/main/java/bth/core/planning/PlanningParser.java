@@ -39,13 +39,17 @@ public class PlanningParser {
 	 */
 	public static boolean isTechRow(Element row) {
 		Elements cells = row.getAllElements();
-		if(cells.get(2).text().length() >= 4) {
-			logger.trace("Found tech row: {}", row);
-			return true;
+		for (Element cell : cells) {
+			logger.trace("Check for technician name cell: {}", cell.text());
+			if(cell.text().matches("^[A-Z](\\.|,)[A-Z]{3,}")) {
+				logger.trace("Found tech cell: {}", cell.text());
+				return true;
+			}
+			else {
+				logger.trace("Not a tech name cell: {}", cell.text());
+			}
 		}
-		else {
-			logger.trace("Not a tech row: {}", row);
-		}
+
 
 		return false;
 	}

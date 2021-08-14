@@ -12,6 +12,7 @@ import bth.core.Utils;
 import bth.core.planning.PlanningException;
 import bth.core.planning.Planning;
 import bth.core.planning.PlanningManager;
+import bth.core.planning.PlanningParser;
 import bth.core.planning.Technician;
 
 public class BtAssignator {
@@ -186,9 +187,8 @@ public class BtAssignator {
 				ArrayList<String> line = dstMonthArrayList.get(i);
 				String cell = line.get(col);
 				logger.trace("Searching assignation {} in col {} for tech line {} ", assign, col, line);
-				if(cell.equals(assign))
-				{
-					tech = line.get(1);
+				if(cell.equals(assign)) {
+					tech = PlanningParser.extractTechnicians(line);
 				}
 			}
 		}

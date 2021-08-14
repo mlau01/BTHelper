@@ -13,7 +13,7 @@ import org.jsoup.select.Elements;
 public class PlanningParser {
 	
 	private static final Logger logger = LogManager.getLogger();
-	public static final String TECHNICIAN_REGEX = "^[A-Z](\\.|,)[A-Z]{3,}";
+	public static final String TECHNICIAN_REGEX = "^[A-Z]{1,4}(\\.|,)[A-Z]{3,}";
 
 	/**
 	 * Search a suite of number starting by 1 in the row given

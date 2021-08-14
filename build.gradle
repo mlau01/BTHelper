@@ -37,6 +37,9 @@ test {
 launch4j {
 	dontWrapJar = 'true'
 	headerType = 'gui'
-	
-	
+	icon = "${projectDir}/src/main/resources/icons/BTHelper.ico"
+	mainClassName = 'bth.gui.MWin'
+    bundledJrePath = './jre'
+    jreMinVersion = '1.8.0'
+   jreMaxVersion = '16.0.0'	
 }

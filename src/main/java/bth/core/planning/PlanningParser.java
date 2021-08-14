@@ -1,6 +1,7 @@
 package bth.core.planning;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -12,6 +13,7 @@ import org.jsoup.select.Elements;
 public class PlanningParser {
 	
 	private static final Logger logger = LogManager.getLogger();
+	public static final String TECHNICIAN_REGEX = "^[A-Z](\\.|,)[A-Z]{3,}";
 
 	/**
 	 * Search a suite of number starting by 1 in the row given
@@ -41,7 +43,7 @@ public class PlanningParser {
 		Elements cells = row.getAllElements();
 		for (Element cell : cells) {
 			logger.trace("Check for technician name cell: {}", cell.text());
-			if(cell.text().matches("^[A-Z](\\.|,)[A-Z]{3,}")) {
+			if(cell.text().matches(TECHNICIAN_REGEX)) {
 				logger.trace("Found tech cell: {}", cell.text());
 				return true;
 			}
@@ -54,6 +56,27 @@ public class PlanningParser {
 		return false;
 	}
 	
+	/**
+	 * Search for a technician name in a list of string representing a line of the planning array
+	 * @param row Represent a line in the planning array
+	 * @return Technician found or null of no technician was found on the row
+	 */
+	public static String extractTechnicians(List<String> row){
+		ArrayList<String> technicians = new ArrayList<String>();
+		for(String cell : row) {
+			if(cell.matches(TECHNICIAN_REGEX)) {
+				technicians.add(cell);
+				return cell;
+			}
+		}
+		return null;
+	}
+	
+	/**
+	 * Parse the planning given, clean html tags to keep only useful data
+	 * @param httpContent raw html content
+	 * @return an ArrayList<ArrayList<String>> representing array planning
+	 */
 	public static ArrayList<ArrayList<String>> getParsedArray(String httpContent)
 	{
 		Document doc = Jsoup.parse(httpContent);

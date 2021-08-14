@@ -2,8 +2,12 @@ package bth;
 
 import bth.core.planning.PlanningParser;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import org.jsoup.nodes.Element;
 import org.junit.jupiter.api.Test;
@@ -32,5 +36,19 @@ public class PlanningParserTest {
 
         assertTrue(PlanningParser.isTechRow(row1));
         assertFalse(PlanningParser.isTechRow(row2));
+    }
+    
+    @Test
+    public void extractTechnicianTest_shouldExtractTechniciansCorrectly() {
+    	List<String> techRow = new ArrayList<String>();
+    	techRow.add(" ");
+    	techRow.add("C.RENIA");
+    	techRow.add("&nbsp");
+    	techRow.add("A");
+    	techRow.add("M1");
+    	
+    	String technician = PlanningParser.extractTechnicians(techRow);
+    	
+    	assertEquals("C.RENIA", technician);
     }
 }

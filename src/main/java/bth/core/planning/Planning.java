@@ -29,20 +29,15 @@ public class Planning implements Serializable{
 		array = p_array;
 		technicians = new ArrayList<String>();
 		
-		boolean first = false;
 		int rowNbr = 0;
 		int colNbr = 0;
 		
 		//Extract user list
 		for(ArrayList<String> row : p_array)
 		{
-			logger.info("Extracting user from line: {}", row);
-			String tech = row.get(1);
-			if(tech.equals("C,RENIA"))
-				first = true;
-			if(first && tech.length() > 4) {
-				logger.info("Adding tech: {}", tech);
-				technicians.add(tech);
+			String technician = PlanningParser.extractTechnicians(row);
+			if(technician != null) {
+				technicians.add(technician);
 			}
 			
 			int rowCol = 0;

@@ -33,3 +33,10 @@ dependencies {
 test {
     useJUnitPlatform()
 }
+
+launch4j {
+	dontWrapJar = 'true'
+	headerType = 'gui'
+	
+	
+}

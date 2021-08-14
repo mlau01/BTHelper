@@ -43,6 +43,8 @@ public class MWin extends JFrame implements Observer {
 	{
 		if(args.length > 0) argsManager(args);
 		
+		System.setProperty("log4j2.configurationFile", System.getProperties().getProperty("user.dir") + "/log4j2.xml");
+		
 		try {
 			optMan = new OptionsManager();
 		} catch (OptionsException e) {

@@ -3,7 +3,9 @@ package bth.core.schedule;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
+import bth.BTHelper;
 import bth.core.model.Assignation;
 
 public class SheduleService {
@@ -15,12 +17,17 @@ public class SheduleService {
 	private List<Assignation> assignationT2W;
 	private List<Assignation> assignationT2S;
 	
-	public SheduleService() {
-		// TODO Auto-generated constructor stub
+	public SheduleService(Properties bthOptions) {
+		loadfromOptions(bthOptions);
 	}
 	
-	public void loadT1fromString(String T1Assignation) {
-		
+	public void loadfromOptions(Properties properties) {
+		assignationT1 = parseFromString(String.valueOf(properties.get(BTHelper.sheduleT1)));
+		assignationT1W = parseFromString(String.valueOf(properties.get(BTHelper.sheduleT1W)));
+		assignationT1S = parseFromString(String.valueOf(properties.get(BTHelper.sheduleT1S)));
+		assignationT2 = parseFromString(String.valueOf(properties.get(BTHelper.sheduleT2)));
+		assignationT2W = parseFromString(String.valueOf(properties.get(BTHelper.sheduleT2W)));
+		assignationT2S = parseFromString(String.valueOf(properties.get(BTHelper.sheduleT2S)));
 	}
 	
 	/**
@@ -57,6 +64,49 @@ public class SheduleService {
 
 		return assignations;
 	}
+
+	/**
+	 * Create a string with assignation.toString() of each assignation separate by semicolon
+	 * @param assignations
+	 * @return String builded
+	 */
+	public String toString(List<Assignation> assignations) {
+		String string = "";
+		for(Assignation assign : assignations) {
+			if( ! string.isEmpty()) {
+				string += ";";
+			}
+			
+			string += assign.toString();
+		}
+		return string;
+	}
+
+	public List<Assignation> getAssignationT1() {
+		return assignationT1;
+	}
+
+	public List<Assignation> getAssignationT1W() {
+		return assignationT1W;
+	}
+
+	public List<Assignation> getAssignationT1S() {
+		return assignationT1S;
+	}
+
+	public List<Assignation> getAssignationT2() {
+		return assignationT2;
+	}
+
+	public List<Assignation> getAssignationT2W() {
+		return assignationT2W;
+	}
+
+	public List<Assignation> getAssignationT2S() {
+		return assignationT2S;
+	}
+	
+	
 	
 
 }

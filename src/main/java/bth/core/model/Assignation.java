@@ -1,6 +1,7 @@
 package bth.core.model;
 
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 
 public class Assignation {
 	
@@ -43,5 +44,10 @@ public class Assignation {
 		this.endTime = endTime;
 	}
 	
-	
+	@Override
+	public String toString() {
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
+		
+		return assignation + "=(" + beginTime.format(formatter) + "," + endTime.format(formatter) + ")";
+	}
 }

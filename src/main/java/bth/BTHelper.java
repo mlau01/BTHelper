@@ -2,7 +2,7 @@ package bth;
 
 public class BTHelper {
 	public static final String APP_NAME = ("BT's Helper");
-	public static final String APP_VERSION = ("1.9.5");
+	public static final String APP_VERSION = ("2.0.0");
 	
 	public static final String CONF_FOLDER = ".BTHelper";
 	public static final String CONF_NAME = "config";
@@ -60,7 +60,7 @@ public class BTHelper {
 	
 	public final static String defaultHttpUrl = "http://nce1dbmain.free.fr";
 	public final static String defaultHttpUser = "unisys";
-	public final static String defaultHttpPassword = "Nce2x";
+	public final static String defaultHttpPassword = "";
 	
 	public final static String defaultHttpUseProxy = "true";
 	public final static String defaultHttpUseSystemProxy = "false";
@@ -106,24 +106,3 @@ public class BTHelper {
 + "ORDER BY REPORTDATE DESC\n";
 
 }
-/*
- * --CHANGELOG--
- * 2020-09-22 v1.9.5
- * - Support Log4j partially
- *
- * 2019-02-15 v1.9
- * Support Maximo web interface
- * 
- * 2019-01-17 v1.8
- * Adding different bt source choice.
- * 
- * 2017-07-26 v1.6
- * Adding planning backup handler
- * 
- * 2017-06-14 Version 1.5
- * Change code structure
- * Add a console system
- * 
- * 2016-05-19 Version 1.4 Release
- * Fix NOT FOUND in middle of the month
-*/

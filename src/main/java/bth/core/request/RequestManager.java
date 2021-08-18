@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Properties;
 
 import bth.core.options.OptionsException;
-import bth.core.options.OptionsManager;
+import bth.core.options.OptionsService;
 
 public class RequestManager {
 	
@@ -15,7 +15,7 @@ public class RequestManager {
 	{
 		
 			try {
-				queryFile = OptionsManager.getPropertiesFile("query.conf");
+				queryFile = OptionsService.getPropertiesFile("query.conf");
 			} catch (OptionsException e) {
 				throw new RequestException(e.getMessage());
 			}
@@ -29,7 +29,7 @@ public class RequestManager {
 	
 	private final void write() throws RequestException {
 		try {
-			OptionsManager.writePropertiesFile(queryFile, "SQL Querys", "query.conf");
+			OptionsService.writePropertiesFile(queryFile, "SQL Querys", "query.conf");
 		} catch (OptionsException e) {
 			throw new RequestException(e.getMessage());
 		}

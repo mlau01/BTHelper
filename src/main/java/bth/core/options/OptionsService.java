@@ -11,16 +11,16 @@ import java.util.Properties;
 
 import bth.BTHelper;
 
-public class OptionsManager {
+public class OptionsService {
 	private short verboseLevel = 0;
 	private Properties p;
 
 	
-	public OptionsManager() throws OptionsException
+	public OptionsService() throws OptionsException
 	{
 		if(verboseLevel >= 2) System.out.println(this.getClass().getName() + " -> INIT");
 		
-		p = OptionsManager.getPropertiesFile(BTHelper.CONF_NAME);
+		p = OptionsService.getPropertiesFile(BTHelper.CONF_NAME);
 		if(p == null){
 			p = getDefaultProperties();
 			save(p);

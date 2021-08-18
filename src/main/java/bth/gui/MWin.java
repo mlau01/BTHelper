@@ -25,7 +25,7 @@ import bth.core.CoreManager;
 import bth.core.bt.BTException;
 import bth.core.datasource.DatasourceException;
 import bth.core.options.OptionsException;
-import bth.core.options.OptionsManager;
+import bth.core.options.OptionsService;
 import bth.core.request.RequestException;
 import bth.gui.menu.Menu;
 
@@ -34,7 +34,7 @@ public class MWin extends JFrame implements Observer {
 	public final static Dimension currentDimension = new Dimension(1024, 600);
 	private MPanel gui;
 	private ArrayList<Fillable> fillableGui;
-	private OptionsManager optMan;
+	private OptionsService optMan;
 	private CoreManager corma = null;
 	private boolean w = false;
 	private boolean verbose = false;
@@ -46,7 +46,7 @@ public class MWin extends JFrame implements Observer {
 		System.setProperty("log4j2.configurationFile", System.getProperties().getProperty("user.dir") + "/log4j2.xml");
 		
 		try {
-			optMan = new OptionsManager();
+			optMan = new OptionsService();
 		} catch (OptionsException e) {
 			e.printStackTrace();
 			showError(e.getClass().getName(), e.getMessage());
@@ -208,7 +208,7 @@ public class MWin extends JFrame implements Observer {
 		}
 	}
 	
-	public final OptionsManager getOptionManager()
+	public final OptionsService getOptionManager()
 	{
 		return optMan;
 	}

@@ -16,7 +16,7 @@ public class SheduleServiceTest {
 	
 	@Test
 	public void parseFromStringTest_shouldReturnAssignationObjectCorreclyParsed() {
-		SheduleService sheduleService = new SheduleService();
+		SheduleService sheduleService = new SheduleService(null);
 		
 		List<Assignation> assignations = sheduleService.parseFromString("M2=(04:15:00,06:59:59);M1=(07:00:00,13:30:00);S1=(13:30:00,19:59:59);S2=(20:00:00,23:30:00)");
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
@@ -44,7 +44,7 @@ public class SheduleServiceTest {
 	
 	@Test
 	public void toStringTest_shouldReturnCorreclyBuildedString() {
-		SheduleService sheduleService = new SheduleService();
+		SheduleService sheduleService = new SheduleService(null);
 		
 		Assignation assignation1 = new Assignation("A", LocalTime.of(11, 34, 42), LocalTime.of(11, 57, 59));
 		Assignation assignation2 = new Assignation("S1", LocalTime.of(9, 1, 2), LocalTime.of(23, 14, 12));

@@ -1,5 +1,7 @@
 package bth;
 
+import bth.core.bt.Timetable;
+
 public class BTHelper {
 	public static final String APP_NAME = ("BT's Helper");
 	public static final String APP_VERSION = ("2.0.0");
@@ -41,6 +43,13 @@ public class BTHelper {
 	public static final String MaximoLogin = ("MaximoLogin");
 	public static final String MaximoPassword = ("MaximoPassword");
 	
+	public static final String sheduleT1 = ("SheduleT1");
+	public static final String sheduleT1W = ("SheduleT1W");
+	public static final String sheduleT1S = ("SheduleT1S");
+	public static final String sheduleT2 = ("SheduleT2");
+	public static final String sheduleT2W = ("SheduleT2W");
+	public static final String sheduleT2S = ("SheduleT2S");
+	
 	//Default Options -------------------------------------------------------------------------
 	public final static String defaultSqlUsed = "false";
 	public final static String defaultSqlProtocol = "sqlserver";
@@ -67,6 +76,31 @@ public class BTHelper {
 	public final static String defaultHttpProxyHost = "10.1.40.251:8008";
 	public final static String defaultHttpProxyUser = "";
 	public final static String defaultHttpProxyPassword = "";
+	
+	public final static String defaultSheduleT1 = "M2=(04:15:00,06:59:59);M1=(07:00:00,13:30:00);S1=(13:30:00,19:59:59);S2=(20:00:00,23:30:00)";
+	
+	/*
+		timeTableT1W.put(new Timetable("04:15:00", "06:59:59"), "M2");
+		timeTableT1W.put(new Timetable("07:00:00", "13:30:00"), "M1");
+		timeTableT1W.put(new Timetable("13:30:00", "20:00:00"), "S1");
+		timeTableT1W.put(new Timetable("20:00:00", "23:30:00"), "S2");
+
+		timeTableT1S.put(new Timetable("04:15:00", "06:59:59"), "SM");
+		timeTableT1S.put(new Timetable("20:00:00", "23:30:00"), "SS");
+
+		timeTableT2.put(new Timetable("04:30:00", "11:29:59"), "M2");
+		timeTableT2.put(new Timetable("11:30:00", "16:29:59"), "A");
+		timeTableT2.put(new Timetable("16:30:00", "23:30:00"), "S2");
+
+		timeTableT2W.put(new Timetable("04:30:00", "13:59:00"), "SM");
+		timeTableT2W.put(new Timetable("14:00:00", "23:30:00"), "SS");
+		timeTableT2W.put(new Timetable("04:30:00", "13:59:00"), "M2");
+		timeTableT2W.put(new Timetable("14:00:00", "23:30:00"), "S2");
+
+		timeTableT2S.put(new Timetable("04:30:00", "13:59:00"), "SM");
+		timeTableT2S.put(new Timetable("14:00:00", "23:30:00"), "SS");
+
+	 */
 	
 	public final static String defaultSqlRequest = "SELECT WONUM, REPORTDATE, DESCRIPTION FROM WORKORDER\n"
 	+ "WHERE (\n"

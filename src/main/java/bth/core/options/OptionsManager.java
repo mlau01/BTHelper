@@ -53,6 +53,8 @@ public class OptionsManager {
 		np.setProperty(BTHelper.MaximoLogin, BTHelper.defaultMaximoLogin);
 		np.setProperty(BTHelper.MaximoPassword, BTHelper.defaultMaximoPassword);
 		
+		np.setProperty(BTHelper.sheduleT1, BTHelper.defaultSheduleT1);
+		
 		return np;
 	}
 	

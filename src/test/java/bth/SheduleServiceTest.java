@@ -20,7 +20,7 @@ public class SheduleServiceTest {
 	
 	@Test
 	public void parseFromStringTest_shouldReturnAssignmentObjectCorreclyParsed() {
-		ScheduleService sheduleService = new ScheduleService(null);
+		ScheduleService sheduleService = new ScheduleService();
 		
 		List<Assignment> assignations = sheduleService.parseFromString("M2=(04:15:00,06:59:59);M1=(07:00:00,13:30:00);S1=(13:30:00,19:59:59);S2=(20:00:00,23:30:00)");
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
@@ -48,7 +48,7 @@ public class SheduleServiceTest {
 	
 	@Test
 	public void toStringTest_shouldReturnCorreclyBuildedString() {
-		ScheduleService sheduleService = new ScheduleService(null);
+		ScheduleService sheduleService = new ScheduleService();
 		
 		Assignment assignation1 = new Assignment("A", LocalTime.of(11, 34, 42), LocalTime.of(11, 57, 59));
 		Assignment assignation2 = new Assignment("S1", LocalTime.of(9, 1, 2), LocalTime.of(23, 14, 12));
@@ -65,7 +65,7 @@ public class SheduleServiceTest {
 	
 	@Test
 	public void assignationIsConflictTest_shouldThrowExceptionAssignmentAcronymException() {
-		ScheduleService sheduleService = new ScheduleService(null);
+		ScheduleService sheduleService = new ScheduleService();
 		Assignment assignation1 = new Assignment("A", LocalTime.of(11, 34, 42), LocalTime.of(11, 57, 59));
 		Assignment assignation2 = new Assignment("A", LocalTime.of(11, 34, 42), LocalTime.of(11, 57, 59));
 		
@@ -74,7 +74,7 @@ public class SheduleServiceTest {
 	
 	@Test
 	public void testConflictTest_shouldThrowExceptionForAssignmentWithFullOverlapingTimePeriod() {
-		ScheduleService sheduleService = new ScheduleService(null);
+		ScheduleService sheduleService = new ScheduleService();
 
 		Assignment assignation1 = new Assignment("A", LocalTime.of(11, 34, 42), LocalTime.of(11, 57, 59));
 		Assignment assignation2 = new Assignment("S1", LocalTime.of(11, 34, 42), LocalTime.of(11, 57, 58));
@@ -84,7 +84,7 @@ public class SheduleServiceTest {
 	
 	@Test
 	public void testConflictTest_shouldThrowExceptionForAssignmentWithEndTimeOverlapBeginTime() {
-		ScheduleService sheduleService = new ScheduleService(null);
+		ScheduleService sheduleService = new ScheduleService();
 		
 		Assignment assignation1 = new Assignment("A", LocalTime.of(9, 00, 00), LocalTime.of(17, 00, 00));
 		Assignment assignation2 = new Assignment("M1", LocalTime.of(4, 15, 00), LocalTime.of(9, 01, 58));
@@ -94,7 +94,7 @@ public class SheduleServiceTest {
 	
 	@Test
 	public void testConflictTest_shouldThrowExceptionForAssignmentWithBeginTimeOverlapEndTime() {
-		ScheduleService sheduleService = new ScheduleService(null);
+		ScheduleService sheduleService = new ScheduleService();
 		
 		Assignment assignation1 = new Assignment("A", LocalTime.of(9, 00, 00), LocalTime.of(17, 00, 00));
 		Assignment assignation2 = new Assignment("S1", LocalTime.of(17, 00, 00), LocalTime.of(23, 01, 58));
@@ -104,7 +104,7 @@ public class SheduleServiceTest {
 	
 	@Test
 	public void testConflictTest_shouldReturnNoConflict() throws AssignmentAcronymException, AssignmentScheduleOverlapException {
-		ScheduleService sheduleService = new ScheduleService(null);
+		ScheduleService sheduleService = new ScheduleService();
 		
 		Assignment assignation1 = new Assignment("A", LocalTime.of(9, 00, 00), LocalTime.of(17, 00, 00));
 		Assignment assignation2 = new Assignment("S1", LocalTime.of(17, 00, 01), LocalTime.of(23, 01, 58));

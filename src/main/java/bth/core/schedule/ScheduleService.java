@@ -5,29 +5,38 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import bth.BTHelper;
 import bth.core.model.Assignation;
 
-public class SheduleService {
+public class ScheduleService {
 	
-	private List<Assignation> assignationT1;
-	private List<Assignation> assignationT1W;
-	private List<Assignation> assignationT1S;
-	private List<Assignation> assignationT2;
-	private List<Assignation> assignationT2W;
-	private List<Assignation> assignationT2S;
+	private static final Logger logger = LogManager.getLogger();
 	
-	public SheduleService(Properties bthOptions) {
-		loadfromOptions(bthOptions);
+	private Properties bthOptions;
+	
+	public ScheduleService(Properties p_bthOptions) {
+		bthOptions = p_bthOptions;
 	}
 	
 	public void loadfromOptions(Properties properties) {
-		assignationT1 = parseFromString(String.valueOf(properties.get(BTHelper.sheduleT1)));
-		assignationT1W = parseFromString(String.valueOf(properties.get(BTHelper.sheduleT1W)));
-		assignationT1S = parseFromString(String.valueOf(properties.get(BTHelper.sheduleT1S)));
-		assignationT2 = parseFromString(String.valueOf(properties.get(BTHelper.sheduleT2)));
-		assignationT2W = parseFromString(String.valueOf(properties.get(BTHelper.sheduleT2W)));
-		assignationT2S = parseFromString(String.valueOf(properties.get(BTHelper.sheduleT2S)));
+		ScheduleCategorie.T1.setAssignation(parseFromString(String.valueOf(properties.get(BTHelper.sheduleT1))));
+		ScheduleCategorie.T1W.setAssignation(parseFromString(String.valueOf(properties.get(BTHelper.sheduleT1W))));
+		ScheduleCategorie.T1S.setAssignation(parseFromString(String.valueOf(properties.get(BTHelper.sheduleT1S))));
+		ScheduleCategorie.T2.setAssignation(parseFromString(String.valueOf(properties.get(BTHelper.sheduleT2))));
+		ScheduleCategorie.T2W.setAssignation(parseFromString(String.valueOf(properties.get(BTHelper.sheduleT2W))));
+		ScheduleCategorie.T2S.setAssignation(parseFromString(String.valueOf(properties.get(BTHelper.sheduleT2S))));
+	}
+	
+	public void addAssignation(ScheduleCategorie targetCategorie, String acronym, LocalTime beginTime, LocalTime endTime) {
+		Assignation newAssignation = new Assignation(acronym, beginTime, endTime);
+		List<Assignation> assignationList = targetCategorie.getAssignation();
+		for(Assignation assignation : assignationList) {
+			//TODO
+		}
+		
 	}
 	
 	/**
@@ -81,31 +90,6 @@ public class SheduleService {
 		}
 		return string;
 	}
-
-	public List<Assignation> getAssignationT1() {
-		return assignationT1;
-	}
-
-	public List<Assignation> getAssignationT1W() {
-		return assignationT1W;
-	}
-
-	public List<Assignation> getAssignationT1S() {
-		return assignationT1S;
-	}
-
-	public List<Assignation> getAssignationT2() {
-		return assignationT2;
-	}
-
-	public List<Assignation> getAssignationT2W() {
-		return assignationT2W;
-	}
-
-	public List<Assignation> getAssignationT2S() {
-		return assignationT2S;
-	}
-	
 	
 	
 

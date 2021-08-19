@@ -3,6 +3,9 @@ package bth.core.model;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
+import bth.core.exception.AssignationAcronymException;
+import bth.core.exception.AssignationScheduleOverlapException;
+
 public class Assignation {
 	
 	private String assignation;
@@ -38,6 +41,21 @@ public class Assignation {
 
 	public LocalTime getEndTime() {
 		return endTime;
+	}
+	
+	public boolean isConflict(Assignation assignation) throws AssignationAcronymException, AssignationScheduleOverlapException {
+		if(assignation.getAssignation().equals(this.assignation)) {
+			throw new AssignationAcronymException("Duplicate acronym");
+		}
+		
+		if( (assignation.getBeginTime().isAfter(this.beginTime) 
+				&& assignation.getBeginTime().isBefore(this.endTime))  
+			|| (assignation.getEndTime().isAfter(this.beginTime)
+				&& assignation.getEndTime().isBefore(this.endTime)) ) {
+			throw new AssignationScheduleOverlapException("Shedule overlap");
+		}
+		
+		return false;
 	}
 
 	public void setEndTime(LocalTime endTime) {

@@ -1,6 +1,7 @@
 package bth;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
@@ -9,14 +10,16 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
+import bth.core.exception.AssignationAcronymException;
+import bth.core.exception.AssignationScheduleOverlapException;
 import bth.core.model.Assignation;
-import bth.core.schedule.SheduleService;
+import bth.core.schedule.ScheduleService;
 
 public class SheduleServiceTest {
 	
 	@Test
 	public void parseFromStringTest_shouldReturnAssignationObjectCorreclyParsed() {
-		SheduleService sheduleService = new SheduleService(null);
+		ScheduleService sheduleService = new ScheduleService(null);
 		
 		List<Assignation> assignations = sheduleService.parseFromString("M2=(04:15:00,06:59:59);M1=(07:00:00,13:30:00);S1=(13:30:00,19:59:59);S2=(20:00:00,23:30:00)");
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
@@ -44,7 +47,7 @@ public class SheduleServiceTest {
 	
 	@Test
 	public void toStringTest_shouldReturnCorreclyBuildedString() {
-		SheduleService sheduleService = new SheduleService(null);
+		ScheduleService sheduleService = new ScheduleService(null);
 		
 		Assignation assignation1 = new Assignation("A", LocalTime.of(11, 34, 42), LocalTime.of(11, 57, 59));
 		Assignation assignation2 = new Assignation("S1", LocalTime.of(9, 1, 2), LocalTime.of(23, 14, 12));
@@ -57,6 +60,22 @@ public class SheduleServiceTest {
 		String rawAssignations = sheduleService.toString(assignations);
 		
 		assertEquals("A=(11:34:42,11:57:59);S1=(09:01:02,23:14:12);M2=(04:15:00,10:30:49)", rawAssignations);
+	}
+	
+	@Test
+	public void assignationIsConflictTest_shouldThrowExceptionAssignationAcronymException() {
+		Assignation assignation1 = new Assignation("A", LocalTime.of(11, 34, 42), LocalTime.of(11, 57, 59));
+		Assignation assignation2 = new Assignation("A", LocalTime.of(11, 34, 42), LocalTime.of(11, 57, 59));
+		
+		assertThrows(AssignationAcronymException.class, () -> assignation1.isConflict(assignation2));
+	}
+	
+	@Test
+	public void assignationIsConflictTest_shouldThrowAssignationSheduleOverlapException() {
+		Assignation assignation1 = new Assignation("A", LocalTime.of(11, 34, 42), LocalTime.of(11, 57, 59));
+		Assignation assignation2 = new Assignation("S1", LocalTime.of(11, 34, 42), LocalTime.of(11, 57, 58));
+		
+		assertThrows(AssignationScheduleOverlapException.class, () -> assignation1.isConflict(assignation2));
 	}
 
 }

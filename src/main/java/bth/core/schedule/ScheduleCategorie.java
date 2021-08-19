@@ -2,7 +2,7 @@ package bth.core.schedule;
 
 import java.util.List;
 
-import bth.core.model.Assignation;
+import bth.core.model.Assignment;
 
 public enum ScheduleCategorie {
 	T1,
@@ -12,14 +12,14 @@ public enum ScheduleCategorie {
 	T2W,
 	T2S;
 	
-	private List<Assignation> assignation;
+	private List<Assignment> assignment;
 
-	public List<Assignation> getAssignation() {
-		return assignation;
+	public List<Assignment> getAssignment() {
+		return assignment;
 	}
 
-	public void setAssignation(List<Assignation> assignation) {
-		this.assignation = assignation;
+	public void setAssignment(List<Assignment> assignment) {
+		this.assignment = assignment;
 	}
 
 		

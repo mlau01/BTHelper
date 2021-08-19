@@ -79,6 +79,8 @@ public class OptionsGui extends JPanel implements Fillable {
 	
 	private JTextArea tSqlRequest;
 	
+	private JPanel schedulePanel;
+	
 	private JButton bRestore;
 	private JButton bSave;
 	private JButton bClose;
@@ -103,7 +105,7 @@ public class OptionsGui extends JPanel implements Fillable {
 		JTabbedPane tabPan = new JTabbedPane();
 		this.add(tabPan);
 		
-		//~~~~ Planning Pane ~~~~
+		//~~~~ï¿½Planning Pane ~~~~
 		JPanel planningPan = new JPanel();
 		tabPan.add("Planning", planningPan);
 		
@@ -306,7 +308,10 @@ public class OptionsGui extends JPanel implements Fillable {
 		btGbh.add(rMaximoWebUsing, 4, 0, 0);
 		btGbh.add(maximoWebConfPan, 5, 0, 1, GridBagConstraints.EAST, null);
 		
-
+		// SchedulePan
+		schedulePanel = new SchedulePanel();
+		((SchedulePanel)schedulePanel).loadWidgets();
+		tabPan.add("Horaire", schedulePanel);
 		//#### Request Pane ####
 		JPanel reqPan = new JPanel();
 		BoxLayout reqLyt = new BoxLayout(reqPan, BoxLayout.LINE_AXIS);
@@ -319,7 +324,7 @@ public class OptionsGui extends JPanel implements Fillable {
 		tabPan.add("SQL Request", reqPan);
 		
 		
-		//~~~~ Button Panel ~~~~
+		//~~~~ Button Panelï¿½~~~~
 		
 		JPanel buttonPan = new JPanel();
 		buttonPan.setMaximumSize(new Dimension(800, 80));

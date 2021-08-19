@@ -1,5 +1,6 @@
 package bth.core.schedule;
 
+import java.io.InvalidObjectException;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,28 +18,58 @@ public class ScheduleService {
 	
 	private static final Logger logger = LogManager.getLogger();
 	
-	private Properties bthOptions;
-	
-	public ScheduleService(Properties p_bthOptions) {
-		bthOptions = p_bthOptions;
+	public ScheduleService() {
 	}
 	
 	public void loadfromOptions(Properties properties) {
-		ScheduleCategorie.T1.setAssignment(parseFromString(String.valueOf(properties.get(BTHelper.sheduleT1))));
-		ScheduleCategorie.T1W.setAssignment(parseFromString(String.valueOf(properties.get(BTHelper.sheduleT1W))));
-		ScheduleCategorie.T1S.setAssignment(parseFromString(String.valueOf(properties.get(BTHelper.sheduleT1S))));
-		ScheduleCategorie.T2.setAssignment(parseFromString(String.valueOf(properties.get(BTHelper.sheduleT2))));
-		ScheduleCategorie.T2W.setAssignment(parseFromString(String.valueOf(properties.get(BTHelper.sheduleT2W))));
-		ScheduleCategorie.T2S.setAssignment(parseFromString(String.valueOf(properties.get(BTHelper.sheduleT2S))));
+		ScheduleCategory.T1.setAssignment(parseFromString(String.valueOf(properties.get(BTHelper.sheduleT1))));
+		ScheduleCategory.T1W.setAssignment(parseFromString(String.valueOf(properties.get(BTHelper.sheduleT1W))));
+		ScheduleCategory.T1S.setAssignment(parseFromString(String.valueOf(properties.get(BTHelper.sheduleT1S))));
+		ScheduleCategory.T2.setAssignment(parseFromString(String.valueOf(properties.get(BTHelper.sheduleT2))));
+		ScheduleCategory.T2W.setAssignment(parseFromString(String.valueOf(properties.get(BTHelper.sheduleT2W))));
+		ScheduleCategory.T2S.setAssignment(parseFromString(String.valueOf(properties.get(BTHelper.sheduleT2S))));
 	}
 	
-	public void addassignment(ScheduleCategorie targetCategorie, String acronym, LocalTime beginTime, LocalTime endTime) {
-		Assignment newassignment = new Assignment(acronym, beginTime, endTime);
-		List<Assignment> assignmentList = targetCategorie.getAssignment();
+	/**
+	 * Add a new assignment in a schedule category list
+	 * The new assignment is tested for conflict with one other in the list
+	 * @param targetCategory The category to add the assignment
+	 * @param acronym Assignment acronym (S1,M2,etc..)
+	 * @param beginTime LocalTime of the Assignment begin
+	 * @param endTime LocalTime of the Assignment end
+	 * @return The assignment added if succeed
+	 * @throws Exception if conflicts was detected
+	 */
+	public Assignment addAssignment(ScheduleCategory targetCategory, String acronym, LocalTime beginTime, LocalTime endTime) throws Exception {
+		Assignment newAssignment = new Assignment(acronym, beginTime, endTime);
+		List<Assignment> assignmentList = targetCategory.getAssignment();
 		for(Assignment assignment : assignmentList) {
-			//TODO
+			try {
+				testConflict(assignment, newAssignment);
+			} catch (AssignmentAcronymException | AssignmentScheduleOverlapException e) {
+				logger.error(e);
+				throw e;
+			}
+			
+			assignmentList.add(newAssignment);
 		}
-		
+		return newAssignment;
+	}
+	
+	/**
+	 * Remove an assignment from the desired category
+	 * @param targetCategory
+	 * @param assignmentToRemove
+	 * @return Assignment removed if succeed
+	 * @throws InvalidObjectException If the assignment was not found in the target category
+	 */
+	public Assignment removeAssignment(ScheduleCategory targetCategory, Assignment assignmentToRemove) throws InvalidObjectException {
+		if(targetCategory.getAssignment().remove(assignmentToRemove)) {
+			return assignmentToRemove;
+		}
+		else {
+			throw new InvalidObjectException("Assignment not found in target list");
+		}
 	}
 	
 	/**
@@ -97,9 +128,9 @@ public class ScheduleService {
 	 * Compare two Assignment
 	 * @param inPlaceassignment
 	 * @param toCompareassignment
-	 * @return
-	 * @throws assignmentAcronymException
-	 * @throws assignmentScheduleOverlapException
+	 * @return false if no conflict was detected
+	 * @throws assignmentAcronymException If the acronym is the same
+	 * @throws assignmentScheduleOverlapException If the first assignment beginTime or endTime over lap or equals beginTime or endTime of the second Assignment
 	 */
 	public boolean testConflict(Assignment inPlaceassignment, Assignment toCompareassignment) throws AssignmentAcronymException, AssignmentScheduleOverlapException {
 		String acronym1 = inPlaceassignment.getAssignment();

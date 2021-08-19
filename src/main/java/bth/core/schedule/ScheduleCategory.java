@@ -4,7 +4,7 @@ import java.util.List;
 
 import bth.core.model.Assignment;
 
-public enum ScheduleCategorie {
+public enum ScheduleCategory {
 	T1,
 	T1W,
 	T1S,

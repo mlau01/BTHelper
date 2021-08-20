@@ -2,10 +2,12 @@ package bth.gui.options;
 
 import java.util.Vector;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+import java.awt.print.PrinterException;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -17,17 +19,20 @@ import javax.swing.JPasswordField;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumn;
 
+import bth.core.schedule.ScheduleService;
 import bth.gui.GridBagHelper;
 
 public class SchedulePanel extends JPanel {
 	
-	private Vector<Vector<String>> t1nDatas = new Vector<Vector<String>>();
-	private Vector<Vector<String>> t1wDatas = new Vector<Vector<String>>();
-	private Vector<Vector<String>> t1sDatas = new Vector<Vector<String>>();
-	private Vector<Vector<String>> t2nDatas = new Vector<Vector<String>>();
-	private Vector<Vector<String>> t2wDatas = new Vector<Vector<String>>();
-	private Vector<Vector<String>> t2sDatas = new Vector<Vector<String>>();
+	private Vector<Vector<String>> t1nDatas;
+	private Vector<Vector<String>> t1wDatas;
+	private Vector<Vector<String>> t1sDatas;
+	private Vector<Vector<String>> t2nDatas;
+	private Vector<Vector<String>> t2wDatas;
+	private Vector<Vector<String>> t2sDatas;
 	
 	private Vector<String> tableColumnName;
 	
@@ -36,18 +41,12 @@ public class SchedulePanel extends JPanel {
 		tableColumnName.add(0, "Acronyme");
 		tableColumnName.add(1, "Début");
 		tableColumnName.add(2, "Fin");
-		
-		/*Only For Test, remove after*/
-		
-		Vector<String> line1 = new Vector<String>();
-		line1.add("S1");
-		line1.add("19:00:33");
-		line1.add("23:00:33");
-		
-		t1nDatas.add(line1);
 	}
 
-
+	public void loadDatas() {
+		ScheduleService scheduleService = new ScheduleService();
+		
+	}
 
 	public void loadWidgets() {
 
@@ -83,7 +82,7 @@ public class SchedulePanel extends JPanel {
 		terminals.setLayout(new GridLayout(1, 2));
 		{
 			JPanel t1 = new JPanel();
-			t1.setBorder(BorderFactory.createTitledBorder("Terminal 1"));
+			t1.setBorder(BorderFactory.createTitledBorder("BT du Terminal 1"));
 			//t1.setPreferredSize(new Dimension(700, 150));
 			t1.setLayout(new GridLayout(3, 1));
 			terminals.add(t1);
@@ -94,28 +93,33 @@ public class SchedulePanel extends JPanel {
 				t1.add(t1n);
 				{
 					JPanel t1nButtons = new JPanel();
-					t1nButtons.setLayout(new BoxLayout(t1nButtons, BoxLayout.Y_AXIS));
+					t1nButtons.setLayout(new GridLayout(2,1));
+					t1nButtons.setBorder(BorderFactory.createEmptyBorder(40, 40, 40, 40));
 					t1n.add(t1nButtons);
 					{
 						JButton t1nButtonAdd = new JButton("Ajouter");
-						t1nButtonAdd.setMaximumSize(new Dimension(150,20));
+						t1nButtonAdd.setMaximumSize(new Dimension(50, 20));
 						t1nButtons.add(t1nButtonAdd);
 						
 						JButton t1nButtonDelete = new JButton("Suprimer");
-						t1nButtonDelete.setMaximumSize(new Dimension(150,20));
+						t1nButtonDelete.setMaximumSize(new Dimension(50, 20));
 						t1nButtons.add(t1nButtonDelete);
 					}
 					
 					JPanel t1nTablePanel = new JPanel();
-
+					t1nTablePanel.setLayout(new GridLayout(1,1));
 					t1n.add(t1nTablePanel);
 					{
 						JTable t1nTable = new JTable(t1nDatas, tableColumnName);
-						t1nTable.setPreferredScrollableViewportSize(new Dimension(500, 70));
-						t1nTable.setFillsViewportHeight(true);
+						
+						t1nTable.getTableHeader().getColumnModel().getColumn(0).setPreferredWidth(30);
+						t1nTable.getTableHeader().getColumnModel().getColumn(1).setPreferredWidth(80);
+						t1nTable.getTableHeader().getColumnModel().getColumn(2).setPreferredWidth(80);
+
 						JScrollPane scrollPane = new JScrollPane(t1nTable);
+						t1nTable.setFillsViewportHeight(true);
+
 						t1nTablePanel.add(scrollPane);
-						t1nTablePanel.add(t1nTable);
 					}
 				}
 				
@@ -158,7 +162,7 @@ public class SchedulePanel extends JPanel {
 			}
 			
 			JPanel t2 = new JPanel();
-			t2.setBorder(BorderFactory.createTitledBorder("Terminal 2"));
+			t2.setBorder(BorderFactory.createTitledBorder("BT du Terminal 2"));
 			t2.setPreferredSize(new Dimension(700, 150));
 			t2.setLayout(new GridLayout(1, 2));
 			terminals.add(t2);

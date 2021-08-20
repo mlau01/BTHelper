@@ -4,6 +4,7 @@ import java.io.InvalidObjectException;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Vector;
 import java.util.Properties;
 
 import org.apache.logging.log4j.LogManager;
@@ -162,6 +163,26 @@ public class ScheduleService {
 		}
 		
 		return false;
+	}
+	
+	/**
+	 * Build a bidimentional array as Vector<Vector<String>>
+	 * @param assignmentTarget Assignment to build
+	 * @return
+	 */
+	public Vector<Vector<String>> getAssignmentAsVectorOfString(ScheduleCategory assignmentTarget) {
+		//TODO Test this
+		Vector<Vector<String>> rows = new Vector<Vector<String>>();
+		for(Assignment assignment : assignmentTarget.getAssignment()) {
+			Vector<String> column = new Vector<String>();
+			column.add(assignment.getAssignment());
+			column.add(assignment.getBeginTime().toString());
+			column.add(assignment.getEndTime().toString());
+			
+			rows.add(column);
+		}
+		
+		return rows;
 	}
 	
 	

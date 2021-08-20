@@ -1,5 +1,6 @@
 package bth.gui.options;
 
+import java.util.Properties;
 import java.util.Vector;
 import java.awt.Color;
 import java.awt.Component;
@@ -22,6 +23,7 @@ import javax.swing.JTextField;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
+import bth.core.schedule.ScheduleCategory;
 import bth.core.schedule.ScheduleService;
 import bth.gui.GridBagHelper;
 
@@ -43,8 +45,10 @@ public class SchedulePanel extends JPanel {
 		tableColumnName.add(2, "Fin");
 	}
 
-	public void loadDatas() {
+	public void loadDatas(Properties properties) {
 		ScheduleService scheduleService = new ScheduleService();
+		scheduleService.loadfromOptions(properties);
+		t1nDatas = scheduleService.getAssignmentAsVectorOfString(ScheduleCategory.T1);
 		
 	}
 

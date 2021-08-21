@@ -4,6 +4,7 @@ import java.io.InvalidObjectException;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Formatter;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
@@ -202,6 +203,10 @@ public class ScheduleService {
 	
 	public void setAssignmentList(List<Assignment> assignmentList, ScheduleCategory scheduleCategory) {
 		scheduleCategory.setAssignment(assignmentList);
+	}
+	
+	public DateTimeFormatter getDateTimeFormatter() {
+		return formatter;
 	}
 	
 }

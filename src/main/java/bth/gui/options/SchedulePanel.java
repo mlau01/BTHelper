@@ -3,6 +3,7 @@ package bth.gui.options;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
+import java.time.format.DateTimeFormatter;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
@@ -72,12 +73,13 @@ public class SchedulePanel extends JPanel {
 	 * @return
 	 */
 	public Vector<Vector<String>> buildVectorArray(List<Assignment> assignmentList) {
+		DateTimeFormatter formatter = scheduleService.getDateTimeFormatter();
 		Vector<Vector<String>> rows = new Vector<Vector<String>>();
 		for(Assignment assignment : assignmentList) {
 			Vector<String> column = new Vector<String>();
 			column.add(assignment.getAssignment());
-			column.add(assignment.getBeginTime().toString());
-			column.add(assignment.getEndTime().toString());
+			column.add(assignment.getBeginTime().format(formatter));
+			column.add(assignment.getEndTime().format(formatter));
 			
 			rows.add(column);
 		}

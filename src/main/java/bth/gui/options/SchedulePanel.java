@@ -206,7 +206,15 @@ public class SchedulePanel extends JPanel {
 	}
 
 	private void action_addAssignment(ScheduleCategory scheduleCategory) {
-		scheduleService.addAssignment(scheduleCategory, acronym.getText(), beginTime.getText(), endTime.getText());
+		List<Assignment> updatedList;
+		try {
+			updatedList = scheduleService.addAssignment(scheduleCategory, acronym.getText(), beginTime.getText(), endTime.getText());
+		} catch (Exception e) {
+			mWin.showError("error", e.getMessage());
+			return;
+		}
+		
+		//TODO FINISH THE BEHAVIOR HERE
 		
 	}
 	

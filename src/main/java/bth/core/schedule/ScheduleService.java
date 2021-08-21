@@ -2,6 +2,7 @@ package bth.core.schedule;
 
 import java.io.InvalidObjectException;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,6 +18,7 @@ import bth.core.options.OptionsService;
 public class ScheduleService {
 	
 	private static final Logger logger = LogManager.getLogger();
+	private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
 	
 	public ScheduleService() {
 		ScheduleCategory.T1.setAssignment(new ArrayList<Assignment>());
@@ -52,6 +54,13 @@ public class ScheduleService {
 		testConflict(newAssignment, assignmentList);
 		assignmentList.add(newAssignment);
 		return assignmentList;
+	}
+	
+	public List<Assignment> addAssignment(ScheduleCategory targetCategory, String acronym, String beginTime, String endTime) throws Exception {
+		LocalTime beginTimeObject = LocalTime.parse(beginTime, formatter);
+		LocalTime endTimeObject = LocalTime.parse(endTime, formatter);
+		
+		return addAssignment(targetCategory, acronym, beginTimeObject, endTimeObject);
 	}
 	
 	/**
@@ -97,10 +106,10 @@ public class ScheduleService {
 			
 			assignment.setAssignment(acronym);
 			
-			LocalTime beginTime = LocalTime.parse(beginTimeString);
+			LocalTime beginTime = LocalTime.parse(beginTimeString, formatter);
 			assignment.setBeginTime(beginTime);
 			
-			LocalTime endTime = LocalTime.parse(endTimeString);
+			LocalTime endTime = LocalTime.parse(endTimeString, formatter);
 			assignment.setEndTime(endTime);
 			
 			testConflict(assignment, assignments);

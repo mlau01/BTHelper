@@ -116,7 +116,7 @@ public class ScheduleService {
 	 * @param assignments
 	 * @return String builded
 	 */
-	public String toString(List<Assignment> assignments) {
+	public String getAssignmentListAsString(List<Assignment> assignments) {
 		String string = "";
 		for(Assignment assign : assignments) {
 			if( ! string.isEmpty()) {

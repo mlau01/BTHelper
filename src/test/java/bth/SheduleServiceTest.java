@@ -69,7 +69,7 @@ public class SheduleServiceTest {
 		assignations.add(assignation2);
 		assignations.add(assignation3);
 		
-		String rawAssignments = sheduleService.toString(assignations);
+		String rawAssignments = sheduleService.getAssignmentListAsString(assignations);
 		
 		assertEquals("A=(11:34:42,11:57:59);S1=(09:01:02,23:14:12);M2=(04:15:00,10:30:49)", rawAssignments);
 	}

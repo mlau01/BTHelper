@@ -34,10 +34,12 @@ public class SchedulePanel extends JPanel {
 	private Vector<Vector<String>> t2wDatas;
 	private Vector<Vector<String>> t2sDatas;
 	private JTable t1nTable, t1wTable, t1sTable;
+	private JTextField acronym, beginTime, endTime;
 	private static final Logger logger = LogManager.getLogger();
 	private String[] tableColumnName;
 	
 	private MWin mWin;
+	private ScheduleService scheduleService;
 	
 	public SchedulePanel(MWin p_mWin) {
 		mWin = p_mWin;
@@ -45,7 +47,7 @@ public class SchedulePanel extends JPanel {
 	}
 
 	public void loadDatas() {
-		ScheduleService scheduleService = mWin.getCorma().getScheduleService();
+		scheduleService = mWin.getCorma().getScheduleService();
 		
 		t1nDatas = buildVectorArray(scheduleService.getAssignementList(ScheduleCategory.T1));
 		t1nTable.setModel(new ScheduleTableModel(tableColumnName, t1nDatas));
@@ -92,19 +94,19 @@ public class SchedulePanel extends JPanel {
 		{
 			textfields.add(new JLabel("Acronyme"));
 			
-			JTextField acronym = new JTextField();
+			acronym = new JTextField();
 			acronym.setPreferredSize(new Dimension(50, 20));
 			textfields.add(acronym);
 			
 			textfields.add(new JLabel("Horaire début"));
 			
-			JTextField beginTime = new JTextField();
+			beginTime = new JTextField();
 			beginTime.setPreferredSize(new Dimension(150, 20));
 			textfields.add(beginTime);
 			
 			textfields.add(new JLabel("Horaire fin"));
 			
-			JTextField endTime = new JTextField();
+			endTime = new JTextField();
 			endTime.setPreferredSize(new Dimension(150, 20));
 			textfields.add(endTime);
 		}
@@ -204,8 +206,14 @@ public class SchedulePanel extends JPanel {
 	}
 
 	private void action_addAssignment(ScheduleCategory scheduleCategory) {
-		// TODO Auto-generated method stub
+		scheduleService.addAssignment(scheduleCategory, acronym.getText(), beginTime.getText(), endTime.getText());
 		
+	}
+	
+	private void clearFields() {
+		acronym.setText("");
+		beginTime.setText("");
+		endTime.setText("");
 	}
 
 }

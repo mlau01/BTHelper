@@ -28,6 +28,8 @@ dependencies {
  	implementation (name:'junit-platform-engine-1.7.2', ext:'jar')
     implementation (name:'junit-jupiter-api-5.7.2', ext:'jar')
    	implementation (name:'junit-jupiter-engine-5.7.2', ext:'jar')
+    testImplementation 'org.mockito:mockito-inline:3.11.2'
+    testImplementation 'org.mockito:mockito-junit-jupiter:3.11.2'
 }
 
 test {

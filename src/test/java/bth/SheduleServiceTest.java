@@ -15,15 +15,16 @@ import org.junit.jupiter.api.Test;
 import bth.core.exception.AssignmentAcronymException;
 import bth.core.exception.AssignmentScheduleOverlapException;
 import bth.core.model.Assignment;
+import bth.core.schedule.ScheduleCategory;
 import bth.core.schedule.ScheduleService;
 
 public class SheduleServiceTest {
 	
 	@Test
-	public void parseFromStringTest_shouldReturnAssignmentObjectCorreclyParsed() {
+	public void parseFromStringTest_shouldReturnAssignmentObjectCorreclyParsed() throws Exception {
 		ScheduleService sheduleService = new ScheduleService();
 		
-		List<Assignment> assignations = sheduleService.parseFromString("M2=(04:15:00,06:59:59);M1=(07:00:00,13:30:00);S1=(13:30:00,19:59:59);S2=(20:00:00,23:30:00)");
+		List<Assignment> assignations = sheduleService.parseFromString("M2=(04:15:00,06:59:59);M1=(07:00:00,13:29:59);S1=(13:30:00,19:59:59);S2=(20:00:00,23:30:00)");
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
 		
 		assertEquals("M2", assignations.get(0).getAssignment());
@@ -33,8 +34,8 @@ public class SheduleServiceTest {
 		
 		assertEquals("M1", assignations.get(1).getAssignment());
 		assertEquals("07:00:00", assignations.get(1).getBeginTime().format(formatter));
-		assertEquals("13:30:00", assignations.get(1).getEndTime().format(formatter));
-		assertEquals("M1=(07:00:00,13:30:00)", assignations.get(1).toString());
+		assertEquals("13:29:59", assignations.get(1).getEndTime().format(formatter));
+		assertEquals("M1=(07:00:00,13:29:59)", assignations.get(1).toString());
 		
 		assertEquals("S1", assignations.get(2).getAssignment());
 		assertEquals("13:30:00", assignations.get(2).getBeginTime().format(formatter));
@@ -48,7 +49,7 @@ public class SheduleServiceTest {
 	}
 	
 	@Test
-	public void parseFromStringWithEmptyStringTest_shouldReturnEmptyList() {
+	public void parseFromStringWithEmptyStringTest_shouldReturnEmptyList() throws Exception {
 		ScheduleService sheduleService = new ScheduleService();
 		
 		List<Assignment> assignations = sheduleService.parseFromString("");
@@ -122,5 +123,18 @@ public class SheduleServiceTest {
 		
 		assertFalse(sheduleService.testConflict(assignation1, assignation2));
 	}
+	
+	@Test
+	public void testAddAssignment_shouldCorreclyAdd() throws Exception {
+		ScheduleService scheduleService = new ScheduleService();
+		
+		ScheduleCategory scheduleCategory = ScheduleCategory.T1;
+		String acronym = "S1";
+		LocalTime begin = LocalTime.of(9, 30, 0);
+		LocalTime end = LocalTime.of(12, 30, 0);
+		
+		scheduleService.addAssignment(scheduleCategory, acronym, begin, end);
+	}
 
 }
+

@@ -63,14 +63,17 @@ public class SchedulePanel extends JPanel {
 		} catch (OptionsException e) {
 			mWin.showError(e.getClass().toString(), e.getMessage());
 			logger.error(e);
+		} catch (Exception e) {
+			mWin.showError(e.getClass().toString(), e.getMessage());
+			logger.error(e);
 		}
 		
-		t1nDatas = buildVectorArray(scheduleService.getAssignement(ScheduleCategory.T1));
-		t1wDatas = buildVectorArray(scheduleService.getAssignement(ScheduleCategory.T1W));
-		t1sDatas = buildVectorArray(scheduleService.getAssignement(ScheduleCategory.T1S));
-		t2nDatas = buildVectorArray(scheduleService.getAssignement(ScheduleCategory.T2));
-		t2wDatas = buildVectorArray(scheduleService.getAssignement(ScheduleCategory.T2W));
-		t2sDatas = buildVectorArray(scheduleService.getAssignement(ScheduleCategory.T2S));
+		t1nDatas = buildVectorArray(scheduleService.getAssignementList(ScheduleCategory.T1));
+		t1wDatas = buildVectorArray(scheduleService.getAssignementList(ScheduleCategory.T1W));
+		t1sDatas = buildVectorArray(scheduleService.getAssignementList(ScheduleCategory.T1S));
+		t2nDatas = buildVectorArray(scheduleService.getAssignementList(ScheduleCategory.T2));
+		t2wDatas = buildVectorArray(scheduleService.getAssignementList(ScheduleCategory.T2W));
+		t2sDatas = buildVectorArray(scheduleService.getAssignementList(ScheduleCategory.T2S));
 		
 	}
 	

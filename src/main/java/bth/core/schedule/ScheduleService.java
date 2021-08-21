@@ -12,7 +12,6 @@ import bth.BTHelper;
 import bth.core.exception.AssignmentAcronymException;
 import bth.core.exception.AssignmentScheduleOverlapException;
 import bth.core.model.Assignment;
-import bth.core.options.OptionsException;
 import bth.core.options.OptionsService;
 
 public class ScheduleService {
@@ -20,9 +19,15 @@ public class ScheduleService {
 	private static final Logger logger = LogManager.getLogger();
 	
 	public ScheduleService() {
+		ScheduleCategory.T1.setAssignment(new ArrayList<Assignment>());
+		ScheduleCategory.T1W.setAssignment(new ArrayList<Assignment>());
+		ScheduleCategory.T1S.setAssignment(new ArrayList<Assignment>());
+		ScheduleCategory.T2.setAssignment(new ArrayList<Assignment>());
+		ScheduleCategory.T2W.setAssignment(new ArrayList<Assignment>());
+		ScheduleCategory.T2S.setAssignment(new ArrayList<Assignment>());
 	}
 	
-	public void loadfromOptions(OptionsService optionsService) throws OptionsException {
+	public void loadfromOptions(OptionsService optionsService) throws Exception {
 		ScheduleCategory.T1.setAssignment(parseFromString(String.valueOf(optionsService.get(BTHelper.sheduleT1))));
 		ScheduleCategory.T1W.setAssignment(parseFromString(String.valueOf(optionsService.get(BTHelper.sheduleT1W))));
 		ScheduleCategory.T1S.setAssignment(parseFromString(String.valueOf(optionsService.get(BTHelper.sheduleT1S))));
@@ -38,23 +43,15 @@ public class ScheduleService {
 	 * @param acronym Assignment acronym (S1,M2,etc..)
 	 * @param beginTime LocalTime of the Assignment begin
 	 * @param endTime LocalTime of the Assignment end
-	 * @return The assignment added if succeed
+	 * @return The assignment list updated if succeed
 	 * @throws Exception if conflicts was detected
 	 */
-	public Assignment addAssignment(ScheduleCategory targetCategory, String acronym, LocalTime beginTime, LocalTime endTime) throws Exception {
+	public List<Assignment> addAssignment(ScheduleCategory targetCategory, String acronym, LocalTime beginTime, LocalTime endTime) throws Exception {
 		Assignment newAssignment = new Assignment(acronym, beginTime, endTime);
 		List<Assignment> assignmentList = targetCategory.getAssignment();
-		for(Assignment assignment : assignmentList) {
-			try {
-				testConflict(assignment, newAssignment);
-			} catch (AssignmentAcronymException | AssignmentScheduleOverlapException e) {
-				logger.error(e);
-				throw e;
-			}
-			
-			assignmentList.add(newAssignment);
-		}
-		return newAssignment;
+		testConflict(newAssignment, assignmentList);
+		assignmentList.add(newAssignment);
+		return assignmentList;
 	}
 	
 	/**
@@ -79,8 +76,9 @@ public class ScheduleService {
 	 * Example: S1=(14:00:00,21:00:00);S2=(16:30:00,23:30:00)
 	 * @param rawassignment
 	 * @return List<Assignment> parsed, can return empty list if the string does not contains any parsable assignment
+	 * @throws Exception 
 	 */
-	public List<Assignment> parseFromString(String rawassignments) {
+	public List<Assignment> parseFromString(String rawassignments) throws Exception {
 		List<Assignment> assignments = new ArrayList<Assignment>();
 		if(rawassignments.isEmpty()) {
 			logger.debug("empty rawAssignments string, return empty array");
@@ -105,6 +103,7 @@ public class ScheduleService {
 			LocalTime endTime = LocalTime.parse(endTimeString);
 			assignment.setEndTime(endTime);
 			
+			testConflict(assignment, assignments);
 			assignments.add(assignment);
 		}
 
@@ -129,7 +128,7 @@ public class ScheduleService {
 	}
 	
 	/**
-	 * Compare two Assignment
+	 * Test conflict between two assignment
 	 * @param inPlaceassignment
 	 * @param toCompareassignment
 	 * @return false if no conflict was detected
@@ -167,9 +166,33 @@ public class ScheduleService {
 		
 		return false;
 	}
+	
+	/**
+	 * Test conflict between an assignment and all assignment in a list
+	 * @param assignmentToTest
+	 * @param assignmentList
+	 * @return false if no conflict detected
+	 * @throws Exception When a conflict has been detected
+	 */
+	public boolean testConflict(Assignment assignmentToTest, List<Assignment> assignmentList) throws Exception {
+		for(Assignment assignment : assignmentList) {
+			try {
+				testConflict(assignment, assignmentToTest);
+			} catch (AssignmentAcronymException | AssignmentScheduleOverlapException e) {
+				logger.error(e);
+				throw e;
+			}
+		}
+		
+		return false;
+	}
 
-	public List<Assignment> getAssignement(ScheduleCategory scheduleCategory) {
+	public List<Assignment> getAssignementList(ScheduleCategory scheduleCategory) {
 		return scheduleCategory.getAssignment();
+	}
+	
+	public void setAssignmentList(List<Assignment> assignmentList, ScheduleCategory scheduleCategory) {
+		scheduleCategory.setAssignment(assignmentList);
 	}
 	
 }

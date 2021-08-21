@@ -44,17 +44,8 @@ public class SchedulePanel extends JPanel {
 		tableColumnName = new String[] {"Acronyme", "Début", "Fin"};
 	}
 
-	public void loadDatas(OptionsService optionService) {
-		ScheduleService scheduleService = new ScheduleService();
-		try {
-			scheduleService.loadfromOptions(optionService);
-		} catch (OptionsException e) {
-			mWin.showError(e.getClass().toString(), e.getMessage());
-			logger.error(e);
-		} catch (Exception e) {
-			mWin.showError(e.getClass().toString(), e.getMessage());
-			logger.error(e);
-		}
+	public void loadDatas() {
+		ScheduleService scheduleService = mWin.getCorma().getScheduleService();
 		
 		t1nDatas = buildVectorArray(scheduleService.getAssignementList(ScheduleCategory.T1));
 		t1nTable.setModel(new ScheduleTableModel(tableColumnName, t1nDatas));

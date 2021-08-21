@@ -23,6 +23,7 @@ import bth.core.planning.PlanningManager;
 import bth.core.planning.Technician;
 import bth.core.request.RequestException;
 import bth.core.request.RequestManager;
+import bth.core.schedule.ScheduleService;
 import mack.MackConnection;
 import mack.exception.MaximoConnectionException;
 import bth.core.planning.PlanningException;
@@ -37,9 +38,10 @@ public class CoreManager implements Observable {
 	private Datasource DBMan;
 	private final RequestManager reqMan;
 	private final ArrayList<Observer> observers;
-	private final OptionsService optionsService; 
+	private final OptionsService optionsService;
+	private final ScheduleService scheduleService;
 	
-	public CoreManager() throws DatasourceException, RequestException, OptionsException
+	public CoreManager() throws Exception
 	{
 
 		this.optionsService = new OptionsService();
@@ -57,7 +59,8 @@ public class CoreManager implements Observable {
 		else if(Boolean.parseBoolean(properties.getProperty(BTHelper.MaximoUsed))) {
 			//DBMan = new MaximoManager(this, observers, properties);
 		}
-		
+		scheduleService = new ScheduleService();
+		scheduleService.loadfromOptions(optionsService);
 		btMan = new BtManager(properties, observers, DBMan);
 		
 		reqMan = new RequestManager();
@@ -246,5 +249,9 @@ public class CoreManager implements Observable {
 	public void removeObserver(Observer obs) {
 		observers.remove(obs);
 		
+	}
+
+	public ScheduleService getScheduleService() {
+		return scheduleService;
 	}
 }

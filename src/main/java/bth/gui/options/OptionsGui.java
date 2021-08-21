@@ -311,7 +311,7 @@ public class OptionsGui extends JPanel implements Fillable {
 		// SchedulePan
 		schedulePanel = new SchedulePanel(mWin);
 		((SchedulePanel)schedulePanel).loadWidgets();
-		((SchedulePanel)schedulePanel).loadDatas(mWin.getCorma().getOptionService());
+		((SchedulePanel)schedulePanel).loadDatas();
 		tabPan.add("Horaire", schedulePanel);
 		//#### Request Pane ####
 		JPanel reqPan = new JPanel();

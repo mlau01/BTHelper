@@ -48,7 +48,7 @@ public class MWin extends JFrame implements Observer {
 		
 		 try {
 		 corma = new CoreManager();
-		} catch (DatasourceException | RequestException | OptionsException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 			showError(e.getClass().getName(), e.getMessage());
 			gui.setStatusText("NOT Connected...");

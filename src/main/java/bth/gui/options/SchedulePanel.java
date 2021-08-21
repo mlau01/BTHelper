@@ -1,29 +1,19 @@
 package bth.gui.options;
 
-import java.util.List;
-import java.util.Properties;
-import java.util.Vector;
-import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.GridBagLayout;
 import java.awt.GridLayout;
-import java.awt.print.PrinterException;
+import java.util.List;
+import java.util.Vector;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
-import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JPasswordField;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableCellRenderer;
-import javax.swing.table.TableColumn;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -33,7 +23,6 @@ import bth.core.options.OptionsException;
 import bth.core.options.OptionsService;
 import bth.core.schedule.ScheduleCategory;
 import bth.core.schedule.ScheduleService;
-import bth.gui.GridBagHelper;
 import bth.gui.MWin;
 
 public class SchedulePanel extends JPanel {
@@ -150,6 +139,9 @@ public class SchedulePanel extends JPanel {
 					t1n.add(t1nButtons);
 					{
 						JButton t1nButtonAdd = new JButton("Ajouter");
+						t1nButtonAdd.addActionListener(e -> {
+							action_addAssignment(ScheduleCategory.T1);
+						});
 						t1nButtonAdd.setMaximumSize(new Dimension(50, 20));
 						t1nButtons.add(t1nButtonAdd);
 						
@@ -222,6 +214,11 @@ public class SchedulePanel extends JPanel {
 			
 		}
 
+	}
+
+	private void action_addAssignment(ScheduleCategory t1) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

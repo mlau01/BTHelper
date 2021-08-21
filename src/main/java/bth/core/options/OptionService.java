@@ -12,14 +12,10 @@ import java.util.Properties;
 import bth.BTHelper;
 
 public class OptionService {
-	private short verboseLevel = 0;
 	private Properties p;
 
-	
 	public OptionService() throws OptionException
 	{
-		if(verboseLevel >= 2) System.out.println(this.getClass().getName() + " -> INIT");
-		
 		p = OptionService.getPropertiesFile(BTHelper.CONF_NAME);
 		if(p == null){
 			p = getDefaultProperties();
@@ -150,7 +146,7 @@ public class OptionService {
 	 * If the property does not exist, return the default properties values
 	 * @param optionName
 	 * @return
-	 * @throws OptionException If the property name is invalid
+	 * @throws OptionException If the property name is unknown
 	 */
 	public String get(String optionName) throws OptionException  {
 		String property = p.getProperty(optionName);

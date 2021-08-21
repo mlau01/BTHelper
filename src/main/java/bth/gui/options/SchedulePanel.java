@@ -3,7 +3,9 @@ package bth.gui.options;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
+import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 
 import javax.swing.BorderFactory;
@@ -33,7 +35,7 @@ public class SchedulePanel extends JPanel {
 	private Vector<Vector<String>> t2nDatas;
 	private Vector<Vector<String>> t2wDatas;
 	private Vector<Vector<String>> t2sDatas;
-	private JTable t1nTable, t1wTable, t1sTable;
+	private Map<ScheduleCategory, JTable> tableMap;
 	private JTextField acronym, beginTime, endTime;
 	private static final Logger logger = LogManager.getLogger();
 	private String[] tableColumnName;
@@ -44,17 +46,18 @@ public class SchedulePanel extends JPanel {
 	public SchedulePanel(MWin p_mWin) {
 		mWin = p_mWin;
 		tableColumnName = new String[] {"Acronyme", "Début", "Fin"};
+		tableMap = new Hashtable<ScheduleCategory, JTable>();
 	}
 
 	public void loadDatas() {
 		scheduleService = mWin.getCorma().getScheduleService();
 		
 		t1nDatas = buildVectorArray(scheduleService.getAssignementList(ScheduleCategory.T1));
-		t1nTable.setModel(new ScheduleTableModel(tableColumnName, t1nDatas));
+		tableMap.get(ScheduleCategory.T1).setModel(new ScheduleTableModel(tableColumnName, t1nDatas));
 		t1wDatas = buildVectorArray(scheduleService.getAssignementList(ScheduleCategory.T1W));
-		t1wTable.setModel(new ScheduleTableModel(tableColumnName, t1wDatas));
+		tableMap.get(ScheduleCategory.T1W).setModel(new ScheduleTableModel(tableColumnName, t1wDatas));
 		t1sDatas = buildVectorArray(scheduleService.getAssignementList(ScheduleCategory.T1S));
-		t1sTable.setModel(new ScheduleTableModel(tableColumnName, t1sDatas));
+		tableMap.get(ScheduleCategory.T1S).setModel(new ScheduleTableModel(tableColumnName, t1sDatas));
 		t2nDatas = buildVectorArray(scheduleService.getAssignementList(ScheduleCategory.T2));
 		t2wDatas = buildVectorArray(scheduleService.getAssignementList(ScheduleCategory.T2W));
 		t2sDatas = buildVectorArray(scheduleService.getAssignementList(ScheduleCategory.T2S));
@@ -147,9 +150,9 @@ public class SchedulePanel extends JPanel {
 					t1nTablePanel.setLayout(new GridLayout(1,1));
 					t1n.add(t1nTablePanel);
 					{
-						t1nTable = new JTable();
-						JScrollPane scrollPane = new JScrollPane(t1nTable);
-						t1nTable.setFillsViewportHeight(true);
+						tableMap.put(ScheduleCategory.T1, new JTable());
+						JScrollPane scrollPane = new JScrollPane(tableMap.get(ScheduleCategory.T1));
+						tableMap.get(ScheduleCategory.T1).setFillsViewportHeight(true);
 
 						t1nTablePanel.add(scrollPane);
 					}
@@ -157,39 +160,70 @@ public class SchedulePanel extends JPanel {
 				
 				JPanel t1w = new JPanel();
 				t1w.setBorder(BorderFactory.createTitledBorder("Week-end"));
+				t1w.setLayout(new GridLayout(1,2));
 				t1.add(t1w);
 				{
 					JPanel t1wButtons = new JPanel();
 					t1wButtons.setLayout(new GridLayout(2,1));
+					t1wButtons.setBorder(BorderFactory.createEmptyBorder(40, 40, 40, 40));
 					t1w.add(t1wButtons);
 					{
 						JButton t1wButtonAdd = new JButton("Ajouter");
+						t1wButtonAdd.addActionListener(e -> {
+							action_addAssignment(ScheduleCategory.T1);
+						});
+						t1wButtonAdd.setMaximumSize(new Dimension(50, 20));
 						t1wButtons.add(t1wButtonAdd);
+						
 						JButton t1wButtonDelete = new JButton("Suprimer");
+						t1wButtonDelete.setMaximumSize(new Dimension(50, 20));
 						t1wButtons.add(t1wButtonDelete);
 					}
 					
-					t1wTable = new JTable();
-					JScrollPane scrollPane = new JScrollPane(t1wTable);
-					t1w.add(scrollPane);
+					JPanel t1wTablePanel = new JPanel();
+					t1wTablePanel.setLayout(new GridLayout(1,1));
+					t1w.add(t1wTablePanel);
+					{
+						tableMap.put(ScheduleCategory.T1W, new JTable());
+						JScrollPane scrollPane = new JScrollPane(tableMap.get(ScheduleCategory.T1W));
+						tableMap.get(ScheduleCategory.T1W).setFillsViewportHeight(true);
+
+						t1wTablePanel.add(scrollPane);
+					}
 				}
 				
 				JPanel t1s = new JPanel();
 				t1s.setBorder(BorderFactory.createTitledBorder("Super"));
+				t1s.setLayout(new GridLayout(1,2));
 				t1.add(t1s);
 				{
 					JPanel t1sButtons = new JPanel();
 					t1sButtons.setLayout(new GridLayout(2,1));
+					t1sButtons.setBorder(BorderFactory.createEmptyBorder(40, 40, 40, 40));
 					t1s.add(t1sButtons);
 					{
 						JButton t1sButtonAdd = new JButton("Ajouter");
+						t1sButtonAdd.addActionListener(e -> {
+							action_addAssignment(ScheduleCategory.T1);
+						});
+						t1sButtonAdd.setMaximumSize(new Dimension(50, 20));
 						t1sButtons.add(t1sButtonAdd);
+						
 						JButton t1sButtonDelete = new JButton("Suprimer");
+						t1sButtonDelete.setMaximumSize(new Dimension(50, 20));
 						t1sButtons.add(t1sButtonDelete);
 					}
 					
-					t1sTable = new JTable();
-					t1s.add(t1sTable);
+					JPanel t1sTablePanel = new JPanel();
+					t1sTablePanel.setLayout(new GridLayout(1,1));
+					t1s.add(t1sTablePanel);
+					{
+						tableMap.put(ScheduleCategory.T1S, new JTable());
+						JScrollPane scrollPane = new JScrollPane(tableMap.get(ScheduleCategory.T1S));
+						tableMap.get(ScheduleCategory.T1S).setFillsViewportHeight(true);
+
+						t1sTablePanel.add(scrollPane);
+					}
 				}
 				
 			}

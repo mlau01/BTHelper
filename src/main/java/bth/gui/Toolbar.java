@@ -34,10 +34,10 @@ public class Toolbar extends JToolBar {
 		
 		this.add(bRefresh);
 		
-		if(mWin.getOptionManager().getCurrentProperties().getProperty(BTHelper.FileUsed).equals("true"))
+		if(mWin.getCorma().getProperties().getProperty(BTHelper.FileUsed).equals("true"))
 		{
 			filepath = new JTextField(50);
-			filepath.setText(mWin.getOptionManager().getCurrentProperties().getProperty(BTHelper.Filepath) + "\\");
+			filepath.setText(mWin.getCorma().getOptionService().getCurrentProperties().getProperty(BTHelper.Filepath) + "\\");
 			filepath.addKeyListener(new KeyListener() {
 				
 				@Override

@@ -34,51 +34,33 @@ public class MWin extends JFrame implements Observer {
 	public final static Dimension currentDimension = new Dimension(1024, 600);
 	private MPanel gui;
 	private ArrayList<Fillable> fillableGui;
-	private OptionsService optMan;
 	private CoreManager corma = null;
 	private boolean w = false;
-	private boolean verbose = false;
 
 	public MWin(String[] args)
 	{
-		if(args.length > 0) argsManager(args);
+		if(args.length > 0) {
+			argsManager(args);
+		}
 		
 		System.setProperty("log4j2.configurationFile", System.getProperties().getProperty("user.dir") + "/log4j2.xml");
 		
-		try {
-			optMan = new OptionsService();
-		} catch (OptionsException e) {
+		
+		 try {
+		 corma = new CoreManager();
+		} catch (DatasourceException | RequestException | OptionsException e) {
 			e.printStackTrace();
 			showError(e.getClass().getName(), e.getMessage());
-			return;
+			gui.setStatusText("NOT Connected...");
 		}
-		
-		gui = loadGui();
-		corma = initCoreManager(optMan.getCurrentProperties());
+		 
+		 gui = loadGui();
+		 
 		corma.addObserver(this);
 		
-		if(corma != null && 
-				optMan.getCurrentProperties().getProperty(BTHelper.FileUsed).equals("false")) 
+		if(corma.getProperties().getProperty(BTHelper.FileUsed).equals("false")) {
 			reload();
-	}
-	
-	private final CoreManager initCoreManager(final Properties properties)
-	{
-		setWait(true);
-		CoreManager init = null;
-	
-			try {
-				init = new CoreManager(optMan.getCurrentProperties(), verbose);
-			} catch (DatasourceException | RequestException e) {
-				e.printStackTrace();
-				showError(e.getClass().getName(), e.getMessage());
-				gui.setStatusText("NOT Connected...");
-			} finally {
-				setWait(false);
-			}
-		
-		
-		return init;
+		}
 	}
 	
 	private final MPanel loadGui()
@@ -111,15 +93,11 @@ public class MWin extends JFrame implements Observer {
 		{
 			@Override
 			public void run() {
-				if(corma == null) initCoreManager(optMan.getCurrentProperties());
-				else {
-					setWait(true);
-					clear();
-					loadBts(gui.getToolbar().getFilepath());
-					fillGuis();
-					setWait(false);
-				}
-				
+				setWait(true);
+				clear();
+				loadBts(gui.getToolbar().getFilepath());
+				fillGuis();
+				setWait(false);
 			}
 			
 		};
@@ -204,13 +182,7 @@ public class MWin extends JFrame implements Observer {
 	private void argsManager(String[] args){
 		for(String arg : args){
 			if(arg.equals("-W")) w = true;
-			if(arg.equals("-v")) verbose = true;
 		}
-	}
-	
-	public final OptionsService getOptionManager()
-	{
-		return optMan;
 	}
 
 	@Override

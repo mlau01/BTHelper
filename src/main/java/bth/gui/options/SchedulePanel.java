@@ -206,17 +206,13 @@ public class SchedulePanel extends JPanel {
 			t2.setPreferredSize(new Dimension(700, 150));
 			t2.setLayout(new GridLayout(1, 2));
 			terminals.add(t2);
-			{
-				
+			{				
 				
 			}
-			
-			
 		}
-
 	}
 
-	private void action_addAssignment(ScheduleCategory t1) {
+	private void action_addAssignment(ScheduleCategory scheduleCategory) {
 		// TODO Auto-generated method stub
 		
 	}

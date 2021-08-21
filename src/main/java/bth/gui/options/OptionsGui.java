@@ -311,7 +311,7 @@ public class OptionsGui extends JPanel implements Fillable {
 		// SchedulePan
 		schedulePanel = new SchedulePanel(mWin);
 		((SchedulePanel)schedulePanel).loadWidgets();
-		((SchedulePanel)schedulePanel).loadDatas(mWin.getOptionManager());
+		((SchedulePanel)schedulePanel).loadDatas(mWin.getCorma().getOptionService());
 		tabPan.add("Horaire", schedulePanel);
 		//#### Request Pane ####
 		JPanel reqPan = new JPanel();
@@ -541,7 +541,7 @@ public class OptionsGui extends JPanel implements Fillable {
 		p.setProperty(BTHelper.SqlRequest, tSqlRequest.getText());
 		
 		try {
-			mWin.getOptionManager().setProperties(p);
+			mWin.getCorma().getOptionService().setProperties(p);
 		} catch (OptionsException e) {
 			e.printStackTrace();
 			mWin.showError(e.getClass().getName(), e.getMessage());
@@ -551,7 +551,7 @@ public class OptionsGui extends JPanel implements Fillable {
 	
 	public void fillDatas()
 	{
-		fillField(mWin.getOptionManager().getCurrentProperties());
+		fillField(mWin.getCorma().getOptionService().getCurrentProperties());
 	}
 
 }

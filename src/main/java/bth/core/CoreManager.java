@@ -17,6 +17,8 @@ import bth.core.datasource.DatasourceException;
 import bth.core.datasource.Datasource;
 import bth.core.datasource.file.FileManager;
 import bth.core.datasource.sql.SQLManager;
+import bth.core.options.OptionsException;
+import bth.core.options.OptionsService;
 import bth.core.planning.PlanningManager;
 import bth.core.planning.Technician;
 import bth.core.request.RequestException;
@@ -35,13 +37,15 @@ public class CoreManager implements Observable {
 	private Datasource DBMan;
 	private final RequestManager reqMan;
 	private final ArrayList<Observer> observers;
-	private final boolean verbose;
+	private final OptionsService optionsService; 
 	
-	public CoreManager(final Properties p_properties, boolean p_verbose) throws DatasourceException, RequestException
+	public CoreManager() throws DatasourceException, RequestException, OptionsException
 	{
-		properties = p_properties;
+
+		this.optionsService = new OptionsService();
+
+		properties = optionsService.getCurrentProperties();
 		observers = new ArrayList<Observer>();
-		verbose = p_verbose;
 		pMan = new PlanningManager(properties);
 		
 		if(Boolean.parseBoolean(properties.getProperty(BTHelper.SqlUsed))) {
@@ -88,7 +92,11 @@ public class CoreManager implements Observable {
 	
 	public final Properties getProperties()
 	{
-		return properties;
+		return optionsService.getCurrentProperties();
+	}
+	
+	public final OptionsService getOptionService() {
+		return optionsService;
 	}
 	
 	// ---- Planning methods ----
@@ -239,10 +247,4 @@ public class CoreManager implements Observable {
 		observers.remove(obs);
 		
 	}
-	
-	public final boolean getVerbose()
-	{
-		return verbose;
-	}
-
 }

@@ -21,6 +21,7 @@ import javax.swing.JPasswordField;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
@@ -43,17 +44,15 @@ public class SchedulePanel extends JPanel {
 	private Vector<Vector<String>> t2nDatas;
 	private Vector<Vector<String>> t2wDatas;
 	private Vector<Vector<String>> t2sDatas;
+	private JTable t1nTable, t1wTable, t1sTable;
 	private static final Logger logger = LogManager.getLogger();
-	private Vector<String> tableColumnName;
+	private String[] tableColumnName;
 	
 	private MWin mWin;
 	
 	public SchedulePanel(MWin p_mWin) {
 		mWin = p_mWin;
-		tableColumnName = new Vector<String>();
-		tableColumnName.add(0, "Acronyme");
-		tableColumnName.add(1, "Début");
-		tableColumnName.add(2, "Fin");
+		tableColumnName = new String[] {"Acronyme", "Début", "Fin"};
 	}
 
 	public void loadDatas(OptionsService optionService) {
@@ -69,11 +68,16 @@ public class SchedulePanel extends JPanel {
 		}
 		
 		t1nDatas = buildVectorArray(scheduleService.getAssignementList(ScheduleCategory.T1));
+		t1nTable.setModel(new ScheduleTableModel(tableColumnName, t1nDatas));
 		t1wDatas = buildVectorArray(scheduleService.getAssignementList(ScheduleCategory.T1W));
+		t1wTable.setModel(new ScheduleTableModel(tableColumnName, t1wDatas));
 		t1sDatas = buildVectorArray(scheduleService.getAssignementList(ScheduleCategory.T1S));
+		t1sTable.setModel(new ScheduleTableModel(tableColumnName, t1sDatas));
 		t2nDatas = buildVectorArray(scheduleService.getAssignementList(ScheduleCategory.T2));
 		t2wDatas = buildVectorArray(scheduleService.getAssignementList(ScheduleCategory.T2W));
 		t2sDatas = buildVectorArray(scheduleService.getAssignementList(ScheduleCategory.T2S));
+		
+		
 		
 	}
 	
@@ -158,12 +162,7 @@ public class SchedulePanel extends JPanel {
 					t1nTablePanel.setLayout(new GridLayout(1,1));
 					t1n.add(t1nTablePanel);
 					{
-						JTable t1nTable = new JTable(t1nDatas, tableColumnName);
-						
-						t1nTable.getTableHeader().getColumnModel().getColumn(0).setPreferredWidth(30);
-						t1nTable.getTableHeader().getColumnModel().getColumn(1).setPreferredWidth(80);
-						t1nTable.getTableHeader().getColumnModel().getColumn(2).setPreferredWidth(80);
-
+						t1nTable = new JTable();
 						JScrollPane scrollPane = new JScrollPane(t1nTable);
 						t1nTable.setFillsViewportHeight(true);
 
@@ -185,8 +184,9 @@ public class SchedulePanel extends JPanel {
 						t1wButtons.add(t1wButtonDelete);
 					}
 					
-					JTable t1wTable = new JTable(t1wDatas, tableColumnName);
-					t1w.add(t1wTable);
+					t1wTable = new JTable();
+					JScrollPane scrollPane = new JScrollPane(t1wTable);
+					t1w.add(scrollPane);
 				}
 				
 				JPanel t1s = new JPanel();
@@ -203,7 +203,7 @@ public class SchedulePanel extends JPanel {
 						t1sButtons.add(t1sButtonDelete);
 					}
 					
-					JTable t1sTable = new JTable(t1sDatas, tableColumnName);
+					t1sTable = new JTable();
 					t1s.add(t1sTable);
 				}
 				

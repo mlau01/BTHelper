@@ -4,8 +4,6 @@ import java.io.InvalidObjectException;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
-import java.util.Properties;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -14,6 +12,8 @@ import bth.BTHelper;
 import bth.core.exception.AssignmentAcronymException;
 import bth.core.exception.AssignmentScheduleOverlapException;
 import bth.core.model.Assignment;
+import bth.core.options.OptionsException;
+import bth.core.options.OptionsService;
 
 public class ScheduleService {
 	
@@ -22,13 +22,13 @@ public class ScheduleService {
 	public ScheduleService() {
 	}
 	
-	public void loadfromOptions(Properties properties) {
-		ScheduleCategory.T1.setAssignment(parseFromString(String.valueOf(properties.get(BTHelper.sheduleT1))));
-		ScheduleCategory.T1W.setAssignment(parseFromString(String.valueOf(properties.get(BTHelper.sheduleT1W))));
-		ScheduleCategory.T1S.setAssignment(parseFromString(String.valueOf(properties.get(BTHelper.sheduleT1S))));
-		ScheduleCategory.T2.setAssignment(parseFromString(String.valueOf(properties.get(BTHelper.sheduleT2))));
-		ScheduleCategory.T2W.setAssignment(parseFromString(String.valueOf(properties.get(BTHelper.sheduleT2W))));
-		ScheduleCategory.T2S.setAssignment(parseFromString(String.valueOf(properties.get(BTHelper.sheduleT2S))));
+	public void loadfromOptions(OptionsService optionsService) throws OptionsException {
+		ScheduleCategory.T1.setAssignment(parseFromString(String.valueOf(optionsService.get(BTHelper.sheduleT1))));
+		ScheduleCategory.T1W.setAssignment(parseFromString(String.valueOf(optionsService.get(BTHelper.sheduleT1W))));
+		ScheduleCategory.T1S.setAssignment(parseFromString(String.valueOf(optionsService.get(BTHelper.sheduleT1S))));
+		ScheduleCategory.T2.setAssignment(parseFromString(String.valueOf(optionsService.get(BTHelper.sheduleT2))));
+		ScheduleCategory.T2W.setAssignment(parseFromString(String.valueOf(optionsService.get(BTHelper.sheduleT2W))));
+		ScheduleCategory.T2S.setAssignment(parseFromString(String.valueOf(optionsService.get(BTHelper.sheduleT2S))));
 	}
 	
 	/**
@@ -78,11 +78,14 @@ public class ScheduleService {
 	 * String had to respect pattern: PlanningAcronym=(HH:mm:ss,HH:mm:ss);PlanningAcronym=(HH:mm:ss,HH:mm:ss);
 	 * Example: S1=(14:00:00,21:00:00);S2=(16:30:00,23:30:00)
 	 * @param rawassignment
-	 * @return
+	 * @return List<Assignment> parsed, can return empty list if the string does not contains any parsable assignment
 	 */
 	public List<Assignment> parseFromString(String rawassignments) {
 		List<Assignment> assignments = new ArrayList<Assignment>();
-		
+		if(rawassignments.isEmpty()) {
+			logger.debug("empty rawAssignments string, return empty array");
+			return assignments;
+		}
 		String[] rawassignmentArray = rawassignments.split(";");
 		
 		for(String rawassignment : rawassignmentArray) {
@@ -164,27 +167,9 @@ public class ScheduleService {
 		
 		return false;
 	}
-	
-	/**
-	 * Build a bidimentional array as Vector<Vector<String>>
-	 * @param assignmentTarget Assignment to build
-	 * @return
-	 */
-	public Vector<Vector<String>> getAssignmentAsVectorOfString(ScheduleCategory assignmentTarget) {
-		//TODO Test this
-		Vector<Vector<String>> rows = new Vector<Vector<String>>();
-		for(Assignment assignment : assignmentTarget.getAssignment()) {
-			Vector<String> column = new Vector<String>();
-			column.add(assignment.getAssignment());
-			column.add(assignment.getBeginTime().toString());
-			column.add(assignment.getEndTime().toString());
-			
-			rows.add(column);
-		}
-		
-		return rows;
+
+	public List<Assignment> getAssignement(ScheduleCategory scheduleCategory) {
+		return scheduleCategory.getAssignment();
 	}
 	
-	
-
 }

@@ -2,6 +2,7 @@ package bth;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.time.LocalTime;
@@ -44,6 +45,16 @@ public class SheduleServiceTest {
 		assertEquals("20:00:00", assignations.get(3).getBeginTime().format(formatter));
 		assertEquals("23:30:00", assignations.get(3).getEndTime().format(formatter));
 		assertEquals("S2=(20:00:00,23:30:00)", assignations.get(3).toString());
+	}
+	
+	@Test
+	public void parseFromStringWithEmptyStringTest_shouldReturnEmptyList() {
+		ScheduleService sheduleService = new ScheduleService();
+		
+		List<Assignment> assignations = sheduleService.parseFromString("");
+		
+		assertNotNull(assignations);
+		assertEquals(0, assignations.size());
 	}
 	
 	@Test

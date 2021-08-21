@@ -54,6 +54,11 @@ public class OptionsService {
 		np.setProperty(BTHelper.MaximoPassword, BTHelper.defaultMaximoPassword);
 		
 		np.setProperty(BTHelper.sheduleT1, BTHelper.defaultSheduleT1);
+		np.setProperty(BTHelper.sheduleT1W, BTHelper.defaultSheduleT1W);
+		np.setProperty(BTHelper.sheduleT1S, BTHelper.defaultSheduleT1S);
+		np.setProperty(BTHelper.sheduleT2, BTHelper.defaultSheduleT2);
+		np.setProperty(BTHelper.sheduleT2W, BTHelper.defaultSheduleT2W);
+		np.setProperty(BTHelper.sheduleT2S, BTHelper.defaultSheduleT2S);
 		
 		return np;
 	}
@@ -138,5 +143,28 @@ public class OptionsService {
 		final Path createdDir = Files.createDirectories(path);
 		
 		return createdDir.toString();
+	}
+
+	/**
+	 * Get a property
+	 * If the property does not exist, return the default properties values
+	 * @param optionName
+	 * @return
+	 * @throws OptionsException If the property name is invalid
+	 */
+	public String get(String optionName) throws OptionsException  {
+		String property = p.getProperty(optionName);
+		if(property == null) {
+			property = getDefaultProperties().getProperty(optionName);
+			if(property == null)
+			{
+				throw new OptionsException("Unknown property name: " + optionName);
+			} else {
+				p.setProperty(optionName, property);
+				save(p);
+			}
+		}
+		return property;
+		
 	}
 }

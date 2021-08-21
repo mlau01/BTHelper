@@ -309,9 +309,9 @@ public class OptionsGui extends JPanel implements Fillable {
 		btGbh.add(maximoWebConfPan, 5, 0, 1, GridBagConstraints.EAST, null);
 		
 		// SchedulePan
-		schedulePanel = new SchedulePanel();
+		schedulePanel = new SchedulePanel(mWin);
 		((SchedulePanel)schedulePanel).loadWidgets();
-		((SchedulePanel)schedulePanel).loadDatas(mWin.getOptionManager().getCurrentProperties());
+		((SchedulePanel)schedulePanel).loadDatas(mWin.getOptionManager());
 		tabPan.add("Horaire", schedulePanel);
 		//#### Request Pane ####
 		JPanel reqPan = new JPanel();

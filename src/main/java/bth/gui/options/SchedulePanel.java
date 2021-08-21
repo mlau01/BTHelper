@@ -1,5 +1,6 @@
 package bth.gui.options;
 
+import java.util.List;
 import java.util.Properties;
 import java.util.Vector;
 import java.awt.Color;
@@ -23,9 +24,16 @@ import javax.swing.JTextField;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import bth.core.model.Assignment;
+import bth.core.options.OptionsException;
+import bth.core.options.OptionsService;
 import bth.core.schedule.ScheduleCategory;
 import bth.core.schedule.ScheduleService;
 import bth.gui.GridBagHelper;
+import bth.gui.MWin;
 
 public class SchedulePanel extends JPanel {
 	
@@ -35,21 +43,54 @@ public class SchedulePanel extends JPanel {
 	private Vector<Vector<String>> t2nDatas;
 	private Vector<Vector<String>> t2wDatas;
 	private Vector<Vector<String>> t2sDatas;
-	
+	private static final Logger logger = LogManager.getLogger();
 	private Vector<String> tableColumnName;
 	
-	public SchedulePanel() {
+	private MWin mWin;
+	
+	public SchedulePanel(MWin p_mWin) {
+		mWin = p_mWin;
 		tableColumnName = new Vector<String>();
 		tableColumnName.add(0, "Acronyme");
 		tableColumnName.add(1, "Début");
 		tableColumnName.add(2, "Fin");
 	}
 
-	public void loadDatas(Properties properties) {
+	public void loadDatas(OptionsService optionService) {
 		ScheduleService scheduleService = new ScheduleService();
-		scheduleService.loadfromOptions(properties);
-		t1nDatas = scheduleService.getAssignmentAsVectorOfString(ScheduleCategory.T1);
+		try {
+			scheduleService.loadfromOptions(optionService);
+		} catch (OptionsException e) {
+			mWin.showError(e.getClass().toString(), e.getMessage());
+			logger.error(e);
+		}
 		
+		t1nDatas = buildVectorArray(scheduleService.getAssignement(ScheduleCategory.T1));
+		t1wDatas = buildVectorArray(scheduleService.getAssignement(ScheduleCategory.T1W));
+		t1sDatas = buildVectorArray(scheduleService.getAssignement(ScheduleCategory.T1S));
+		t2nDatas = buildVectorArray(scheduleService.getAssignement(ScheduleCategory.T2));
+		t2wDatas = buildVectorArray(scheduleService.getAssignement(ScheduleCategory.T2W));
+		t2sDatas = buildVectorArray(scheduleService.getAssignement(ScheduleCategory.T2S));
+		
+	}
+	
+	/**
+	 * Build a bidimentional array as Vector<Vector<String>>
+	 * @param assignmentList
+	 * @return
+	 */
+	public Vector<Vector<String>> buildVectorArray(List<Assignment> assignmentList) {
+		Vector<Vector<String>> rows = new Vector<Vector<String>>();
+		for(Assignment assignment : assignmentList) {
+			Vector<String> column = new Vector<String>();
+			column.add(assignment.getAssignment());
+			column.add(assignment.getBeginTime().toString());
+			column.add(assignment.getEndTime().toString());
+			
+			rows.add(column);
+		}
+		
+		return rows;
 	}
 
 	public void loadWidgets() {

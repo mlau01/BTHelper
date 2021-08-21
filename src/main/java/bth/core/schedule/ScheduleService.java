@@ -14,7 +14,7 @@ import bth.BTHelper;
 import bth.core.exception.AssignmentAcronymException;
 import bth.core.exception.AssignmentScheduleOverlapException;
 import bth.core.model.Assignment;
-import bth.core.options.OptionsService;
+import bth.core.options.OptionService;
 
 public class ScheduleService {
 	
@@ -30,7 +30,7 @@ public class ScheduleService {
 		ScheduleCategory.T2S.setAssignment(new ArrayList<Assignment>());
 	}
 	
-	public void loadfromOptions(OptionsService optionsService) throws Exception {
+	public void loadfromOptions(OptionService optionsService) throws Exception {
 		ScheduleCategory.T1.setAssignment(parseFromString(String.valueOf(optionsService.get(BTHelper.sheduleT1))));
 		ScheduleCategory.T1W.setAssignment(parseFromString(String.valueOf(optionsService.get(BTHelper.sheduleT1W))));
 		ScheduleCategory.T1S.setAssignment(parseFromString(String.valueOf(optionsService.get(BTHelper.sheduleT1S))));

@@ -3,8 +3,8 @@ package bth.core.request;
 import java.util.ArrayList;
 import java.util.Properties;
 
-import bth.core.options.OptionsException;
-import bth.core.options.OptionsService;
+import bth.core.options.OptionException;
+import bth.core.options.OptionService;
 
 public class RequestManager {
 	
@@ -15,8 +15,8 @@ public class RequestManager {
 	{
 		
 			try {
-				queryFile = OptionsService.getPropertiesFile("query.conf");
-			} catch (OptionsException e) {
+				queryFile = OptionService.getPropertiesFile("query.conf");
+			} catch (OptionException e) {
 				throw new RequestException(e.getMessage());
 			}
 	
@@ -29,8 +29,8 @@ public class RequestManager {
 	
 	private final void write() throws RequestException {
 		try {
-			OptionsService.writePropertiesFile(queryFile, "SQL Querys", "query.conf");
-		} catch (OptionsException e) {
+			OptionService.writePropertiesFile(queryFile, "SQL Querys", "query.conf");
+		} catch (OptionException e) {
 			throw new RequestException(e.getMessage());
 		}
 	}

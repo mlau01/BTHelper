@@ -11,16 +11,16 @@ import java.util.Properties;
 
 import bth.BTHelper;
 
-public class OptionsService {
+public class OptionService {
 	private short verboseLevel = 0;
 	private Properties p;
 
 	
-	public OptionsService() throws OptionsException
+	public OptionService() throws OptionException
 	{
 		if(verboseLevel >= 2) System.out.println(this.getClass().getName() + " -> INIT");
 		
-		p = OptionsService.getPropertiesFile(BTHelper.CONF_NAME);
+		p = OptionService.getPropertiesFile(BTHelper.CONF_NAME);
 		if(p == null){
 			p = getDefaultProperties();
 			save(p);
@@ -67,13 +67,13 @@ public class OptionsService {
 		return p;
 	}
 	
-	public void setProperties(final Properties p_p) throws OptionsException
+	public void setProperties(final Properties p_p) throws OptionException
 	{
 		p = p_p;
 		save(p);
 	}
 	
-	public void save(final Properties p) throws OptionsException {
+	public void save(final Properties p) throws OptionException {
 		writePropertiesFile(p, BTHelper.CONF_FOLDER, BTHelper.CONF_NAME);
 		//writePropertiesFile(p, BTHelper.CONF_FOLDER, BTHelper.CONF_NAME + "_bak" +  new SimpleDateFormat("yyyyMMdd").format(Calendar.getInstance().getTime()));
 	}
@@ -85,9 +85,9 @@ public class OptionsService {
 	 * @param projectName Name of the folder that contains properties file
 	 * @param configName Name of the file that contains properties
 	 * @return String represents the config file or null if something goes wrong
-	 * @throws OptionsException 
+	 * @throws OptionException 
 	 */
-	public static void writePropertiesFile(final Properties p, final String projectName, final String configName) throws OptionsException {
+	public static void writePropertiesFile(final Properties p, final String projectName, final String configName) throws OptionException {
 		
 		try {
 			final FileOutputStream fos = new FileOutputStream(getConfigDirectoryPath()  + "/" + configName);
@@ -95,7 +95,7 @@ public class OptionsService {
 			fos.close();
 		} catch (IOException e)
 		{
-			throw new OptionsException(e.getMessage());
+			throw new OptionException(e.getMessage());
 		}
 	}
 	
@@ -104,9 +104,9 @@ public class OptionsService {
 	 * @param projectName Name of the folder that contains properties file
 	 * @param configName Name of the file that contains properties
 	 * @return Properties object
-	 * @throws OptionsException 
+	 * @throws OptionException 
 	 */
-	public static final Properties getPropertiesFile(final String configName) throws OptionsException
+	public static final Properties getPropertiesFile(final String configName) throws OptionException
 	{
 		final String filepath = BTHelper.CONF_DIRECTORY + "/" + configName;
 		final Properties p = new Properties();
@@ -150,15 +150,15 @@ public class OptionsService {
 	 * If the property does not exist, return the default properties values
 	 * @param optionName
 	 * @return
-	 * @throws OptionsException If the property name is invalid
+	 * @throws OptionException If the property name is invalid
 	 */
-	public String get(String optionName) throws OptionsException  {
+	public String get(String optionName) throws OptionException  {
 		String property = p.getProperty(optionName);
 		if(property == null) {
 			property = getDefaultProperties().getProperty(optionName);
 			if(property == null)
 			{
-				throw new OptionsException("Unknown property name: " + optionName);
+				throw new OptionException("Unknown property name: " + optionName);
 			} else {
 				p.setProperty(optionName, property);
 				save(p);

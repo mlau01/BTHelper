@@ -18,14 +18,14 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import bth.core.exception.AssignmentAcronymException;
 import bth.core.exception.AssignmentScheduleOverlapException;
 import bth.core.model.Assignment;
-import bth.core.options.OptionsService;
+import bth.core.options.OptionService;
 import bth.core.schedule.ScheduleCategory;
 import bth.core.schedule.ScheduleService;
 @ExtendWith(MockitoExtension.class)
 public class SheduleServiceTest {
 	
 	@Mock
-	public OptionsService optionService;
+	public OptionService optionService;
 	
 	@Test
 	public void parseFromStringTest_shouldReturnAssignmentObjectCorreclyParsed() throws Exception {

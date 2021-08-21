@@ -22,8 +22,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import bth.core.model.Assignment;
-import bth.core.options.OptionsException;
-import bth.core.options.OptionsService;
+import bth.core.options.OptionException;
+import bth.core.options.OptionService;
 import bth.core.schedule.ScheduleCategory;
 import bth.core.schedule.ScheduleService;
 import bth.gui.MWin;

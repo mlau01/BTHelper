@@ -25,7 +25,7 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 import bth.BTHelper;
-import bth.core.options.OptionsException;
+import bth.core.options.OptionException;
 import bth.gui.Fillable;
 import bth.gui.GridBagHelper;
 import bth.gui.MWin;
@@ -542,7 +542,7 @@ public class OptionsGui extends JPanel implements Fillable {
 		
 		try {
 			mWin.getCorma().getOptionService().setProperties(p);
-		} catch (OptionsException e) {
+		} catch (OptionException e) {
 			e.printStackTrace();
 			mWin.showError(e.getClass().getName(), e.getMessage());
 		}

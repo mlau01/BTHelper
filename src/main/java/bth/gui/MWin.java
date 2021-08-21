@@ -24,8 +24,8 @@ import bth.Observer;
 import bth.core.CoreManager;
 import bth.core.bt.BTException;
 import bth.core.datasource.DatasourceException;
-import bth.core.options.OptionsException;
-import bth.core.options.OptionsService;
+import bth.core.options.OptionException;
+import bth.core.options.OptionService;
 import bth.core.request.RequestException;
 import bth.gui.menu.Menu;
 

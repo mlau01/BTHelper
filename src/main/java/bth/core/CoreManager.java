@@ -17,8 +17,8 @@ import bth.core.datasource.DatasourceException;
 import bth.core.datasource.Datasource;
 import bth.core.datasource.file.FileManager;
 import bth.core.datasource.sql.SQLManager;
-import bth.core.options.OptionsException;
-import bth.core.options.OptionsService;
+import bth.core.options.OptionException;
+import bth.core.options.OptionService;
 import bth.core.planning.PlanningManager;
 import bth.core.planning.Technician;
 import bth.core.request.RequestException;
@@ -38,13 +38,13 @@ public class CoreManager implements Observable {
 	private Datasource DBMan;
 	private final RequestManager reqMan;
 	private final ArrayList<Observer> observers;
-	private final OptionsService optionsService;
+	private final OptionService optionsService;
 	private final ScheduleService scheduleService;
 	
 	public CoreManager() throws Exception
 	{
 
-		this.optionsService = new OptionsService();
+		this.optionsService = new OptionService();
 
 		properties = optionsService.getCurrentProperties();
 		observers = new ArrayList<Observer>();
@@ -98,7 +98,7 @@ public class CoreManager implements Observable {
 		return optionsService.getCurrentProperties();
 	}
 	
-	public final OptionsService getOptionService() {
+	public final OptionService getOptionService() {
 		return optionsService;
 	}
 	

@@ -29,6 +29,7 @@ import bth.core.options.OptionException;
 import bth.core.options.OptionService;
 import bth.core.schedule.ScheduleCategory;
 import bth.core.schedule.ScheduleService;
+import bth.core.schedule.exception.AssignmentNotFoundException;
 import bth.gui.MWin;
 
 public class SchedulePanel extends JPanel {
@@ -286,14 +287,25 @@ public class SchedulePanel extends JPanel {
 	private void action_deleteAssignment(ScheduleCategory scheduleCategory) {
 		JTable table = tableMap.get(scheduleCategory);
 		int row = table.getSelectedRow();
-		String acronym = (String) table.getValueAt(row, 0);
-		String beginTime = (String) table.getValueAt(row, 1);
-		String endTime = (String) table.getValueAt(row, 2);
+		Vector<String> line = dataMap.get(scheduleCategory).get(row);
+		String acronym = line.get(0);
+		String beginTime = line.get(1);
+		String endTime = line.get(2);
 
 		int response = JOptionPane.showConfirmDialog(table, "Delete : " + acronym + " (" + beginTime + " - " + endTime + ") ?");
 		if(response != JOptionPane.YES_OPTION) {
 			return;
 		}
+		
+		try {
+			scheduleService.deleteAssignement(scheduleCategory, acronym, beginTime, endTime);
+		} catch (AssignmentNotFoundException | OptionException e) {
+			mWin.showError(e.getClass().getName(), e.getMessage());
+			return;
+		}
+		
+		dataMap.get(scheduleCategory).remove(line);
+		((ScheduleTableModel)table.getModel()).fireTableDataChanged();
 	}
 	
 	private void clearFields() {

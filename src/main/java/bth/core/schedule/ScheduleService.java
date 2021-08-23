@@ -14,7 +14,9 @@ import bth.BTHelper;
 import bth.core.exception.AssignmentAcronymException;
 import bth.core.exception.AssignmentScheduleOverlapException;
 import bth.core.model.Assignment;
+import bth.core.options.OptionException;
 import bth.core.options.OptionService;
+import bth.core.schedule.exception.AssignmentNotFoundException;
 
 public class ScheduleService {
 	
@@ -67,22 +69,6 @@ public class ScheduleService {
 		LocalTime endTimeObject = LocalTime.parse(endTime, formatter);
 		
 		return addAssignment(targetCategory, acronym, beginTimeObject, endTimeObject);
-	}
-	
-	/**
-	 * Remove an assignment from the desired category
-	 * @param targetCategory
-	 * @param assignmentToRemove
-	 * @return Assignment removed if succeed
-	 * @throws InvalidObjectException If the assignment was not found in the target category
-	 */
-	public Assignment removeAssignment(ScheduleCategory targetCategory, Assignment assignmentToRemove) throws InvalidObjectException {
-		if(targetCategory.getAssignment().remove(assignmentToRemove)) {
-			return assignmentToRemove;
-		}
-		else {
-			throw new InvalidObjectException("Assignment not found in target list");
-		}
 	}
 	
 	/**
@@ -213,5 +199,33 @@ public class ScheduleService {
 	public DateTimeFormatter getDateTimeFormatter() {
 		return formatter;
 	}
-	
+
+	/**
+	 * Search for an assignment that match given values and delete it
+	 * @param scheduleCategory
+	 * @param acronym
+	 * @param beginTime
+	 * @param endTime
+	 * @throws AssignmentNotFoundException if no assignment found with this values
+	 * @throws OptionException 
+	 */
+	public void deleteAssignement(ScheduleCategory scheduleCategory, String acronym, String beginTime, String endTime) throws AssignmentNotFoundException, OptionException {
+		Assignment assignToDelete = null;
+		List<Assignment> assignmentList = scheduleCategory.getAssignment(); 
+		for(Assignment assignment : assignmentList) {
+			if(assignment.getAssignment().equals(acronym) 
+					&& assignment.getBeginTime().format(formatter).equals(beginTime)
+					&& assignment.getEndTime().format(formatter).equals(endTime)) {
+				assignToDelete = assignment;
+				break;
+			}
+		}
+		
+		if(assignToDelete == null) {
+			throw new AssignmentNotFoundException("Cannot found assignment for value: " + acronym + ", " + beginTime + ", " + endTime);
+		}
+		
+		assignmentList.remove(assignToDelete);
+		optionService.set(scheduleCategory.getOptionName(), getAssignmentListAsString(assignmentList));
+	}
 }

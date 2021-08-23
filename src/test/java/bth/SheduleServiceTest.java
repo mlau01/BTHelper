@@ -13,6 +13,7 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import bth.core.exception.AssignmentAcronymException;
@@ -24,6 +25,7 @@ import bth.core.schedule.ScheduleService;
 @ExtendWith(MockitoExtension.class)
 public class SheduleServiceTest {
 	
+	private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
 	@Mock
 	public OptionService optionService;
 	
@@ -32,7 +34,7 @@ public class SheduleServiceTest {
 		ScheduleService sheduleService = new ScheduleService(optionService);
 		
 		List<Assignment> assignations = sheduleService.parseFromString("M2=(04:15:00,06:59:59);M1=(07:00:00,13:29:59);S1=(13:30:00,19:59:59);S2=(20:00:00,23:30:00)");
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
+		
 		
 		assertEquals("M2", assignations.get(0).getAssignment());
 		assertEquals("04:15:00", assignations.get(0).getBeginTime().format(formatter));
@@ -141,6 +143,26 @@ public class SheduleServiceTest {
 		LocalTime end = LocalTime.of(12, 30, 0);
 		
 		scheduleService.addAssignment(scheduleCategory, acronym, begin, end);
+		
+		Mockito.verify(optionService).set(ScheduleCategory.T1.getOptionName(), "S1=(09:30:00,12:30:00)");
+	}
+	
+	@Test
+	public void deleteAssignmentTest_shouldCorrectlyAddAndDeleteAssignment() throws Exception {
+ScheduleService scheduleService = new ScheduleService(optionService);
+		
+		ScheduleCategory scheduleCategory = ScheduleCategory.T1;
+		String acronym = "S1";
+		LocalTime begin = LocalTime.of(9, 30, 0);
+		LocalTime end = LocalTime.of(12, 30, 0);
+		
+		scheduleService.addAssignment(scheduleCategory, acronym, begin, end);
+		
+		Mockito.verify(optionService).set(ScheduleCategory.T1.getOptionName(), "S1=(09:30:00,12:30:00)");
+		
+		scheduleService.deleteAssignement(scheduleCategory, acronym, begin.format(formatter), end.format(formatter));
+		
+		Mockito.verify(optionService).set(ScheduleCategory.T1.getOptionName(), "");
 	}
 
 }

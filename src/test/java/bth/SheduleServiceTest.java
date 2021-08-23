@@ -4,10 +4,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
@@ -16,8 +18,10 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import bth.core.bt.Sheduler;
 import bth.core.exception.AssignmentAcronymException;
 import bth.core.exception.AssignmentScheduleOverlapException;
+import bth.core.exception.SheduleServiceException;
 import bth.core.model.Assignment;
 import bth.core.options.OptionService;
 import bth.core.schedule.ScheduleCategory;
@@ -149,7 +153,7 @@ public class SheduleServiceTest {
 	
 	@Test
 	public void deleteAssignmentTest_shouldCorrectlyAddAndDeleteAssignment() throws Exception {
-ScheduleService scheduleService = new ScheduleService(optionService);
+		ScheduleService scheduleService = new ScheduleService(optionService);
 		
 		ScheduleCategory scheduleCategory = ScheduleCategory.T1;
 		String acronym = "S1";
@@ -164,6 +168,13 @@ ScheduleService scheduleService = new ScheduleService(optionService);
 		
 		Mockito.verify(optionService).set(ScheduleCategory.T1.getOptionName(), "");
 	}
-
+	
+	   @Test
+	    public void isWeekendDay_shouldReturnTrueForWeekendDay(){
+		   ScheduleService scheduleService = new ScheduleService(optionService);
+	        assertTrue(scheduleService.isWeekend(new GregorianCalendar(2021, 6, 31, 5,6)));
+	        assertFalse(scheduleService.isWeekend(new GregorianCalendar(2021, 6, 30, 5,6)));
+	        assertTrue(scheduleService.isWeekend(new GregorianCalendar(2021, 7, 1, 5,6)));
+	    }
 }
 

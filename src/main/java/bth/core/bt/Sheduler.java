@@ -72,6 +72,14 @@ public class Sheduler {
 		}
 	}
 
+	/**
+	 * Get the acronym of the assignment selected by getCorrectTimetable method
+	 * @param terminal
+	 * @param btDate
+	 * @param sheduleMode
+	 * @param forceWeekend
+	 * @return
+	 */
 	public String getTimeTableAssign(String terminal, GregorianCalendar btDate, SHEDULEMODE sheduleMode, boolean forceWeekend)
 	{
 		Hashtable<Timetable, String> timeTable = null;

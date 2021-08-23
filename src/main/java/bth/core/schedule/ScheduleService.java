@@ -247,7 +247,7 @@ public class ScheduleService {
 	 * @return The acronym of the selected assignment, null if nothing was found
 	 * @throws SheduleServiceException
 	 */
-	public String selectCorrectSheduleAcronym(String terminal, GregorianCalendar btDate,
+	public String getCorrectSheduleAcronym(String terminal, GregorianCalendar btDate,
 			SHEDULEMODE sheduleMode, boolean forceWeekend) throws SheduleServiceException {
 		logger.info("getTimeTable for terminal: {}", terminal);
 		List<Assignment> selectedAssignmentList;
@@ -280,8 +280,12 @@ public class ScheduleService {
 			throw new SheduleServiceException("Cannot find timetable for params: " + terminal + ", weekend: " + isWeekend(btDate) + ", Shedule mode: " + sheduleMode.toString());
 		}
 		
+		logger.debug("Convert GregorianCalendar time: {} to LocalTime", btDate.get(GregorianCalendar.HOUR_OF_DAY) 
+				+ ":" + btDate.get(GregorianCalendar.MINUTE)
+				+ ":" + btDate.get(GregorianCalendar.SECOND));
+		
 		LocalTime time = LocalTime.of(btDate.get(GregorianCalendar.HOUR_OF_DAY), 
-				btDate.get(btDate.get(GregorianCalendar.MINUTE) ), 
+				btDate.get(GregorianCalendar.MINUTE), 
 				btDate.get(GregorianCalendar.SECOND));
 
 		for(Assignment assign : selectedAssignmentList) {

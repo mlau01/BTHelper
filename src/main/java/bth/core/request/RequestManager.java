@@ -16,9 +16,10 @@ public class RequestManager {
 	public RequestManager() throws RequestException, OptionException
 	{
 		optionService = new OptionService(BTHelper.CONF_DIRECTORY + "/query.conf");
+		optionService.loadConfig();
 		
 			try {
-				queryFile = optionService.getPropertiesFile();
+				optionService.loadConfig();
 			} catch (OptionException e) {
 				throw new RequestException(e.getMessage());
 			}
@@ -32,7 +33,7 @@ public class RequestManager {
 	
 	private final void write() throws RequestException {
 		try {
-			optionService.writePropertiesFile(queryFile, "SQL Querys", "query.conf");
+			optionService.writePropertiesFile(optionService.getCurrentProperties());
 		} catch (OptionException e) {
 			throw new RequestException(e.getMessage());
 		}

@@ -25,14 +25,10 @@ public class OptionService {
 	private String configPath;
 	private static final Logger logger = LogManager.getLogger();
 
-	public OptionService(String p_configPath) throws OptionException
+	public OptionService(String p_configPath)
 	{
 		configPath = p_configPath;
-		p = getPropertiesFile();
-		if(p == null){
-			p = getDefaultProperties();
-			save(p);
-		}
+		
 	}
 	
 	/**
@@ -92,16 +88,7 @@ public class OptionService {
 	public void setProperties(final Properties p_p) throws OptionException
 	{
 		p = p_p;
-		save(p);
-	}
-	
-	/**
-	 * Save the given properties in the file
-	 * @param Given properties
-	 * @throws OptionException if something goes wrong with the write process
-	 */
-	public void save(final Properties p) throws OptionException {
-		writePropertiesFile(p, BTHelper.CONF_FOLDER, BTHelper.CONF_NAME);
+		writePropertiesFile(p);
 	}
 	
 	/**
@@ -111,14 +98,19 @@ public class OptionService {
 	 * @param configName Name of the file that will contains properties
 	 * @throws OptionException if something goes wrong with the write process
 	 */
-	public void writePropertiesFile(final Properties p, final String projectName, final String configName) throws OptionException {
+	public void writePropertiesFile(Properties properties) throws OptionException {
 		
 		try {
-			final FileOutputStream fos = new FileOutputStream(getConfigDirectoryPath()  + "/" + configName);
-			p.store(fos, "Properties for: " + projectName);
+			if(Files.notExists(Paths.get(configPath).getParent(), LinkOption.NOFOLLOW_LINKS)) {
+				createConfigFileDirectory();
+			}
+			
+			final FileOutputStream fos = new FileOutputStream(configPath);
+			properties.store(fos, "Properties for: " + BTHelper.APP_NAME);
 			fos.close();
 		} catch (IOException e)
 		{
+			logger.error("Failed to write file {}, error: {}", configPath, e.getMessage());
 			throw new OptionException(e.getMessage());
 		}
 	}
@@ -130,20 +122,18 @@ public class OptionService {
 	 * @return Properties object
 	 * @throws OptionException 
 	 */
-	public final Properties getPropertiesFile() throws OptionException
+	public final void loadConfig() throws OptionException
 	{
-		final Properties p = new Properties();
-		
+		this.p = new Properties();
 		try {
 			FileInputStream fis = new FileInputStream(configPath);
 			p.load(fis);
 			fis.close();
 		} catch (IOException e) {
 			logger.warn("Failed to load properties file, use default properties instead");
-			return getDefaultProperties();
+			this.p = getDefaultProperties();
+			writePropertiesFile(this.p);
 		}
-		
-		return p;
 	}
 	
 	/**
@@ -154,7 +144,7 @@ public class OptionService {
 	 */
 	public final String getConfigDirectoryPath() throws IOException
 	{		
-		final Path path = Paths.get(configPath);
+		final Path path = Paths.get(configPath).getParent();
 		if(Files.exists(path, LinkOption.NOFOLLOW_LINKS))
 		{
 			if(Files.isDirectory(path, LinkOption.NOFOLLOW_LINKS)) {
@@ -166,18 +156,20 @@ public class OptionService {
 		}
 		else
 		{
-			return createConfigFilepath(path);
+			return createConfigFileDirectory();
 		}
 	}
 	
 	/**
 	 * Create a directory in the target path
-	 * @return Directory path created
+	 * @return Directory path as string created
 	 * @throws IOException
 	 */
-	public String createConfigFilepath(Path directory) throws IOException
+	public String createConfigFileDirectory() throws IOException
 	{	
-		final Path createdDir = Files.createDirectories(directory.getParent());
+		Path path = Paths.get(configPath);
+		logger.debug("Create path: {}", path.getParent());
+		final Path createdDir = Files.createDirectories(path.getParent());
 		
 		return createdDir.toString();
 	}
@@ -198,10 +190,21 @@ public class OptionService {
 				throw new OptionException("Unknown property name: " + optionName);
 			} else {
 				p.setProperty(optionName, property);
-				save(p);
+				writePropertiesFile(p);
 			}
 		}
 		return property;
 		
+	}
+	
+	/**
+	 * Set a property and persist it
+	 * @param optionName
+	 * @param optionValue
+	 * @throws OptionException
+	 */
+	public void set(String optionName, String optionValue) throws OptionException {
+		p.setProperty(optionName, optionValue);
+		writePropertiesFile(p);
 	}
 }

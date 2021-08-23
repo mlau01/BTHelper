@@ -44,7 +44,8 @@ public class CoreManager implements Observable {
 	public CoreManager() throws Exception
 	{
 
-		this.optionsService = new OptionService(BTHelper.CONF_NAME);
+		this.optionsService = new OptionService(BTHelper.CONF_DIRECTORY + "/" + BTHelper.CONF_NAME);
+		optionsService.loadConfig();
 
 		properties = optionsService.getCurrentProperties();
 		observers = new ArrayList<Observer>();

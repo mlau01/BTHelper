@@ -1,16 +1,22 @@
 package bth.core.schedule;
 
+import java.text.SimpleDateFormat;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import bth.BTHelper;
+import bth.core.bt.Sheduler.SHEDULEMODE;
 import bth.core.exception.AssignmentAcronymException;
 import bth.core.exception.AssignmentScheduleOverlapException;
+import bth.core.exception.SheduleServiceException;
+import bth.core.exception.TimetableException;
 import bth.core.model.Assignment;
 import bth.core.options.OptionException;
 import bth.core.options.OptionService;
@@ -230,4 +236,92 @@ public class ScheduleService {
 		assignmentList.remove(assignToDelete);
 		optionService.set(scheduleCategory.getOptionName(), getAssignmentListAsString(assignmentList));
 	}
+	
+
+	/**
+	 * Select the correct assignment list and get the acronym matching the given BT time
+	 * @param terminal
+	 * @param btDate
+	 * @param sheduleMode
+	 * @param forceWeekend
+	 * @return The acronym of the selected assignment, null if nothing was found
+	 * @throws SheduleServiceException
+	 */
+	public String selectCorrectSheduleAcronym(String terminal, GregorianCalendar btDate,
+			SHEDULEMODE sheduleMode, boolean forceWeekend) throws SheduleServiceException {
+		logger.info("getTimeTable for terminal: {}", terminal);
+		List<Assignment> selectedAssignmentList;
+		if(terminal.equals("T1") && (isWeekend(btDate) || forceWeekend) && sheduleMode == SHEDULEMODE.NORMAL) {
+			logger.info("Timetable selected: T1 Weekend");
+			selectedAssignmentList = ScheduleCategory.T1W.getAssignment();
+		}
+		else if(terminal.equals("T1") && !isWeekend(btDate) && sheduleMode == SHEDULEMODE.NORMAL) {
+			logger.info("Timetable selected: T1 Normal");
+			selectedAssignmentList = ScheduleCategory.T1.getAssignment();
+		}
+		else if(terminal.equals("T1")  && sheduleMode == SHEDULEMODE.SUPER) {
+			logger.info("Timetable selected: T1 Super");
+			selectedAssignmentList = ScheduleCategory.T1S.getAssignment();
+		}
+		else if(terminal.equals("T2") && (isWeekend(btDate) || forceWeekend) && sheduleMode == SHEDULEMODE.NORMAL) {
+			logger.info("Timetable selected: T2 Weekend");
+			selectedAssignmentList = ScheduleCategory.T2W.getAssignment();
+		}
+		else if(terminal.equals("T2") && !isWeekend(btDate) && sheduleMode == SHEDULEMODE.NORMAL) {
+			logger.info("Timetable selected: T2 Normal");
+			selectedAssignmentList = ScheduleCategory.T2.getAssignment();
+		}
+		else if(terminal.equals("T2") && sheduleMode == SHEDULEMODE.SUPER) {
+			logger.info("Timetable selected: T2 Super");
+			selectedAssignmentList = ScheduleCategory.T2S.getAssignment();
+		}
+
+		else {
+			throw new SheduleServiceException("Cannot find timetable for params: " + terminal + ", weekend: " + isWeekend(btDate) + ", Shedule mode: " + sheduleMode.toString());
+		}
+		
+		LocalTime time = LocalTime.of(btDate.get(GregorianCalendar.HOUR_OF_DAY), 
+				btDate.get(btDate.get(GregorianCalendar.MINUTE) ), 
+				btDate.get(GregorianCalendar.SECOND));
+
+		for(Assignment assign : selectedAssignmentList) {
+			if(isTimeInAssignment(time, assign)) {
+				return assign.getAssignment();
+			}
+		}
+		
+		return null;
+		
+		
+	}
+	
+	/**
+	 * Check if time given is in the given assignment schedule
+	 * @param time
+	 * @param assign
+	 * @return true if is in the assignment schedule given, false otherwise
+	 */
+	public boolean isTimeInAssignment(LocalTime time, Assignment assign) {
+		if(time.isAfter(assign.getBeginTime()) && time.isBefore(assign.getEndTime())) {
+			return true;
+		}
+		
+		return false;
+	}
+	
+	/**
+	 * Check if a date day is a weekend day
+	 * @param cal Date to check
+	 * @return true if the day is a weekend day
+	 */
+	public boolean isWeekend(GregorianCalendar cal)
+	{
+		int day = cal.get(GregorianCalendar.DAY_OF_WEEK);
+		if( (day == 7) || (day == 1) ) {
+			return true;
+		}
+		
+		return false;
+	}
+
 }

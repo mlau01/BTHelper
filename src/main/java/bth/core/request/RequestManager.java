@@ -3,6 +3,7 @@ package bth.core.request;
 import java.util.ArrayList;
 import java.util.Properties;
 
+import bth.BTHelper;
 import bth.core.options.OptionException;
 import bth.core.options.OptionService;
 
@@ -10,12 +11,14 @@ public class RequestManager {
 	
 	//private final CoreManager corma;
 	private Properties queryFile;
+	private OptionService optionService;
 	
-	public RequestManager() throws RequestException
+	public RequestManager() throws RequestException, OptionException
 	{
+		optionService = new OptionService(BTHelper.CONF_DIRECTORY + "/query.conf");
 		
 			try {
-				queryFile = OptionService.getPropertiesFile("query.conf");
+				queryFile = optionService.getPropertiesFile();
 			} catch (OptionException e) {
 				throw new RequestException(e.getMessage());
 			}
@@ -29,7 +32,7 @@ public class RequestManager {
 	
 	private final void write() throws RequestException {
 		try {
-			OptionService.writePropertiesFile(queryFile, "SQL Querys", "query.conf");
+			optionService.writePropertiesFile(queryFile, "SQL Querys", "query.conf");
 		} catch (OptionException e) {
 			throw new RequestException(e.getMessage());
 		}

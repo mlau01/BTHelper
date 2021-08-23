@@ -9,21 +9,37 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Properties;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import bth.BTHelper;
 
+/**
+ * This class handle properties of the application
+ * Properties are saved in a file in the given path/filename
+ * @author Matt
+ *
+ */
 public class OptionService {
 	private Properties p;
+	private String configPath;
+	private static final Logger logger = LogManager.getLogger();
 
-	public OptionService() throws OptionException
+	public OptionService(String p_configPath) throws OptionException
 	{
-		p = OptionService.getPropertiesFile(BTHelper.CONF_NAME);
+		configPath = p_configPath;
+		p = getPropertiesFile();
 		if(p == null){
 			p = getDefaultProperties();
 			save(p);
 		}
 	}
 	
-	private static final Properties getDefaultProperties()
+	/**
+	 * Create a Properties object with all default options found in BTHelper.java
+	 * @return Properties
+	 */
+	public final Properties getDefaultProperties()
 	{
 		final Properties np = new Properties();
 		np.setProperty(BTHelper.HttpUrl, BTHelper.defaultHttpUrl);
@@ -59,31 +75,43 @@ public class OptionService {
 		return np;
 	}
 	
+	/**
+	 * Get the actual properties loaded
+	 * @return
+	 */
 	public final Properties getCurrentProperties() {
 		return p;
 	}
 	
+	/**
+	 * Set a new properties object
+	 * Write the configuration file with this new properties
+	 * @param p_p
+	 * @throws OptionException
+	 */
 	public void setProperties(final Properties p_p) throws OptionException
 	{
 		p = p_p;
 		save(p);
 	}
 	
+	/**
+	 * Save the given properties in the file
+	 * @param Given properties
+	 * @throws OptionException if something goes wrong with the write process
+	 */
 	public void save(final Properties p) throws OptionException {
 		writePropertiesFile(p, BTHelper.CONF_FOLDER, BTHelper.CONF_NAME);
-		//writePropertiesFile(p, BTHelper.CONF_FOLDER, BTHelper.CONF_NAME + "_bak" +  new SimpleDateFormat("yyyyMMdd").format(Calendar.getInstance().getTime()));
 	}
 	
 	/**
-	 * Write a properties file to the local user data
-	 * The project name would be use that folder name
-	 * @param p Properties object
-	 * @param projectName Name of the folder that contains properties file
-	 * @param configName Name of the file that contains properties
-	 * @return String represents the config file or null if something goes wrong
-	 * @throws OptionException 
+	 * Write a properties file in the file system
+	 * @param p Properties object to write
+	 * @param projectName Name of the folder that will contains properties file
+	 * @param configName Name of the file that will contains properties
+	 * @throws OptionException if something goes wrong with the write process
 	 */
-	public static void writePropertiesFile(final Properties p, final String projectName, final String configName) throws OptionException {
+	public void writePropertiesFile(final Properties p, final String projectName, final String configName) throws OptionException {
 		
 		try {
 			final FileOutputStream fos = new FileOutputStream(getConfigDirectoryPath()  + "/" + configName);
@@ -102,41 +130,54 @@ public class OptionService {
 	 * @return Properties object
 	 * @throws OptionException 
 	 */
-	public static final Properties getPropertiesFile(final String configName) throws OptionException
+	public final Properties getPropertiesFile() throws OptionException
 	{
-		final String filepath = BTHelper.CONF_DIRECTORY + "/" + configName;
 		final Properties p = new Properties();
 		
 		try {
-			FileInputStream fis = new FileInputStream(filepath);
+			FileInputStream fis = new FileInputStream(configPath);
 			p.load(fis);
 			fis.close();
 		} catch (IOException e) {
+			logger.warn("Failed to load properties file, use default properties instead");
 			return getDefaultProperties();
 		}
 		
 		return p;
 	}
 	
-	private static final String getConfigDirectoryPath() throws IOException
+	/**
+	 * Get the path directory of the configPath
+	 * If it doesn't exist, create it
+	 * @return
+	 * @throws IOException
+	 */
+	public final String getConfigDirectoryPath() throws IOException
 	{		
-		final Path path = Paths.get(BTHelper.CONF_DIRECTORY);
+		final Path path = Paths.get(configPath);
 		if(Files.exists(path, LinkOption.NOFOLLOW_LINKS))
 		{
-			if(Files.isDirectory(path, LinkOption.NOFOLLOW_LINKS)) return path.toString();
-			else throw new IOException("The targeted file is not valid");
+			if(Files.isDirectory(path, LinkOption.NOFOLLOW_LINKS)) {
+				return path.toString();
+			}
+			else {
+				throw new IOException("The targeted file is not valid");
+			}
 		}
 		else
 		{
-			return createConfigFilepath();
+			return createConfigFilepath(path);
 		}
 	}
 	
-	private static String createConfigFilepath() throws IOException
+	/**
+	 * Create a directory in the target path
+	 * @return Directory path created
+	 * @throws IOException
+	 */
+	public String createConfigFilepath(Path directory) throws IOException
 	{	
-		final Path path = Paths.get(BTHelper.CONF_DIRECTORY);
-		
-		final Path createdDir = Files.createDirectories(path);
+		final Path createdDir = Files.createDirectories(directory.getParent());
 		
 		return createdDir.toString();
 	}

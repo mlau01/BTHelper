@@ -15,6 +15,7 @@ import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -126,7 +127,6 @@ public class SchedulePanel extends JPanel {
 		{
 			JPanel t1 = new JPanel();
 			t1.setBorder(BorderFactory.createTitledBorder("BT du Terminal 1"));
-			//t1.setPreferredSize(new Dimension(700, 150));
 			t1.setLayout(new GridLayout(3, 1));
 			terminals.add(t1);
 			{
@@ -148,6 +148,9 @@ public class SchedulePanel extends JPanel {
 						t1nButtons.add(t1nButtonAdd);
 						
 						JButton t1nButtonDelete = new JButton("Suprimer");
+						t1nButtonDelete.addActionListener(e -> {
+							action_deleteAssignment(ScheduleCategory.T1);
+						});
 						t1nButtonDelete.setMaximumSize(new Dimension(50, 20));
 						t1nButtons.add(t1nButtonDelete);
 					}
@@ -278,6 +281,19 @@ public class SchedulePanel extends JPanel {
 		datas.add(newLine);
 		((ScheduleTableModel)table.getModel()).fireTableDataChanged();
 		clearFields();
+	}
+	
+	private void action_deleteAssignment(ScheduleCategory scheduleCategory) {
+		JTable table = tableMap.get(scheduleCategory);
+		int row = table.getSelectedRow();
+		String acronym = (String) table.getValueAt(row, 0);
+		String beginTime = (String) table.getValueAt(row, 1);
+		String endTime = (String) table.getValueAt(row, 2);
+
+		int response = JOptionPane.showConfirmDialog(table, "Delete : " + acronym + " (" + beginTime + " - " + endTime + ") ?");
+		if(response != JOptionPane.YES_OPTION) {
+			return;
+		}
 	}
 	
 	private void clearFields() {

@@ -66,11 +66,17 @@ public class SchedulePanel extends JPanel {
 		tableMap.get(ScheduleCategory.T1S).setModel(new ScheduleTableModel(tableColumnName, t1sDatas));
 		
 		Vector<Vector<String>> t2nDatas = buildVectorArray(scheduleService.getAssignementList(ScheduleCategory.T2));
+		dataMap.put(ScheduleCategory.T2, t2nDatas);
+		tableMap.get(ScheduleCategory.T2).setModel(new ScheduleTableModel(tableColumnName, t2nDatas));
+		
 		Vector<Vector<String>> t2wDatas = buildVectorArray(scheduleService.getAssignementList(ScheduleCategory.T2W));
+		dataMap.put(ScheduleCategory.T2W, t2wDatas);
+		tableMap.get(ScheduleCategory.T2W).setModel(new ScheduleTableModel(tableColumnName, t2wDatas));
+		
 		Vector<Vector<String>> t2sDatas = buildVectorArray(scheduleService.getAssignementList(ScheduleCategory.T2S));
-		
-		
-		
+		dataMap.put(ScheduleCategory.T2S, t2sDatas);
+		tableMap.get(ScheduleCategory.T2S).setModel(new ScheduleTableModel(tableColumnName, t2sDatas));
+
 	}
 	
 	/**
@@ -180,12 +186,15 @@ public class SchedulePanel extends JPanel {
 					{
 						JButton t1wButtonAdd = new JButton("Ajouter");
 						t1wButtonAdd.addActionListener(e -> {
-							action_addAssignment(ScheduleCategory.T1);
+							action_addAssignment(ScheduleCategory.T1W);
 						});
 						t1wButtonAdd.setMaximumSize(new Dimension(50, 20));
 						t1wButtons.add(t1wButtonAdd);
 						
 						JButton t1wButtonDelete = new JButton("Suprimer");
+						t1wButtonDelete.addActionListener(e -> {
+							action_deleteAssignment(ScheduleCategory.T1W);
+						});
 						t1wButtonDelete.setMaximumSize(new Dimension(50, 20));
 						t1wButtons.add(t1wButtonDelete);
 					}
@@ -214,12 +223,15 @@ public class SchedulePanel extends JPanel {
 					{
 						JButton t1sButtonAdd = new JButton("Ajouter");
 						t1sButtonAdd.addActionListener(e -> {
-							action_addAssignment(ScheduleCategory.T1);
+							action_addAssignment(ScheduleCategory.T1S);
 						});
 						t1sButtonAdd.setMaximumSize(new Dimension(50, 20));
 						t1sButtons.add(t1sButtonAdd);
 						
 						JButton t1sButtonDelete = new JButton("Suprimer");
+						t1sButtonDelete.addActionListener(e -> {
+							action_deleteAssignment(ScheduleCategory.T1S);
+						});
 						t1sButtonDelete.setMaximumSize(new Dimension(50, 20));
 						t1sButtons.add(t1sButtonDelete);
 					}
@@ -241,9 +253,121 @@ public class SchedulePanel extends JPanel {
 			JPanel t2 = new JPanel();
 			t2.setBorder(BorderFactory.createTitledBorder("BT du Terminal 2"));
 			t2.setPreferredSize(new Dimension(700, 150));
-			t2.setLayout(new GridLayout(1, 2));
+			t2.setLayout(new GridLayout(3, 1));
 			terminals.add(t2);
 			{				
+				JPanel t2n = new JPanel();
+				t2n.setBorder(BorderFactory.createTitledBorder("Normal"));
+				t2n.setLayout(new GridLayout(1,2));
+				t2.add(t2n);
+				{
+					JPanel t2nButtons = new JPanel();
+					t2nButtons.setLayout(new GridLayout(2,1));
+					t2nButtons.setBorder(BorderFactory.createEmptyBorder(40, 40, 40, 40));
+					t2n.add(t2nButtons);
+					{
+						JButton t2nButtonAdd = new JButton("Ajouter");
+						t2nButtonAdd.addActionListener(e -> {
+							action_addAssignment(ScheduleCategory.T2);
+						});
+						t2nButtonAdd.setMaximumSize(new Dimension(50, 20));
+						t2nButtons.add(t2nButtonAdd);
+						
+						JButton t2nButtonDelete = new JButton("Suprimer");
+						t2nButtonDelete.addActionListener(e -> {
+							action_deleteAssignment(ScheduleCategory.T2);
+						});
+						t2nButtonDelete.setMaximumSize(new Dimension(50, 20));
+						t2nButtons.add(t2nButtonDelete);
+					}
+					
+					JPanel t2nTablePanel = new JPanel();
+					t2nTablePanel.setLayout(new GridLayout(1,1));
+					t2n.add(t2nTablePanel);
+					{
+						tableMap.put(ScheduleCategory.T2, new JTable());
+						JScrollPane scrollPane = new JScrollPane(tableMap.get(ScheduleCategory.T2));
+						tableMap.get(ScheduleCategory.T2).setFillsViewportHeight(true);
+
+						t2nTablePanel.add(scrollPane);
+					}
+				}
+				
+				JPanel t2w = new JPanel();
+				t2w.setBorder(BorderFactory.createTitledBorder("Week-end"));
+				t2w.setLayout(new GridLayout(1,2));
+				t2.add(t2w);
+				{
+					JPanel t2wButtons = new JPanel();
+					t2wButtons.setLayout(new GridLayout(2,1));
+					t2wButtons.setBorder(BorderFactory.createEmptyBorder(40, 40, 40, 40));
+					t2w.add(t2wButtons);
+					{
+						JButton t2wButtonAdd = new JButton("Ajouter");
+						t2wButtonAdd.addActionListener(e -> {
+							action_addAssignment(ScheduleCategory.T2W);
+						});
+						t2wButtonAdd.setMaximumSize(new Dimension(50, 20));
+						t2wButtons.add(t2wButtonAdd);
+						
+						JButton t2wButtonDelete = new JButton("Suprimer");
+						t2wButtonDelete.addActionListener(e -> {
+							action_deleteAssignment(ScheduleCategory.T2W);
+						});
+						t2wButtonDelete.setMaximumSize(new Dimension(50, 20));
+						t2wButtons.add(t2wButtonDelete);
+					}
+					
+					JPanel t2wTablePanel = new JPanel();
+					t2wTablePanel.setLayout(new GridLayout(1,1));
+					t2w.add(t2wTablePanel);
+					{
+						tableMap.put(ScheduleCategory.T2W, new JTable());
+						JScrollPane scrollPane = new JScrollPane(tableMap.get(ScheduleCategory.T2W));
+						tableMap.get(ScheduleCategory.T2W).setFillsViewportHeight(true);
+
+						t2wTablePanel.add(scrollPane);
+					}
+				}
+				
+				JPanel t2s = new JPanel();
+				t2s.setBorder(BorderFactory.createTitledBorder("Super"));
+				t2s.setLayout(new GridLayout(1,2));
+				t2.add(t2s);
+				{
+					JPanel t2sButtons = new JPanel();
+					t2sButtons.setLayout(new GridLayout(2,1));
+					t2sButtons.setBorder(BorderFactory.createEmptyBorder(40, 40, 40, 40));
+					t2s.add(t2sButtons);
+					{
+						JButton t2sButtonAdd = new JButton("Ajouter");
+						t2sButtonAdd.addActionListener(e -> {
+							action_addAssignment(ScheduleCategory.T2S);
+						});
+						t2sButtonAdd.setMaximumSize(new Dimension(50, 20));
+						t2sButtons.add(t2sButtonAdd);
+						
+						JButton t2sButtonDelete = new JButton("Suprimer");
+						t2sButtonDelete.addActionListener(e -> {
+							action_deleteAssignment(ScheduleCategory.T2S);
+						});
+						t2sButtonDelete.setMaximumSize(new Dimension(50, 20));
+						t2sButtons.add(t2sButtonDelete);
+					}
+					
+					JPanel t2sTablePanel = new JPanel();
+					t2sTablePanel.setLayout(new GridLayout(1,1));
+					t2s.add(t2sTablePanel);
+					{
+						tableMap.put(ScheduleCategory.T2S, new JTable());
+						JScrollPane scrollPane = new JScrollPane(tableMap.get(ScheduleCategory.T2S));
+						tableMap.get(ScheduleCategory.T2S).setFillsViewportHeight(true);
+
+						t2sTablePanel.add(scrollPane);
+					}
+				}
+				
+				
 				
 			}
 		}

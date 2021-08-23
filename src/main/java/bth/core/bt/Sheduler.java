@@ -50,6 +50,10 @@ public class Sheduler {
 			logger.info("Timetable selected: T1 Normal");
 			return timeTableT1;
 		}
+		else if(terminal.equals("T1")  && sheduleMode == SHEDULEMODE.SUPER) {
+			logger.info("Timetable selected: T1 Super");
+			return timeTableT1S;
+		}
 		else if(terminal.equals("T2") && (isWeekend(btDate) || forceWeekend) && sheduleMode == SHEDULEMODE.NORMAL) {
 			logger.info("Timetable selected: T2 Weekend");
 			return timeTableT2W;
@@ -62,10 +66,7 @@ public class Sheduler {
 			logger.info("Timetable selected: T2 Super");
 			return timeTableT2S;
 		}
-		else if(terminal.equals("T1")  && sheduleMode == SHEDULEMODE.SUPER) {
-			logger.info("Timetable selected: T1 Super");
-			return timeTableT1S;
-		}
+
 		else {
 			throw new TimetableException("Cannot find timetable for params: " + terminal + ", weekend: " + isWeekend(btDate) + ", Shedule mode: " + sheduleMode.toString());
 		}

@@ -260,10 +260,9 @@ public class SchedulePanel extends JPanel {
 			mWin.showError("Input field error", "Format d'horaire invalide");
 			return;
 		}
-		
-		List<Assignment> updatedList;
+
 		try {
-			updatedList = scheduleService.addAssignment(scheduleCategory, acronym.getText(), beginTime.getText(), endTime.getText());
+			scheduleService.addAssignment(scheduleCategory, acronym.getText(), beginTime.getText(), endTime.getText());
 		} catch (Exception e) {
 			mWin.showError("error", e.getMessage());
 			return;
@@ -278,6 +277,7 @@ public class SchedulePanel extends JPanel {
 		Vector<Vector<String>> datas = dataMap.get(scheduleCategory);
 		datas.add(newLine);
 		((ScheduleTableModel)table.getModel()).fireTableDataChanged();
+		clearFields();
 	}
 	
 	private void clearFields() {

@@ -57,7 +57,7 @@ public class ScheduleService {
 		List<Assignment> assignmentList = targetCategory.getAssignment();
 		testConflict(newAssignment, assignmentList);
 		assignmentList.add(newAssignment);
-		optionService.set(targetCategory.toString(), getAssignmentListAsString(assignmentList));
+		optionService.set(targetCategory.getOptionName(), getAssignmentListAsString(assignmentList));
 		
 		return assignmentList;
 	}

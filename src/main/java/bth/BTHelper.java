@@ -1,6 +1,7 @@
 package bth;
 
 import bth.core.bt.Timetable;
+import bth.core.schedule.ScheduleCategory;
 
 public class BTHelper {
 	public static final String APP_NAME = ("BT's Helper");
@@ -43,12 +44,12 @@ public class BTHelper {
 	public static final String MaximoLogin = ("MaximoLogin");
 	public static final String MaximoPassword = ("MaximoPassword");
 	
-	public static final String sheduleT1 = ("SheduleT1");
-	public static final String sheduleT1W = ("SheduleT1W");
-	public static final String sheduleT1S = ("SheduleT1S");
-	public static final String sheduleT2 = ("SheduleT2");
-	public static final String sheduleT2W = ("SheduleT2W");
-	public static final String sheduleT2S = ("SheduleT2S");
+	public static final String sheduleT1 = ScheduleCategory.T1.getOptionName();
+	public static final String sheduleT1W = ScheduleCategory.T1W.getOptionName();
+	public static final String sheduleT1S = ScheduleCategory.T1S.getOptionName();
+	public static final String sheduleT2 = ScheduleCategory.T2.getOptionName();
+	public static final String sheduleT2W = ScheduleCategory.T2W.getOptionName();
+	public static final String sheduleT2S = ScheduleCategory.T2S.getOptionName();
 	
 	//Default Options -------------------------------------------------------------------------
 	public final static String defaultSqlUsed = "false";

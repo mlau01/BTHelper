@@ -1,10 +1,8 @@
 package bth.core.schedule;
 
-import java.io.InvalidObjectException;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Formatter;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
@@ -19,6 +17,10 @@ import bth.core.options.OptionService;
 import bth.core.schedule.exception.AssignmentNotFoundException;
 
 public class ScheduleService {
+	public enum SHEDULEMODE {
+		NORMAL,
+		SUPER
+	}
 	
 	private static final Logger logger = LogManager.getLogger();
 	private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");

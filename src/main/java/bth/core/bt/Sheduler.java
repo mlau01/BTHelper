@@ -35,7 +35,7 @@ public class Sheduler {
 	 * @param terminal can be T1 or T2
 	 * @param btDate The date of the bt, time in date is user to find correct timetable
 	 * @param sheduleMode if this is a Super timetable or Normal time table
-	 * @param forceWeekend set to true if you want to force a week end timetable
+	 * @param forceWeekend set to true if you want to force a week end timetable, this is used as fallback when no technician was founds with the other ways
 	 * @return  timetable selected by the logic
 	 * @throws TimetableException when params matches to no logic
 	 */

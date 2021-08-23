@@ -4,11 +4,13 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
+import javax.naming.directory.InvalidAttributeValueException;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -30,12 +32,7 @@ import bth.gui.MWin;
 
 public class SchedulePanel extends JPanel {
 	
-	private Vector<Vector<String>> t1nDatas;
-	private Vector<Vector<String>> t1wDatas;
-	private Vector<Vector<String>> t1sDatas;
-	private Vector<Vector<String>> t2nDatas;
-	private Vector<Vector<String>> t2wDatas;
-	private Vector<Vector<String>> t2sDatas;
+	private Map<ScheduleCategory, Vector<Vector<String>>> dataMap;
 	private Map<ScheduleCategory, JTable> tableMap;
 	private JTextField acronym, beginTime, endTime;
 	private static final Logger logger = LogManager.getLogger();
@@ -48,20 +45,27 @@ public class SchedulePanel extends JPanel {
 		mWin = p_mWin;
 		tableColumnName = new String[] {"Acronyme", "Début", "Fin"};
 		tableMap = new Hashtable<ScheduleCategory, JTable>();
+		dataMap = new Hashtable<ScheduleCategory, Vector<Vector<String>>>();
 	}
 
 	public void loadDatas() {
 		scheduleService = mWin.getCorma().getScheduleService();
 		
-		t1nDatas = buildVectorArray(scheduleService.getAssignementList(ScheduleCategory.T1));
+		Vector<Vector<String>> t1nDatas = buildVectorArray(scheduleService.getAssignementList(ScheduleCategory.T1));
+		dataMap.put(ScheduleCategory.T1, t1nDatas);
 		tableMap.get(ScheduleCategory.T1).setModel(new ScheduleTableModel(tableColumnName, t1nDatas));
-		t1wDatas = buildVectorArray(scheduleService.getAssignementList(ScheduleCategory.T1W));
+		
+		Vector<Vector<String>> t1wDatas = buildVectorArray(scheduleService.getAssignementList(ScheduleCategory.T1W));
+		dataMap.put(ScheduleCategory.T1W, t1wDatas);
 		tableMap.get(ScheduleCategory.T1W).setModel(new ScheduleTableModel(tableColumnName, t1wDatas));
-		t1sDatas = buildVectorArray(scheduleService.getAssignementList(ScheduleCategory.T1S));
+		
+		Vector<Vector<String>> t1sDatas = buildVectorArray(scheduleService.getAssignementList(ScheduleCategory.T1S));
+		dataMap.put(ScheduleCategory.T1S, t1sDatas);
 		tableMap.get(ScheduleCategory.T1S).setModel(new ScheduleTableModel(tableColumnName, t1sDatas));
-		t2nDatas = buildVectorArray(scheduleService.getAssignementList(ScheduleCategory.T2));
-		t2wDatas = buildVectorArray(scheduleService.getAssignementList(ScheduleCategory.T2W));
-		t2sDatas = buildVectorArray(scheduleService.getAssignementList(ScheduleCategory.T2S));
+		
+		Vector<Vector<String>> t2nDatas = buildVectorArray(scheduleService.getAssignementList(ScheduleCategory.T2));
+		Vector<Vector<String>> t2wDatas = buildVectorArray(scheduleService.getAssignementList(ScheduleCategory.T2W));
+		Vector<Vector<String>> t2sDatas = buildVectorArray(scheduleService.getAssignementList(ScheduleCategory.T2S));
 		
 		
 		
@@ -242,6 +246,21 @@ public class SchedulePanel extends JPanel {
 	}
 
 	private void action_addAssignment(ScheduleCategory scheduleCategory) {
+		String acronymValue = acronym.getText();
+		String beginTimeValue = beginTime.getText();
+		String endTimeValue = endTime.getText();
+		if(acronymValue.isEmpty() || beginTimeValue.isEmpty() || endTimeValue.isEmpty()) {
+			mWin.showError("Input field error", "Champ(s) vide(s) !");
+			return;
+		}
+		try {
+			scheduleService.getDateTimeFormatter().parse(beginTimeValue);
+			scheduleService.getDateTimeFormatter().parse(endTimeValue);
+		} catch (DateTimeParseException e) {
+			mWin.showError("Input field error", "Format d'horaire invalide");
+			return;
+		}
+		
 		List<Assignment> updatedList;
 		try {
 			updatedList = scheduleService.addAssignment(scheduleCategory, acronym.getText(), beginTime.getText(), endTime.getText());
@@ -250,8 +269,15 @@ public class SchedulePanel extends JPanel {
 			return;
 		}
 		
-		//TODO FINISH THE BEHAVIOR HERE
+		Vector<String> newLine = new Vector<String>();
+		newLine.add(acronym.getText());
+		newLine.add(beginTime.getText());
+		newLine.add(endTime.getText());
 		
+		JTable table = tableMap.get(scheduleCategory);
+		Vector<Vector<String>> datas = dataMap.get(scheduleCategory);
+		datas.add(newLine);
+		((ScheduleTableModel)table.getModel()).fireTableDataChanged();
 	}
 	
 	private void clearFields() {

@@ -20,8 +20,10 @@ public class ScheduleService {
 	
 	private static final Logger logger = LogManager.getLogger();
 	private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
+	private OptionService optionService;
 	
-	public ScheduleService() {
+	public ScheduleService(OptionService p_optionService) {
+		optionService = p_optionService;
 		ScheduleCategory.T1.setAssignment(new ArrayList<Assignment>());
 		ScheduleCategory.T1W.setAssignment(new ArrayList<Assignment>());
 		ScheduleCategory.T1S.setAssignment(new ArrayList<Assignment>());
@@ -30,18 +32,19 @@ public class ScheduleService {
 		ScheduleCategory.T2S.setAssignment(new ArrayList<Assignment>());
 	}
 	
-	public void loadfromOptions(OptionService optionsService) throws Exception {
-		ScheduleCategory.T1.setAssignment(parseFromString(String.valueOf(optionsService.get(BTHelper.sheduleT1))));
-		ScheduleCategory.T1W.setAssignment(parseFromString(String.valueOf(optionsService.get(BTHelper.sheduleT1W))));
-		ScheduleCategory.T1S.setAssignment(parseFromString(String.valueOf(optionsService.get(BTHelper.sheduleT1S))));
-		ScheduleCategory.T2.setAssignment(parseFromString(String.valueOf(optionsService.get(BTHelper.sheduleT2))));
-		ScheduleCategory.T2W.setAssignment(parseFromString(String.valueOf(optionsService.get(BTHelper.sheduleT2W))));
-		ScheduleCategory.T2S.setAssignment(parseFromString(String.valueOf(optionsService.get(BTHelper.sheduleT2S))));
+	public void load() throws Exception {
+		ScheduleCategory.T1.setAssignment(parseFromString(String.valueOf(optionService.get(BTHelper.sheduleT1))));
+		ScheduleCategory.T1W.setAssignment(parseFromString(String.valueOf(optionService.get(BTHelper.sheduleT1W))));
+		ScheduleCategory.T1S.setAssignment(parseFromString(String.valueOf(optionService.get(BTHelper.sheduleT1S))));
+		ScheduleCategory.T2.setAssignment(parseFromString(String.valueOf(optionService.get(BTHelper.sheduleT2))));
+		ScheduleCategory.T2W.setAssignment(parseFromString(String.valueOf(optionService.get(BTHelper.sheduleT2W))));
+		ScheduleCategory.T2S.setAssignment(parseFromString(String.valueOf(optionService.get(BTHelper.sheduleT2S))));
 	}
 	
 	/**
 	 * Add a new assignment in a schedule category list
-	 * The new assignment is tested for conflict with one other in the list
+	 * The new assignment is tested for conflict with others in the assignment list
+	 * Save the assignment using OptionService
 	 * @param targetCategory The category to add the assignment
 	 * @param acronym Assignment acronym (S1,M2,etc..)
 	 * @param beginTime LocalTime of the Assignment begin
@@ -54,6 +57,8 @@ public class ScheduleService {
 		List<Assignment> assignmentList = targetCategory.getAssignment();
 		testConflict(newAssignment, assignmentList);
 		assignmentList.add(newAssignment);
+		optionService.set(targetCategory.toString(), getAssignmentListAsString(assignmentList));
+		
 		return assignmentList;
 	}
 	
@@ -132,7 +137,7 @@ public class ScheduleService {
 				string += ";";
 			}
 			
-			string += assign.toString();
+			string += assign.getSaveableString();
 		}
 		return string;
 	}

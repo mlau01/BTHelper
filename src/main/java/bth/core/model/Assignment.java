@@ -44,10 +44,13 @@ public class Assignment {
 		this.endTime = endTime;
 	}
 	
+	public String getSaveableString() {
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
+		return assignment + "=(" + beginTime.format(formatter) + "," + endTime.format(formatter) + ")";
+	}
+	
 	@Override
 	public String toString() {
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
-		
-		return assignment + "=(" + beginTime.format(formatter) + "," + endTime.format(formatter) + ")";
+		return getSaveableString();
 	}
 }

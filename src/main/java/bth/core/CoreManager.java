@@ -60,8 +60,8 @@ public class CoreManager implements Observable {
 		else if(Boolean.parseBoolean(properties.getProperty(BTHelper.MaximoUsed))) {
 			//DBMan = new MaximoManager(this, observers, properties);
 		}
-		scheduleService = new ScheduleService();
-		scheduleService.loadfromOptions(optionsService);
+		scheduleService = new ScheduleService(optionsService);
+		scheduleService.load();
 		btMan = new BtManager(properties, observers, DBMan);
 		
 		reqMan = new RequestManager();

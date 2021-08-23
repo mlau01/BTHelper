@@ -204,6 +204,7 @@ public class OptionService {
 	 * @throws OptionException
 	 */
 	public void set(String optionName, String optionValue) throws OptionException {
+		logger.debug("set property name: {} to {}", optionName, optionValue);
 		p.setProperty(optionName, optionValue);
 		writePropertiesFile(p);
 	}

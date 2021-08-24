@@ -65,7 +65,7 @@ public class RequestGui extends JPanel implements Fillable {
 	public void fillDatas()
 	{
 		queryListModel.clear();
-		for(final String s : requestService.getQueryList())
+		for(final String s : requestService.getQueriesTitle())
 		{
 			queryListModel.addElement(s);
 		}
@@ -169,7 +169,7 @@ public class RequestGui extends JPanel implements Fillable {
 			eventAction_setEditable(false);
 			lastSelectedItem = selectedValue;
 			queryName.setText(selectedValue);
-			queryArea.setText(requestService.getQuery(selectedValue));
+			queryArea.setText(requestService.getQueryValue(selectedValue));
 		});
 		
 		bExecute.addActionListener(e -> {

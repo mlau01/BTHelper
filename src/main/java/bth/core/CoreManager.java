@@ -183,7 +183,7 @@ public class CoreManager implements Observable {
 	
 	public final void bt_assign(final String dbFilepath) throws BTException, SheduleServiceException, ParseException, OptionException, DatasourceException
 	{
-		btService.assign(planningService, dbFilepath);
+		btService.assign(dbFilepath);
 	}
 	
 	public void w(ArrayList<Bt> btList) throws MaximoConnectionException, IOException, InterruptedException

@@ -17,13 +17,13 @@ import bth.core.datasource.Datasource;
 import bth.core.datasource.file.FileManager;
 import bth.core.datasource.sql.SQLManager;
 import bth.core.exception.BTException;
+import bth.core.exception.RequestException;
 import bth.core.exception.SheduleServiceException;
 import bth.core.options.OptionException;
 import bth.core.options.OptionService;
 import bth.core.planning.PlanningManager;
 import bth.core.planning.Technician;
-import bth.core.request.RequestException;
-import bth.core.request.RequestManager;
+import bth.core.request.RequestService;
 import bth.core.schedule.ScheduleService;
 import mack.MackConnection;
 import mack.exception.MaximoConnectionException;
@@ -37,7 +37,7 @@ public class CoreManager implements Observable {
 	private final PlanningManager planningService;
 	private final BtService btService;
 	private Datasource DBMan;
-	private final RequestManager reqMan;
+	private final RequestService reqMan;
 	private final ArrayList<Observer> observers;
 	private final OptionService optionService;
 	private final ScheduleService scheduleService;
@@ -65,7 +65,7 @@ public class CoreManager implements Observable {
 		scheduleService.load();
 		btService = new BtService(optionService, observers, DBMan, planningService, scheduleService);
 		
-		reqMan = new RequestManager();
+		reqMan = new RequestService();
 		
 	}
 	// ---- Request methods ----

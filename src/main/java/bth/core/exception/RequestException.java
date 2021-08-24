@@ -1,4 +1,4 @@
-package bth.core.request;
+package bth.core.exception;
 
 public class RequestException extends Exception{
 	

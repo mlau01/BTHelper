@@ -4,26 +4,21 @@ import java.util.ArrayList;
 import java.util.Properties;
 
 import bth.BTHelper;
+import bth.core.exception.RequestException;
 import bth.core.options.OptionException;
 import bth.core.options.OptionService;
 
-public class RequestManager {
+public class RequestService {
 	
 	//private final CoreManager corma;
 	private Properties queryFile;
 	private OptionService optionService;
 	
-	public RequestManager() throws RequestException, OptionException
+	public RequestService() throws RequestException, OptionException
 	{
 		optionService = new OptionService(BTHelper.CONF_DIRECTORY + "/query.conf");
 		optionService.loadConfig();
-		
-			try {
-				optionService.loadConfig();
-			} catch (OptionException e) {
-				throw new RequestException(e.getMessage());
-			}
-	
+
 		if(queryFile == null) {
 			queryFile = new Properties();
 			write();

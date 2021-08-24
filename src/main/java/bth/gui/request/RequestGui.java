@@ -25,7 +25,7 @@ import javax.swing.ListSelectionModel;
 import javax.swing.table.AbstractTableModel;
 
 import bth.core.datasource.DatasourceException;
-import bth.core.request.RequestException;
+import bth.core.exception.RequestException;
 import bth.gui.Fillable;
 import bth.gui.MWin;
 

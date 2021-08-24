@@ -25,10 +25,10 @@ import bth.Observer;
 import bth.core.CoreManager;
 import bth.core.datasource.DatasourceException;
 import bth.core.exception.BTException;
+import bth.core.exception.RequestException;
 import bth.core.exception.SheduleServiceException;
 import bth.core.options.OptionException;
 import bth.core.options.OptionService;
-import bth.core.request.RequestException;
 import bth.gui.menu.Menu;
 
 public class MWin extends JFrame implements Observer {

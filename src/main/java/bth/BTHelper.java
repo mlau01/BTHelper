@@ -53,6 +53,8 @@ public class BTHelper {
 	public static final String sheduleT2W = ScheduleCategory.T2W.getOptionName();
 	public static final String sheduleT2S = ScheduleCategory.T2S.getOptionName();
 	
+	public static final String Queries = "queries";
+	
 	//Default Options -------------------------------------------------------------------------
 	public final static String defaultSqlUsed = "false";
 	public final static String defaultSqlProtocol = "sqlserver";

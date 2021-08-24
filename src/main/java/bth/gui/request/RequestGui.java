@@ -26,6 +26,7 @@ import javax.swing.table.AbstractTableModel;
 
 import bth.core.datasource.DatasourceException;
 import bth.core.exception.RequestException;
+import bth.core.request.RequestService;
 import bth.gui.Fillable;
 import bth.gui.MWin;
 
@@ -49,10 +50,12 @@ public class RequestGui extends JPanel implements Fillable {
 	private Color myGrey = new Color(225, 225, 225);
 	private String lastSelectedItem = "";
 	
+	private RequestService requestService;
+	
 	public RequestGui(final MWin p_mWin)
 	{
 		mWin = p_mWin; 
-		
+		requestService = mWin.getCorma().getRequestService();
 		createWidgets();
 		createEvents();
 		mWin.addFillableGui(this);
@@ -62,7 +65,7 @@ public class RequestGui extends JPanel implements Fillable {
 	public void fillDatas()
 	{
 		queryListModel.clear();
-		for(final String s : mWin.getCorma().request_getList())
+		for(final String s : requestService.getQueryList())
 		{
 			queryListModel.addElement(s);
 		}
@@ -166,13 +169,13 @@ public class RequestGui extends JPanel implements Fillable {
 			eventAction_setEditable(false);
 			lastSelectedItem = selectedValue;
 			queryName.setText(selectedValue);
-			queryArea.setText(mWin.getCorma().request_getQuery(selectedValue));
+			queryArea.setText(requestService.getQuery(selectedValue));
 		});
 		
 		bExecute.addActionListener(e -> {
 			
 			try {
-				eventAction_fillResult(mWin.getCorma().request_execQuery(queryArea.getText()));
+				eventAction_fillResult(requestService.execQuery(queryArea.getText()));
 			} catch (SQLException | DatasourceException e1) {
 				mWin.showError(e1.getClass().getName(), e1.getMessage());
 				e1.printStackTrace();
@@ -195,7 +198,7 @@ public class RequestGui extends JPanel implements Fillable {
 				
 			
 				try {
-					mWin.getCorma().request_writeQuery(queryName.getText(), queryArea.getText());
+					requestService.writeQuery(queryName.getText(), queryArea.getText());
 				} catch (RequestException e1) {
 					e1.printStackTrace();
 					mWin.showError(e1.getClass().getName(), e1.getMessage());
@@ -211,7 +214,7 @@ public class RequestGui extends JPanel implements Fillable {
 			int res = JOptionPane.showConfirmDialog(mWin, "Supprimer: " + lastSelectedItem + " ?", "Confirmation", JOptionPane.YES_NO_OPTION);
 			
 			if(res == 0) try {
-					mWin.getCorma().request_delQuery(lastSelectedItem);
+					requestService.delQuery(lastSelectedItem);
 				} catch (RequestException e1) {
 					e1.printStackTrace();
 					mWin.showError(e1.getClass().getName(), e1.getMessage());

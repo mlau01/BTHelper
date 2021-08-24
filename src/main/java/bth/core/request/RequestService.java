@@ -1,39 +1,31 @@
 package bth.core.request;
 
+import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
 import bth.BTHelper;
+import bth.core.datasource.DatasourceException;
+import bth.core.datasource.sql.SQLManager;
 import bth.core.exception.RequestException;
 import bth.core.options.OptionException;
 import bth.core.options.OptionService;
 
 public class RequestService {
 	
-	//private final CoreManager corma;
-	private Properties queryFile;
 	private OptionService optionService;
+	private SQLManager sqlService;
 	
-	public RequestService() throws RequestException, OptionException
+	public RequestService(OptionService p_optionService, SQLManager p_sqlService) throws RequestException, OptionException
 	{
-		optionService = new OptionService(BTHelper.CONF_DIRECTORY + "/query.conf");
-		optionService.loadConfig();
-
-		if(queryFile == null) {
-			queryFile = new Properties();
-			write();
-		}
+		optionService = p_optionService;
+		this.sqlService = p_sqlService;
 			
 	}
 	
-	private final void write() throws RequestException {
-		try {
-			optionService.writePropertiesFile(optionService.getCurrentProperties());
-		} catch (OptionException e) {
-			throw new RequestException(e.getMessage());
-		}
-	}
 	
+	/*
 	public final ArrayList<String> getQueryList()
 	{
 		final ArrayList<String> out =  new ArrayList<String>();
@@ -65,6 +57,28 @@ public class RequestService {
 		if(queryFile != null) return queryFile.getProperty(name);
 		
 		return null;
+	}
+*/
+	public ResultSet execQuery(String query) throws DatasourceException {
+		return sqlService.getResultSet(query);
+	}
+
+
+	public List<String> getQueryList() throws OptionException {
+		ArrayList<String> queryNames = new ArrayList<String>();
+		
+		String queriesAsString = optionService.get(BTHelper.Queries);
+		if(queriesAsString.isEmpty()) {
+			return queryNames;
+		}
+		
+		String[] parsedQueries = queriesAsString.split(";");
+		for(String query : parsedQueries) {
+			String queryName = query.split("=")[0];
+			queryNames.add(queryName);
+		}
+		
+		return queryNames;
 	}
 
 }

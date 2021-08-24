@@ -37,7 +37,7 @@ public class CoreManager implements Observable {
 	private final PlanningManager planningService;
 	private final BtService btService;
 	private Datasource DBMan;
-	private final RequestService reqMan;
+	private final RequestService requestService;
 	private final ArrayList<Observer> observers;
 	private final OptionService optionService;
 	private final ScheduleService scheduleService;
@@ -65,32 +65,8 @@ public class CoreManager implements Observable {
 		scheduleService.load();
 		btService = new BtService(optionService, observers, DBMan, planningService, scheduleService);
 		
-		reqMan = new RequestService();
+		requestService = new RequestService(optionService, new SQLManager(this, observers, properties));
 		
-	}
-	// ---- Request methods ----
-	
-	public final ResultSet request_execQuery(final String params) throws DatasourceException
-	{
-		if(DBMan instanceof SQLManager)
-			return ((SQLManager) DBMan).getResultSet(params);
-		return null;
-	}
-	public final ArrayList<String> request_getList()
-	{
-		return reqMan.getQueryList();
-	}
-	public final void request_writeQuery(final String name, final String query) throws RequestException
-	{
-		reqMan.writeQuery(name, query);
-	}
-	public final String request_getQuery(final String name)
-	{
-		return reqMan.getQuery(name);
-	}
-	public final void request_delQuery(final String name) throws RequestException
-	{
-		reqMan.delQuery(name);
 	}
 	
 	// ---- Options methods ----
@@ -255,5 +231,9 @@ public class CoreManager implements Observable {
 
 	public ScheduleService getScheduleService() {
 		return scheduleService;
+	}
+
+	public RequestService getRequestService() {
+		return requestService;
 	}
 }

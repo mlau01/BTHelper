@@ -81,7 +81,7 @@ public class BTHelper {
 	public final static String defaultSheduleT1W = "M2=(04:15:00,06:59:59);M1=(07:00:00,13:29:59);S1=(13:30:00,19:59:59);S2=(20:00:00,23:30:00)";
 	public final static String defaultSheduleT1S = "SM=(04:15:00,06:59:59);M1=(07:00:00,13:29:59);S1=(13:30:00,19:59:59);SS=(20:00:00,23:30:00)";
 	public final static String defaultSheduleT2 = "M2=(04:30:00,11:29:59);A=(11:30:00,16:29:59);S2=(16:30:00,23:30:00)";
-	public final static String defaultSheduleT2W = "SM=(04:30:00,13:59:59);S2=(14:00:00,23:30:00)";
+	public final static String defaultSheduleT2W = "SM=(04:30:00,13:59:59);SS=(14:00:00,23:30:00)";
 	public final static String defaultSheduleT2S = "SM=(04:30:00,13:59:59);SS=(14:00:00,23:30:00)";
 	
 	public final static String defaultSqlRequest = "SELECT WONUM, REPORTDATE, DESCRIPTION FROM WORKORDER\n"

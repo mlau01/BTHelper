@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
-import javax.naming.directory.InvalidAttributeValueException;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -21,13 +20,9 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import bth.core.exception.AssignmentNotFoundException;
 import bth.core.model.Assignment;
 import bth.core.options.OptionException;
-import bth.core.options.OptionService;
 import bth.core.schedule.ScheduleCategory;
 import bth.core.schedule.ScheduleService;
 import bth.gui.MWin;
@@ -37,7 +32,6 @@ public class SchedulePanel extends JPanel {
 	private Map<ScheduleCategory, Vector<Vector<String>>> dataMap;
 	private Map<ScheduleCategory, JTable> tableMap;
 	private JTextField acronym, beginTime, endTime;
-	private static final Logger logger = LogManager.getLogger();
 	private String[] tableColumnName;
 	
 	private MWin mWin;
@@ -366,9 +360,6 @@ public class SchedulePanel extends JPanel {
 						t2sTablePanel.add(scrollPane);
 					}
 				}
-				
-				
-				
 			}
 		}
 	}
@@ -411,6 +402,9 @@ public class SchedulePanel extends JPanel {
 	private void action_deleteAssignment(ScheduleCategory scheduleCategory) {
 		JTable table = tableMap.get(scheduleCategory);
 		int row = table.getSelectedRow();
+		if(row < 0) {
+			return;
+		}
 		Vector<String> line = dataMap.get(scheduleCategory).get(row);
 		String acronym = line.get(0);
 		String beginTime = line.get(1);

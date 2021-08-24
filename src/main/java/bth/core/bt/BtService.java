@@ -13,12 +13,15 @@ import org.apache.logging.log4j.Logger;
 import bth.BTHelper;
 import bth.Observable;
 import bth.Observer;
-import bth.core.datasource.DatasourceException;
-import bth.core.exception.BTException;
-import bth.core.exception.SheduleServiceException;
 import bth.core.MONTH;
 import bth.core.Utils;
 import bth.core.datasource.Datasource;
+import bth.core.datasource.DatasourceException;
+import bth.core.exception.BTException;
+import bth.core.exception.BtAssignmentException;
+import bth.core.exception.SheduleServiceException;
+import bth.core.options.OptionException;
+import bth.core.options.OptionService;
 import bth.core.planning.Planning;
 import bth.core.planning.PlanningException;
 import bth.core.planning.PlanningManager;
@@ -30,33 +33,66 @@ import bth.core.schedule.ScheduleService.SHEDULEMODE;
 public class BtService implements Observable{
 	
 	private ArrayList<Bt> bts;
-	private final Properties prop;
 	private final Datasource DBMan;
 	private final ArrayList<Observer> observers;
 	private PlanningManager planningService;
 	private ScheduleService scheduleService;
+	private OptionService optionService;
 	private final static Logger logger = LogManager.getLogger();
 	
-	public BtService(final Properties p_prop, final ArrayList<Observer> p_observers, final Datasource p_DBMan, PlanningManager p_planningService, ScheduleService p_scheduleService)
+	public BtService(final OptionService p_optionService, final ArrayList<Observer> p_observers, final Datasource p_DBMan, PlanningManager p_planningService, ScheduleService p_scheduleService)
 	{
 		logger.trace("INIT");
-		
-		prop = p_prop;
+		this.optionService = p_optionService;
 		observers = p_observers;
 		DBMan = p_DBMan;
 		this.planningService = p_planningService;
 		this.scheduleService = p_scheduleService;
 	}
 	
+	public final void assign(final PlanningManager planningService, final String dbFilepath) throws OptionException, BTException, DatasourceException, ParseException
+	{
+		//Clear planning cache
+		planningService.clear();
+	
+		//Assign all bts to virtual technician "All"
+		ArrayList<Bt> btList = getRawBt(dbFilepath);
+
+		Technician all = planningService.getTechnicianManager().getTechnician("All");
+		all.getBtList().addAll(btList);
+		
+		//Assign bt to the target Technician
+		for(final Bt bt : btList) {
+			logger.info(" **** Searching tech for BT {} ... ***", bt.getWonum());
+			
+			final GregorianCalendar parsedBtDate = new GregorianCalendar();
+			parsedBtDate.setTime(new SimpleDateFormat(DBMan.getDateFormat()).parse(bt.getDate()));
+			
+			Technician tech = null;
+			try {
+				tech = searchTech(parsedBtDate, getTermFromDesc(bt.getDesc()));
+				logger.info("Tech found: {}", tech.getName());
+			} catch (SheduleServiceException | PlanningException | BtAssignmentException e) {
+				logger.info("tech not found for wonum= {}, turn in 'NOT FOUND'", bt.getWonum());
+				tech = planningService.getTechnicianManager().getTechnician("NOT FOUND");
+			} finally {
+				tech.getBtList().add(bt);
+			}
+				
+		}
+		notifyObserver("List at: " + new SimpleDateFormat("dd MMMM (HH:mm:ss)").format(Calendar.getInstance().getTime()));
+	
+	}
+
 	/**
 	 * Start the research for a technician with date and terminal
 	 * @param p_btDate GreorianCalendar date
 	 * @param p_terminal String terminal
 	 * @return Technician object
 	 * @throws SheduleServiceException 
-	 * @throws BTHException
+	 * @throws PlanningException 
 	 */
-	public final Technician searchTech(final PlanningManager pMan, final GregorianCalendar p_btDate, final String p_terminal) throws BTException, SheduleServiceException
+	public final Technician searchTech(final GregorianCalendar p_btDate, final String p_terminal) throws SheduleServiceException, PlanningException
 	{	
 		logger.info("searchTech -> Search technician for bt date: " + new SimpleDateFormat("dd/MM/YYYY HH:mm").format(p_btDate.getTime()));
 		//Retrieve the month corresponding to the bt date
@@ -68,39 +104,33 @@ public class BtService implements Observable{
 		assign = scheduleService.getCorrectSheduleAcronym(p_terminal, p_btDate, SHEDULEMODE.NORMAL, false);
 		
 		//Trying to get tech
-		String tech = getTech(pMan, btMonth, p_btDate, assign);
+		String tech = getTech(planningService, btMonth, p_btDate, assign);
 		
 		if(tech.equals("NOT FOUND"))
 		//If tech was not found with normal assignation, trying with SUPER assignation...
 		{
 			assign = scheduleService.getCorrectSheduleAcronym(p_terminal, p_btDate, SHEDULEMODE.SUPER, false);
-			tech = getTech(pMan, btMonth, p_btDate, assign);
+			tech = getTech(planningService, btMonth, p_btDate, assign);
 		}
 		
 		if(tech.equals("NOT FOUND"))
 		//If tech was always not found, try to process like a weedend day, this case can happen in holyday 
 		{
 			assign = scheduleService.getCorrectSheduleAcronym(p_terminal, p_btDate, SHEDULEMODE.NORMAL, true);
-			tech = getTech(pMan, btMonth, p_btDate, assign);
+			tech = getTech(planningService, btMonth, p_btDate, assign);
 			
 		}
 		
 		//Return technician model based on the finded String
-		return pMan.getTechnicianManager().getTechnician(tech);
+		return planningService.getTechnicianManager().getTechnician(tech);
 	}
 	
-	public final String getTech(final PlanningManager pMan, final MONTH btMonth, final GregorianCalendar btDate, final String assign)
-			throws BTException
+	public final String getTech(final PlanningManager planningService, final MONTH btMonth, final GregorianCalendar btDate, final String assign)
+			throws PlanningException
 	{	
 		//Get the planning corresponding to the date of BT
-		Planning planning;
-		try {
-			planning = pMan.get(btMonth);
-		} catch (PlanningException e) {
-			throw new BTException(e.getMessage());
-		}
-	
-		
+		Planning planning = planningService.get(btMonth);
+
 		//Start searching at the end of planning if the bt data >= 15
 		String tech = null;
 		MONTH targetMonth;
@@ -116,23 +146,16 @@ public class BtService implements Observable{
 		if(tech.equals("NFD"))
 		{
 			logger.info("getTech(...): receive NFD code, trying to get day in next planning...");
-			if(btDate.get(GregorianCalendar.DAY_OF_MONTH) < 15)
-			{
+			if(btDate.get(GregorianCalendar.DAY_OF_MONTH) < 15) {
 				targetMonth = MONTH.getPrevMonth(btMonth);
 				 searchIn = SEARCH.END;
 			}
-			else
-			{
+			else {
 				targetMonth = MONTH.getNextMonth(btMonth);
 				searchIn = SEARCH.START;
 			}
 			
-			try {
-				planning = pMan.get(targetMonth);
-			} catch (PlanningException e) {
-				throw new BTException(e.getMessage());
-			}
-
+			planning = planningService.get(targetMonth);
 			
 			tech = getTechAt(btDate, searchIn, assign, planning.getArray());
 		}
@@ -228,11 +251,15 @@ public class BtService implements Observable{
 		return tech;
 	}
 	
-	public final ArrayList<Bt> getRawBt(final String dbFilepath) throws DatasourceException
+	public final ArrayList<Bt> getRawBt(final String dbFilepath) throws DatasourceException, OptionException
 	{	
 		String params = null;
-		if(prop.getProperty(BTHelper.FileUsed).equals("true")) params = dbFilepath;
-		else if(prop.getProperty(BTHelper.SqlUsed).equals("true")) params = prop.getProperty(BTHelper.SqlRequest);
+		if(optionService.get(BTHelper.FileUsed).equals("true")) {
+			params = dbFilepath;
+		}
+		else if(optionService.get(BTHelper.SqlUsed).equals("true")) {
+			params = optionService.get(BTHelper.SqlRequest);
+		}
 	
 		//Get datas and create bts
 		bts = DBMan.getBts(params);
@@ -240,49 +267,14 @@ public class BtService implements Observable{
 		return bts;
 	}
 	
-	public final void assign(final PlanningManager pMan, final String dbFilepath) throws BTException, SheduleServiceException
+	/**
+	 * Get the terminal from the bt description
+	 * @param btDesc
+	 * @return
+	 * @throws BtAssignmentException when failed
+	 */
+	public final String getTermFromDesc (String btDesc) throws BtAssignmentException 
 	{
-		//Clear planning cache
-		clear(pMan);
-
-		//Assign all bts to virtual technician "All"
-		ArrayList<Bt> btList;
-		try {
-			btList = getRawBt(dbFilepath);
-		} catch (DatasourceException e) {
-			e.printStackTrace();
-			throw new BTException(e.getMessage());
-		}
-		Technician all = pMan.getTechnicianManager().getTechnician("All");
-		all.getBtList().addAll(btList);
-		
-		//Assign bt to the target Technician
-		for(final Bt bt : btList) {
-			logger.info(" **** Searching tech for BT {} ... ***", bt.getWonum());
-			Technician tech = searchTech(pMan, parseDate(bt.getDate()), getTermFromDesc(bt.getDesc()));
-			if(tech != null) logger.debug("Tech found: {}", tech.getName());
-			if(tech == null) {
-				logger.debug("tech not found for wonum= {}, turn in 'NOT FOUND'", bt.getWonum());
-				tech = pMan.getTechnicianManager().getTechnician("NOT FOUND");
-			}
-	
-			tech.getBtList().add(bt);		
-		}
-		notifyObserver("List at: " + new SimpleDateFormat("dd MMMM (HH:mm:ss)").format(Calendar.getInstance().getTime()));
-
-	}
-	
-	private final void clear(final PlanningManager pMan)
-	{
-		//pMan.getTechnicianManager().resetAllBts();
-		pMan.clear();
-	}
-	
-	private final String getTermFromDesc (String btDesc)
-	{
-		if(btDesc == null)
-			return "NF";
-		
 		btDesc = btDesc.toLowerCase();
 		String res = null;
 		if(btDesc.contains("t1"))
@@ -298,25 +290,11 @@ public class BtService implements Observable{
 		else if(btDesc.contains("t22"))
 			res = "T2";
 		else  {
-			res = "NFT";
-			logger.error("getTermFromDesc : cannot find terminal in desc '{}', return NFT error", btDesc);
+			logger.error("cannot find terminal in desc {}", btDesc);
+			throw new BtAssignmentException("cannot find terminal in desc " + btDesc);
 		}
+		
 		return res;
-	}
-	
-	private final GregorianCalendar parseDate(String date) throws BTException
-	{
-		logger.trace("parseDate(" + date + ")");
-	
-		final GregorianCalendar cal = new GregorianCalendar();
-		try {
-			cal.setTime(new SimpleDateFormat(DBMan.getDateFormat()).parse(date));
-		} catch (ParseException e) {
-			throw new BTException(e.getMessage());
-		}
-
-		logger.trace("result: {}", new SimpleDateFormat("dd/MM/YYYY").format(cal.getTime()));
-		return cal;
 	}
 
 	@Override

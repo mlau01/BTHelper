@@ -35,7 +35,7 @@ public class CoreManager implements Observable {
 
 	private final Properties properties;
 	private final PlanningManager planningService;
-	private final BtService btMan;
+	private final BtService btService;
 	private Datasource DBMan;
 	private final RequestManager reqMan;
 	private final ArrayList<Observer> observers;
@@ -63,7 +63,7 @@ public class CoreManager implements Observable {
 		}
 		scheduleService = new ScheduleService(optionService);
 		scheduleService.load();
-		btMan = new BtService(properties, observers, DBMan, planningService, scheduleService);
+		btService = new BtService(optionService, observers, DBMan, planningService, scheduleService);
 		
 		reqMan = new RequestManager();
 		
@@ -167,9 +167,9 @@ public class CoreManager implements Observable {
 	
 	// ---- Bt methods ----
 	
-	public final ArrayList<String[]> bt_get_rawList(final String dbFilepath) throws DatasourceException
+	public final ArrayList<String[]> bt_get_rawList(final String dbFilepath) throws DatasourceException, OptionException
 	{	
-		final ArrayList<Bt> btList = btMan.getRawBt(dbFilepath);
+		final ArrayList<Bt> btList = btService.getRawBt(dbFilepath);
 
 		final ArrayList<String[]> btArray = new ArrayList<String[]>();
 		for(final Bt bt : btList)
@@ -181,9 +181,9 @@ public class CoreManager implements Observable {
 		return btArray;
 	}
 	
-	public final void bt_assign(final String dbFilepath) throws BTException, SheduleServiceException
+	public final void bt_assign(final String dbFilepath) throws BTException, SheduleServiceException, ParseException, OptionException, DatasourceException
 	{
-		btMan.assign(planningService, dbFilepath);
+		btService.assign(planningService, dbFilepath);
 	}
 	
 	public void w(ArrayList<Bt> btList) throws MaximoConnectionException, IOException, InterruptedException

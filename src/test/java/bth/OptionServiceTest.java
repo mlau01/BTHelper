@@ -16,7 +16,7 @@ import org.junit.jupiter.api.Test;
 import bth.core.options.OptionException;
 import bth.core.options.OptionService;
 
-public class OptionTest {
+public class OptionServiceTest {
 	
 	 private final String localdir = System.getenv("LOCALAPPDATA");
 	 

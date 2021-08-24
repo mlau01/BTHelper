@@ -6,6 +6,7 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.io.IOException;
 import java.net.URL;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -116,8 +117,7 @@ public class MWin extends JFrame implements Observer {
 	public void loadBts(final String filepath) {
 		try {
 			corma.bt_assign(filepath);
-		} catch (BTException | SheduleServiceException e)
-		{
+		} catch (BTException | SheduleServiceException | ParseException | OptionException | DatasourceException e) {
 			showError(e.getClass().getName(), e.getMessage());
 		}
 	}

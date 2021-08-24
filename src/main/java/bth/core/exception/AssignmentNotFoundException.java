@@ -1,4 +1,4 @@
-package bth.core.schedule.exception;
+package bth.core.exception;
 
 public class AssignmentNotFoundException extends Exception {
 

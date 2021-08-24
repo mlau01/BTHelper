@@ -24,12 +24,12 @@ import javax.swing.JTextField;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import bth.core.exception.AssignmentNotFoundException;
 import bth.core.model.Assignment;
 import bth.core.options.OptionException;
 import bth.core.options.OptionService;
 import bth.core.schedule.ScheduleCategory;
 import bth.core.schedule.ScheduleService;
-import bth.core.schedule.exception.AssignmentNotFoundException;
 import bth.gui.MWin;
 
 public class SchedulePanel extends JPanel {

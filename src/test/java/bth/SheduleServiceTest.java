@@ -18,7 +18,6 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import bth.core.bt.Sheduler;
 import bth.core.exception.AssignmentAcronymException;
 import bth.core.exception.AssignmentScheduleOverlapException;
 import bth.core.exception.SheduleServiceException;

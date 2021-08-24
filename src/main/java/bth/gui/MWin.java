@@ -22,8 +22,9 @@ import javax.swing.SwingUtilities;
 import bth.BTHelper;
 import bth.Observer;
 import bth.core.CoreManager;
-import bth.core.bt.BTException;
 import bth.core.datasource.DatasourceException;
+import bth.core.exception.BTException;
+import bth.core.exception.SheduleServiceException;
 import bth.core.options.OptionException;
 import bth.core.options.OptionService;
 import bth.core.request.RequestException;
@@ -115,9 +116,8 @@ public class MWin extends JFrame implements Observer {
 	public void loadBts(final String filepath) {
 		try {
 			corma.bt_assign(filepath);
-		} catch (BTException e)
+		} catch (BTException | SheduleServiceException e)
 		{
-			e.printStackTrace();
 			showError(e.getClass().getName(), e.getMessage());
 		}
 	}

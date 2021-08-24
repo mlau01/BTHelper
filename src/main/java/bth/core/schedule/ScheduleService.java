@@ -12,15 +12,14 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import bth.BTHelper;
-import bth.core.bt.Sheduler.SHEDULEMODE;
 import bth.core.exception.AssignmentAcronymException;
+import bth.core.exception.AssignmentNotFoundException;
 import bth.core.exception.AssignmentScheduleOverlapException;
 import bth.core.exception.SheduleServiceException;
 import bth.core.exception.TimetableException;
 import bth.core.model.Assignment;
 import bth.core.options.OptionException;
 import bth.core.options.OptionService;
-import bth.core.schedule.exception.AssignmentNotFoundException;
 
 public class ScheduleService {
 	public enum SHEDULEMODE {

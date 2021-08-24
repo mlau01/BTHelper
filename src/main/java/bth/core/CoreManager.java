@@ -10,13 +10,14 @@ import java.util.Properties;
 import bth.BTHelper;
 import bth.Observable;
 import bth.Observer;
-import bth.core.bt.BTException;
 import bth.core.bt.Bt;
-import bth.core.bt.BtManager;
+import bth.core.bt.BtService;
 import bth.core.datasource.DatasourceException;
 import bth.core.datasource.Datasource;
 import bth.core.datasource.file.FileManager;
 import bth.core.datasource.sql.SQLManager;
+import bth.core.exception.BTException;
+import bth.core.exception.SheduleServiceException;
 import bth.core.options.OptionException;
 import bth.core.options.OptionService;
 import bth.core.planning.PlanningManager;
@@ -33,23 +34,23 @@ import bth.core.planning.Planning;
 public class CoreManager implements Observable {
 
 	private final Properties properties;
-	private final PlanningManager pMan;
-	private final BtManager btMan;
+	private final PlanningManager planningService;
+	private final BtService btMan;
 	private Datasource DBMan;
 	private final RequestManager reqMan;
 	private final ArrayList<Observer> observers;
-	private final OptionService optionsService;
+	private final OptionService optionService;
 	private final ScheduleService scheduleService;
 	
 	public CoreManager() throws Exception
 	{
 
-		this.optionsService = new OptionService(BTHelper.CONF_DIRECTORY + "/" + BTHelper.CONF_NAME);
-		optionsService.loadConfig();
+		this.optionService = new OptionService(BTHelper.CONF_DIRECTORY + "/" + BTHelper.CONF_NAME);
+		optionService.loadConfig();
 
-		properties = optionsService.getCurrentProperties();
+		properties = optionService.getCurrentProperties();
 		observers = new ArrayList<Observer>();
-		pMan = new PlanningManager(properties);
+		planningService = new PlanningManager(properties);
 		
 		if(Boolean.parseBoolean(properties.getProperty(BTHelper.SqlUsed))) {
 			DBMan = new SQLManager(this, observers, properties);
@@ -60,9 +61,9 @@ public class CoreManager implements Observable {
 		else if(Boolean.parseBoolean(properties.getProperty(BTHelper.MaximoUsed))) {
 			//DBMan = new MaximoManager(this, observers, properties);
 		}
-		scheduleService = new ScheduleService(optionsService);
+		scheduleService = new ScheduleService(optionService);
 		scheduleService.load();
-		btMan = new BtManager(properties, observers, DBMan);
+		btMan = new BtService(properties, observers, DBMan, planningService, scheduleService);
 		
 		reqMan = new RequestManager();
 		
@@ -96,11 +97,11 @@ public class CoreManager implements Observable {
 	
 	public final Properties getProperties()
 	{
-		return optionsService.getCurrentProperties();
+		return optionService.getCurrentProperties();
 	}
 	
 	public final OptionService getOptionService() {
-		return optionsService;
+		return optionService;
 	}
 	
 	// ---- Planning methods ----
@@ -108,7 +109,7 @@ public class CoreManager implements Observable {
 	public final ArrayList<String> planning_get_cacheList()
 	{
 		final ArrayList<String> list = new ArrayList<String>();
-		for(final Planning plan : pMan.getCache()) list.add(plan.getMonth().toString());
+		for(final Planning plan : planningService.getCache()) list.add(plan.getMonth().toString());
 		return list;
 	}
 	
@@ -116,7 +117,7 @@ public class CoreManager implements Observable {
 			throws HttpConnectionException, IOException, PlanningException
 	{
 		MONTH month = MONTH.getByName(sMonth);
-		final Planning plan = pMan.get(month);
+		final Planning plan = planningService.get(month);
 
 		return plan.getArray();
 	}
@@ -125,7 +126,7 @@ public class CoreManager implements Observable {
 			throws HttpConnectionException, IOException, PlanningException
 	{
 		final MONTH month = MONTH.getByName(sMonth);
-		final Planning plan = pMan.get(month);
+		final Planning plan = planningService.get(month);
 
 		return plan.getLastModified();
 	}
@@ -135,7 +136,7 @@ public class CoreManager implements Observable {
 			throws HttpConnectionException, IOException, PlanningException
 	{
 		final MONTH month = MONTH.getByName(sMonth);
-		final Planning plan = pMan.get(month);
+		final Planning plan = planningService.get(month);
 		
 		return plan.isLocal();
 	}
@@ -146,20 +147,20 @@ public class CoreManager implements Observable {
 	public final ArrayList<String> technician_get_list()
 	{
 		final ArrayList<String> list = new ArrayList<String>();
-		for(final Technician tec : pMan.getTechnicianManager().getTechList()) list.add(tec.getName());
+		for(final Technician tec : planningService.getTechnicianManager().getTechList()) list.add(tec.getName());
 		return list;
 	}
 
 	public final ArrayList<Bt> technician_get_bts(final String userName)
 	{
-		final Technician tec = pMan.getTechnicianManager().getTechnician(userName);
+		final Technician tec = planningService.getTechnicianManager().getTechnician(userName);
 		
 		return tec.getBtList();
 	}
 	
 	public final String technician_get_name(final String userName)
 	{
-		final Technician tec = pMan.getTechnicianManager().getTechnician(userName);
+		final Technician tec = planningService.getTechnicianManager().getTechnician(userName);
 		
 		return tec.getName();
 	}
@@ -180,9 +181,9 @@ public class CoreManager implements Observable {
 		return btArray;
 	}
 	
-	public final void bt_assign(final String dbFilepath) throws BTException
+	public final void bt_assign(final String dbFilepath) throws BTException, SheduleServiceException
 	{
-		btMan.assign(pMan, dbFilepath);
+		btMan.assign(planningService, dbFilepath);
 	}
 	
 	public void w(ArrayList<Bt> btList) throws MaximoConnectionException, IOException, InterruptedException

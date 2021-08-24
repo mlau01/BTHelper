@@ -1,10 +1,8 @@
 package bth.core.schedule;
 
-import java.text.SimpleDateFormat;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 
@@ -16,7 +14,6 @@ import bth.core.exception.AssignmentAcronymException;
 import bth.core.exception.AssignmentNotFoundException;
 import bth.core.exception.AssignmentScheduleOverlapException;
 import bth.core.exception.SheduleServiceException;
-import bth.core.exception.TimetableException;
 import bth.core.model.Assignment;
 import bth.core.options.OptionException;
 import bth.core.options.OptionService;

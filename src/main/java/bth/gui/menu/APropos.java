@@ -17,9 +17,8 @@ public class APropos extends JDialog {
 		this.setSize(300, 100);
 		this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		mainContainer.add(new JLabel(BTHelper.APP_NAME + " version " + BTHelper.APP_VERSION));
-		mainContainer.add(new JLabel("Made by Mathias LAUER"));
-		mainContainer.add(new JLabel("mathias.lauer.06@gmail.com"));
-		mainContainer.add(new JLabel(":x"));
+		mainContainer.add(new JLabel("Author: " + BTHelper.AUTHOR));
+		mainContainer.add(new JLabel(BTHelper.AUTHORMAIL));
 	}
 
 }

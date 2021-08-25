@@ -134,6 +134,7 @@ public class OptionsGui extends JPanel implements Fillable {
 			gbh.add(httpComp[0], 0, 0, 1);
 			gbh.add(httpComp[1], 0, 1, 1);
 			fHttpUrl = (JTextField)httpComp[1];
+			((JTextField)fHttpUrl).setToolTipText("http://nce1dbmain.free.fr/ or file://C:/planning/");
 			
 			gbh.add(httpComp[2], 1, 0, 1);
 			gbh.add(httpComp[3], 1, 1, 1);

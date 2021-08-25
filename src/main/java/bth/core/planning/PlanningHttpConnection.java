@@ -84,16 +84,15 @@ public class PlanningHttpConnection implements IPlanningConnection{
 		
 		//Getting the target content
 		try {
-		InputStream content = (InputStream) con.getInputStream();
-		BufferedReader in = new BufferedReader(new InputStreamReader(content));
-		String line;
-		while((line = in.readLine()) != null)
-		{
-			contentString += line;
-		}
-	
-		in.close();
-		content.close();
+			InputStream content = (InputStream) con.getInputStream();
+			BufferedReader in = new BufferedReader(new InputStreamReader(content));
+			String line;
+			while((line = in.readLine()) != null) {
+				contentString += line;
+			}
+		
+			in.close();
+			content.close();
 		} catch (IOException e)
 		{
 			throw new PlanningConnectionException(e.getMessage());

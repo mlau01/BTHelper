@@ -1,35 +1,46 @@
 package bth.core.planning;
 
-import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
-import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import bth.core.exception.PlanningConnectionException;
 
 public class PlanningFileConnection implements IPlanningConnection {
-
+	private final static Logger logger = LogManager.getLogger();
 	@Override
 	public PlanningContent getTargetContent(String path, String user, String password, String proxyhost)
 			throws PlanningConnectionException {
-		String fileContent = null;
+		String fileContent = "";
 		
 		path = cleanPath(path);
 		
-		Path fichier = Paths.get(path);
+		Path file = Paths.get(path);
+		File fileDetails = file.toFile();
+		if( ! fileDetails.exists()) {
+			throw new PlanningConnectionException("File not exists: " + path); 
+		}
+		try {
+			for(String string : Files.readAllLines(file)) {
+				logger.debug(string);
+				fileContent += string;
+			}
+		} catch (IOException e) {
+			logger.error("IOException catched: ", e.getMessage());
+			throw new PlanningConnectionException(e.getMessage());
+		}
+
 		
-	    try (BufferedReader reader = Files.newBufferedReader(fichier, Charset.forName("UTF-8"))) {
-	      String line = null;
-	      while ((line = reader.readLine()) != null) {
-	        fileContent += line;
-	      }
-	    } catch (IOException ioe) {
-	      throw new PlanningConnectionException(ioe.getMessage());
-	    }
+		logger.debug("Opening file: {}, size: {}", path.toString(), fileDetails.length());
+		
+	   
 	    
-	    return new PlanningContent(fileContent, fichier.toFile().lastModified());
+	    return new PlanningContent(fileContent, fileDetails.lastModified());
 	}
 	
 	/**

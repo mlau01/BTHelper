@@ -35,8 +35,10 @@ public class PlanningService {
 		planList = new ArrayList<Planning>();
 		tecMan = new TechnicianManager();
 		if(optionService.get(BTHelper.HttpUrl).startsWith("http")) {
+			logger.debug("Protocol http detected, using PlanningHttpConnection");
 			planningConnection = new PlanningHttpConnection();
 		} else if (optionService.get(BTHelper.HttpUrl).startsWith("file")){
+			logger.debug("Protocol file detected, using PlanningFileConnection");
 			planningConnection = new PlanningFileConnection();
 		}
 	}
@@ -80,7 +82,7 @@ public class PlanningService {
 			targetData = planningConnection.getTargetContent(buildUrl(hostname, month), user, passwd, proxyHost);
 		} catch (PlanningConnectionException e)
 		{
-			logger.error("Cannot reach target: {}", e.getMessage());
+			logger.error("Cannot reach target: {}", e);
 			newPlan = deserialize(month);
 			if(newPlan != null) { 
 				newPlan.setLocalMode();
@@ -142,12 +144,13 @@ public class PlanningService {
 	 */
 	private final Planning deserialize(final MONTH month) throws PlanningException
 	{
-		
+		String path = BTHelper.CONF_DIRECTORY + "/" + month.toString() + ".ser";
+		logger.debug("Try deserialize " + path);
 		Planning planning = null;
 		ObjectInputStream ois = null;
 		
 		try {	
-			final FileInputStream file = new FileInputStream(BTHelper.CONF_DIRECTORY + "/" + month.toString() + ".ser");
+			final FileInputStream file = new FileInputStream(path);
 			ois = new ObjectInputStream(file);
 			planning = (Planning)ois.readObject();
 		} catch (IOException | ClassNotFoundException e)
@@ -163,6 +166,7 @@ public class PlanningService {
 			}
 		}
 	
+		logger.debug("Deserialization complete of: " + path);
 		return planning;
 		
 	}

@@ -13,14 +13,13 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import bth.BTHelper;
-import bth.core.CoreManager;
 import bth.core.MONTH;
 import bth.core.exception.HttpConnectionException;
+import bth.core.exception.PlanningConnectionException;
 import bth.core.exception.PlanningException;
 
 public class PlanningManager {
 	
-	private short verboseLevel = 0;
 	private final ArrayList<Planning> planList;
 	
 	private final TechnicianManager tecMan;
@@ -36,7 +35,7 @@ public class PlanningManager {
 		if(properties.getProperty(BTHelper.HttpUrl).startsWith("http")) {
 			planningConnection = new PlanningHttpConnection();
 		} else if (properties.getProperty(BTHelper.HttpUrl).startsWith("file")){
-			
+			planningConnection = new PlanningFileConnection();
 		}
 	}
 
@@ -77,11 +76,13 @@ public class PlanningManager {
 		
 		try {
 			targetData = planningConnection.getTargetContent(buildUrl(hostname, month), user, passwd, proxyHost);
-		} catch (HttpConnectionException e)
+		} catch (PlanningConnectionException e)
 		{
 			logger.error("Cannot reach target: {}", e.getMessage());
 			newPlan = deserialize(month);
-			if(newPlan != null) newPlan.setLocalMode();
+			if(newPlan != null) { 
+				newPlan.setLocalMode();
+			}
 		}
 
 		if(targetData != null)

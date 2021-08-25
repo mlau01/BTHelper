@@ -15,13 +15,14 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import bth.core.exception.HttpConnectionException;
+import bth.core.exception.PlanningConnectionException;
 
 public class PlanningHttpConnection implements IPlanningConnection{
 	
 	//Encapsulation of HttpUrlConnection native class
 	private static final Logger logger = LogManager.getLogger();
 
-	public final PlanningContent getTargetContent(final String url, final String user, final String password, final String proxyhost) throws HttpConnectionException
+	public final PlanningContent getTargetContent(final String url, final String user, final String password, final String proxyhost) throws PlanningConnectionException
 	{
 		String contentString = new String();
 		long lastModified; 
@@ -39,7 +40,7 @@ public class PlanningHttpConnection implements IPlanningConnection{
 		try {
 			con = (HttpURLConnection)new URL(url).openConnection(proxy);
 		} catch (IOException e) {
-			throw new HttpConnectionException(e.getMessage());
+			throw new PlanningConnectionException(e.getMessage());
 		}
 		
 		//Authentication handling
@@ -58,7 +59,7 @@ public class PlanningHttpConnection implements IPlanningConnection{
 			con.setConnectTimeout(7000);
 			con.setReadTimeout(5000);
 		} catch (ProtocolException e) {
-			throw new HttpConnectionException(e.getMessage());
+			throw new PlanningConnectionException(e.getMessage());
 		}
 
 		//Handling response code
@@ -66,16 +67,16 @@ public class PlanningHttpConnection implements IPlanningConnection{
 		try {
 			responseCode = con.getResponseCode();
 		} catch (IOException e) {
-			throw new HttpConnectionException(e.getMessage());
+			throw new PlanningConnectionException(e.getMessage());
 		}
 		
 		if(responseCode == 401) {
 			logger.info("Http response Code 401 : Authentification problem");
-			throw new HttpConnectionException("Code 401 : Authentification problem");
+			throw new PlanningConnectionException("Code 401 : Authentification problem");
 		}
 		else if (responseCode == 404) {
 			logger.info("Http response Code 404 : Url not found");
-			throw new HttpConnectionException("Code 404 : Url not found");
+			throw new PlanningConnectionException("Code 404 : Url not found");
 		}
 		else {
 			logger.info("Http response code: " + responseCode);
@@ -95,7 +96,7 @@ public class PlanningHttpConnection implements IPlanningConnection{
 		content.close();
 		} catch (IOException e)
 		{
-			throw new HttpConnectionException(e.getMessage());
+			throw new PlanningConnectionException(e.getMessage());
 		}
 		
 		lastModified = con.getLastModified();

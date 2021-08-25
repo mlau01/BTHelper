@@ -26,6 +26,7 @@ import javax.swing.table.AbstractTableModel;
 
 import bth.core.datasource.DatasourceException;
 import bth.core.exception.RequestException;
+import bth.core.options.OptionException;
 import bth.core.request.RequestService;
 import bth.gui.Fillable;
 import bth.gui.MWin;
@@ -65,10 +66,12 @@ public class RequestGui extends JPanel implements Fillable {
 	public void fillDatas()
 	{
 		queryListModel.clear();
-		for(final String s : requestService.getQueriesTitle())
-		{
-			queryListModel.addElement(s);
+		try {
+			requestService.getQueriesTitle().forEach(title -> queryListModel.addElement(title));
+		} catch (OptionException e) {
+			mWin.showError(e.getClass().getName(), e.getMessage());
 		}
+		
 	}
 	
 	private void createWidgets()
@@ -168,8 +171,14 @@ public class RequestGui extends JPanel implements Fillable {
 			
 			eventAction_setEditable(false);
 			lastSelectedItem = selectedValue;
-			queryName.setText(selectedValue);
-			queryArea.setText(requestService.getQueryValue(selectedValue));
+			
+			
+			try {
+				queryName.setText(selectedValue);
+				queryArea.setText(requestService.getQueryValue(selectedValue));
+			} catch (OptionException | RequestException e1) {
+				mWin.showError(e1.getClass().getName(), e1.getMessage());
+			}
 		});
 		
 		bExecute.addActionListener(e -> {
@@ -199,8 +208,7 @@ public class RequestGui extends JPanel implements Fillable {
 			
 				try {
 					requestService.writeQuery(queryName.getText(), queryArea.getText());
-				} catch (RequestException e1) {
-					e1.printStackTrace();
+				} catch (RequestException | OptionException e1) {
 					mWin.showError(e1.getClass().getName(), e1.getMessage());
 				} finally {
 					queryListModel.clear();
@@ -215,8 +223,7 @@ public class RequestGui extends JPanel implements Fillable {
 			
 			if(res == 0) try {
 					requestService.delQuery(lastSelectedItem);
-				} catch (RequestException e1) {
-					e1.printStackTrace();
+				} catch (RequestException | OptionException e1) {
 					mWin.showError(e1.getClass().getName(), e1.getMessage());
 				} finally {
 					queryListModel.clear();

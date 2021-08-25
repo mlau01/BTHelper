@@ -122,6 +122,9 @@ public class RequestService {
 	 */
 	public void writeQuery(String title, String value) throws RequestException, OptionException {
 		Query newQuery = new Query(title, value);
+		if(value.contains(":") || value.contains(";")) {
+			throw new RequestException("forbidden characters found: ';' or ':'");
+		}
 		for(Query query : queries) {
 			if(query.getTitle().equals(title)) {
 				throw new RequestException("A query with this title already exists");

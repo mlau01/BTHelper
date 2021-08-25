@@ -42,40 +42,6 @@ public class RequestService {
 		}
 	}
 	
-	/*
-	public final ArrayList<String> getQueryList()
-	{
-		final ArrayList<String> out =  new ArrayList<String>();
-		for(final Object o : queryFile.keySet())
-		{
-			out.add((String)o);
-		}
-		
-		return out;
-	}
-	
-	public final void writeQuery(final String name, final String query) throws RequestException
-	{
-		if(queryFile != null)
-		{
-			queryFile.setProperty(name, query);
-			write();
-		}
-	}
-	public final void delQuery(final String name) throws RequestException
-	{
-		if(queryFile == null) return;
-		
-		queryFile.remove(name);
-		write();
-	}
-	public final String getQuery(final String name)
-	{
-		if(queryFile != null) return queryFile.getProperty(name);
-		
-		return null;
-	}
-*/
 	public ResultSet execQuery(String query) throws DatasourceException {
 		return sqlService.getResultSet(query);
 	}

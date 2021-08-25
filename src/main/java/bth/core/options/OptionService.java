@@ -68,6 +68,8 @@ public class OptionService {
 		np.setProperty(BTHelper.sheduleT2W, BTHelper.defaultSheduleT2W);
 		np.setProperty(BTHelper.sheduleT2S, BTHelper.defaultSheduleT2S);
 		
+		np.setProperty(BTHelper.Queries, BTHelper.defaultQueries);
+		
 		return np;
 	}
 	

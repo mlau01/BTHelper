@@ -89,6 +89,8 @@ public class BTHelper {
 	public final static String defaultSheduleT2W = "SM=(04:30:00,13:59:59);SS=(14:00:00,23:30:00)";
 	public final static String defaultSheduleT2S = "SM=(04:30:00,13:59:59);SS=(14:00:00,23:30:00)";
 	
+	public final static String defaultQueries = "";
+	
 	public final static String defaultSqlRequest = "SELECT WONUM, REPORTDATE, DESCRIPTION FROM WORKORDER\n"
 	+ "WHERE (\n"
 	+ "\tSTATUS Not Like 'ann'\n"

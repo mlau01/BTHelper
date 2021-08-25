@@ -17,24 +17,26 @@ import bth.core.MONTH;
 import bth.core.exception.HttpConnectionException;
 import bth.core.exception.PlanningConnectionException;
 import bth.core.exception.PlanningException;
+import bth.core.options.OptionException;
+import bth.core.options.OptionService;
 
-public class PlanningManager {
+public class PlanningService {
 	
 	private final ArrayList<Planning> planList;
 	
 	private final TechnicianManager tecMan;
-	private final Properties properties;
+	private OptionService optionService;
 	private final static Logger logger = LogManager.getLogger();
 	private IPlanningConnection planningConnection;
 	
-	public PlanningManager(final Properties p_properties)
+	public PlanningService(OptionService p_optionService) throws OptionException
 	{
-		properties = p_properties;
+		optionService = p_optionService;
 		planList = new ArrayList<Planning>();
 		tecMan = new TechnicianManager();
-		if(properties.getProperty(BTHelper.HttpUrl).startsWith("http")) {
+		if(optionService.get(BTHelper.HttpUrl).startsWith("http")) {
 			planningConnection = new PlanningHttpConnection();
-		} else if (properties.getProperty(BTHelper.HttpUrl).startsWith("file")){
+		} else if (optionService.get(BTHelper.HttpUrl).startsWith("file")){
 			planningConnection = new PlanningFileConnection();
 		}
 	}
@@ -49,7 +51,7 @@ public class PlanningManager {
 		}
 	}
 	
-	public Planning get(final MONTH month) throws PlanningException
+	public Planning get(final MONTH month) throws PlanningException, OptionException
 	{
 		logger.info("get(...) -> Request for month: " + month + "...");
 		//Search existing planning in memory
@@ -62,13 +64,13 @@ public class PlanningManager {
 		
 		PlanningContent targetData = null;
 		Planning newPlan = null;
-		final String user = properties.getProperty(BTHelper.HttpUser);
-		final String passwd = properties.getProperty(BTHelper.HttpPasswd);
-		final String hostname = properties.getProperty(BTHelper.HttpUrl);
-		final String useProxy = properties.getProperty(BTHelper.HttpUseProxy);
+		final String user = optionService.get(BTHelper.HttpUser);
+		final String passwd = optionService.get(BTHelper.HttpPasswd);
+		final String hostname = optionService.get(BTHelper.HttpUrl);
+		final String useProxy = optionService.get(BTHelper.HttpUseProxy);
 		String proxyHost;
 		if(useProxy.equals("true")) {
-			proxyHost = properties.getProperty(BTHelper.HttpProxyHost);
+			proxyHost = optionService.get(BTHelper.HttpProxyHost);
 		}
 		else {
 			proxyHost = null;

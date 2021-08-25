@@ -24,7 +24,7 @@ import bth.core.exception.SheduleServiceException;
 import bth.core.options.OptionException;
 import bth.core.options.OptionService;
 import bth.core.planning.Planning;
-import bth.core.planning.PlanningManager;
+import bth.core.planning.PlanningService;
 import bth.core.planning.PlanningParser;
 import bth.core.planning.Technician;
 import bth.core.schedule.ScheduleService;
@@ -35,12 +35,12 @@ public class BtService implements Observable{
 	private ArrayList<Bt> bts;
 	private final Datasource DBMan;
 	private final ArrayList<Observer> observers;
-	private PlanningManager planningService;
+	private PlanningService planningService;
 	private ScheduleService scheduleService;
 	private OptionService optionService;
 	private final static Logger logger = LogManager.getLogger();
 	
-	public BtService(final OptionService p_optionService, final ArrayList<Observer> p_observers, final Datasource p_DBMan, PlanningManager p_planningService, ScheduleService p_scheduleService)
+	public BtService(final OptionService p_optionService, final ArrayList<Observer> p_observers, final Datasource p_DBMan, PlanningService p_planningService, ScheduleService p_scheduleService)
 	{
 		logger.trace("INIT");
 		this.optionService = p_optionService;
@@ -100,8 +100,9 @@ public class BtService implements Observable{
 	 * @throws PlanningException 
 	 * @throws ParseException 
 	 * @throws BtAssignmentException 
+	 * @throws OptionException 
 	 */
-	public final Technician searchTech(String btDateString, final String btDesc) throws SheduleServiceException, PlanningException, ParseException, BtAssignmentException
+	public final Technician searchTech(String btDateString, final String btDesc) throws SheduleServiceException, PlanningException, ParseException, BtAssignmentException, OptionException
 	{	
 		//Retrieve the month corresponding to the bt date
 		final GregorianCalendar btDate = new GregorianCalendar();
@@ -139,8 +140,8 @@ public class BtService implements Observable{
 		return planningService.getTechnicianManager().getTechnician(tech);
 	}
 	
-	public final String getTech(final PlanningManager planningService, final MONTH btMonth, final GregorianCalendar btDate, final String assign)
-			throws PlanningException
+	public final String getTech(final PlanningService planningService, final MONTH btMonth, final GregorianCalendar btDate, final String assign)
+			throws PlanningException, OptionException
 	{	
 		//Get the planning corresponding to the date of BT
 		Planning planning = planningService.get(btMonth);

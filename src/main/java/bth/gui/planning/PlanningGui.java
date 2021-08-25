@@ -16,6 +16,7 @@ import javax.swing.table.TableModel;
 import bth.core.MONTH;
 import bth.core.exception.HttpConnectionException;
 import bth.core.exception.PlanningException;
+import bth.core.options.OptionException;
 import bth.gui.MWin;
 
 import java.awt.Font;
@@ -91,7 +92,7 @@ public class PlanningGui extends JPanel implements ActionListener{
 				info.setText("Local Mode");
 			}
 			
-		} catch (HttpConnectionException | IOException e) {
+		} catch (HttpConnectionException | OptionException | IOException e) {
 			mWin.showError("Http error", e.getMessage());
 		} catch (PlanningException e)
 		{

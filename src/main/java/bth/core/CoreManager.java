@@ -23,7 +23,7 @@ import bth.core.exception.RequestException;
 import bth.core.exception.SheduleServiceException;
 import bth.core.options.OptionException;
 import bth.core.options.OptionService;
-import bth.core.planning.PlanningManager;
+import bth.core.planning.PlanningService;
 import bth.core.planning.Technician;
 import bth.core.request.RequestService;
 import bth.core.schedule.ScheduleService;
@@ -34,7 +34,7 @@ import bth.core.planning.Planning;
 public class CoreManager implements Observable {
 
 	private final Properties properties;
-	private final PlanningManager planningService;
+	private final PlanningService planningService;
 	private final BtService btService;
 	private Datasource DBMan;
 	private final RequestService requestService;
@@ -50,7 +50,7 @@ public class CoreManager implements Observable {
 
 		properties = optionService.getCurrentProperties();
 		observers = new ArrayList<Observer>();
-		planningService = new PlanningManager(properties);
+		planningService = new PlanningService(optionService);
 		
 		if(Boolean.parseBoolean(properties.getProperty(BTHelper.SqlUsed))) {
 			DBMan = new SQLManager(this, observers, properties);
@@ -90,7 +90,7 @@ public class CoreManager implements Observable {
 	}
 	
 	public final ArrayList<ArrayList<String>> planning_get_array(final String sMonth)
-			throws HttpConnectionException, IOException, PlanningException
+			throws HttpConnectionException, IOException, PlanningException, OptionException
 	{
 		MONTH month = MONTH.getByName(sMonth);
 		final Planning plan = planningService.get(month);
@@ -99,7 +99,7 @@ public class CoreManager implements Observable {
 	}
 	
 	public final long planning_get_lastModified(final String sMonth) 
-			throws HttpConnectionException, IOException, PlanningException
+			throws HttpConnectionException, IOException, PlanningException, OptionException
 	{
 		final MONTH month = MONTH.getByName(sMonth);
 		final Planning plan = planningService.get(month);
@@ -109,7 +109,7 @@ public class CoreManager implements Observable {
 	
 	
 	public final boolean planning_isLocal(final String sMonth) 
-			throws HttpConnectionException, IOException, PlanningException
+			throws HttpConnectionException, IOException, PlanningException, OptionException
 	{
 		final MONTH month = MONTH.getByName(sMonth);
 		final Planning plan = planningService.get(month);

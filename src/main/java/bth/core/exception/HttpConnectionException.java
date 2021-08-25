@@ -1,4 +1,4 @@
-package bth.core.planning;
+package bth.core.exception;
 
 public class HttpConnectionException extends Exception {
 	

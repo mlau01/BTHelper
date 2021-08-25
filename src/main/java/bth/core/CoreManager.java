@@ -17,6 +17,8 @@ import bth.core.datasource.Datasource;
 import bth.core.datasource.file.FileManager;
 import bth.core.datasource.sql.SQLManager;
 import bth.core.exception.BTException;
+import bth.core.exception.HttpConnectionException;
+import bth.core.exception.PlanningException;
 import bth.core.exception.RequestException;
 import bth.core.exception.SheduleServiceException;
 import bth.core.options.OptionException;
@@ -27,8 +29,6 @@ import bth.core.request.RequestService;
 import bth.core.schedule.ScheduleService;
 import mack.MackConnection;
 import mack.exception.MaximoConnectionException;
-import bth.core.planning.PlanningException;
-import bth.core.planning.HttpConnectionException;
 import bth.core.planning.Planning;
 
 public class CoreManager implements Observable {

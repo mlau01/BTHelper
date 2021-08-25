@@ -19,8 +19,7 @@ public class Planning implements Serializable{
 	private final ArrayList<String> technicians;
 	private final Calendar gettedDate;
 	private boolean localMode = false;
-	private final static Logger logger = LogManager.getLogger();
-	
+
 	Planning(final MONTH pMonth, final ArrayList<ArrayList<String>> p_array, final long p_lastModified, final Calendar p_gettedDate)
 	{
 		month = pMonth;

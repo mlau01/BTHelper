@@ -15,6 +15,8 @@ import org.apache.logging.log4j.Logger;
 import bth.BTHelper;
 import bth.core.CoreManager;
 import bth.core.MONTH;
+import bth.core.exception.HttpConnectionException;
+import bth.core.exception.PlanningException;
 
 public class PlanningManager {
 	
@@ -24,12 +26,18 @@ public class PlanningManager {
 	private final TechnicianManager tecMan;
 	private final Properties properties;
 	private final static Logger logger = LogManager.getLogger();
+	private IPlanningConnection planningConnection;
 	
 	public PlanningManager(final Properties p_properties)
 	{
 		properties = p_properties;
 		planList = new ArrayList<Planning>();
 		tecMan = new TechnicianManager();
+		if(properties.getProperty(BTHelper.HttpUrl).startsWith("http")) {
+			planningConnection = new PlanningHttpConnection();
+		} else if (properties.getProperty(BTHelper.HttpUrl).startsWith("file")){
+			
+		}
 	}
 
 	public String buildUrl(final String hostname, final MONTH month) {
@@ -53,7 +61,7 @@ public class PlanningManager {
 		//At this stage, no planning was founded in memory, so we try to get it by other way
 		logger.info("Getting new planning : " + month);
 		
-		HttpContent targetData = null;
+		PlanningContent targetData = null;
 		Planning newPlan = null;
 		final String user = properties.getProperty(BTHelper.HttpUser);
 		final String passwd = properties.getProperty(BTHelper.HttpPasswd);
@@ -66,8 +74,9 @@ public class PlanningManager {
 		else {
 			proxyHost = null;
 		}
+		
 		try {
-			targetData = HttpConnection.getTargetContent(buildUrl(hostname, month), user, passwd, proxyHost);
+			targetData = planningConnection.getTargetContent(buildUrl(hostname, month), user, passwd, proxyHost);
 		} catch (HttpConnectionException e)
 		{
 			logger.error("Cannot reach target: {}", e.getMessage());

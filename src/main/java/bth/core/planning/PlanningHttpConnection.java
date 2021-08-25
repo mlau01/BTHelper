@@ -14,12 +14,14 @@ import java.util.Base64;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class HttpConnection {
+import bth.core.exception.HttpConnectionException;
+
+public class PlanningHttpConnection implements IPlanningConnection{
 	
 	//Encapsulation of HttpUrlConnection native class
 	private static final Logger logger = LogManager.getLogger();
 
-	public static final HttpContent getTargetContent(final String url, final String user, final String password, final String proxyhost) throws HttpConnectionException
+	public final PlanningContent getTargetContent(final String url, final String user, final String password, final String proxyhost) throws HttpConnectionException
 	{
 		String contentString = new String();
 		long lastModified; 
@@ -100,7 +102,7 @@ public class HttpConnection {
 		con.disconnect();
 
 		
-		return new HttpContent(contentString, lastModified);
+		return new PlanningContent(contentString, lastModified);
 			
 	}
 	 

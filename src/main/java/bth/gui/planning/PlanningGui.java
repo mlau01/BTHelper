@@ -14,8 +14,8 @@ import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
 
 import bth.core.MONTH;
-import bth.core.planning.HttpConnectionException;
-import bth.core.planning.PlanningException;
+import bth.core.exception.HttpConnectionException;
+import bth.core.exception.PlanningException;
 import bth.gui.MWin;
 
 import java.awt.Font;

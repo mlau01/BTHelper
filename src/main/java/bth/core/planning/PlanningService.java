@@ -17,7 +17,9 @@ import bth.core.MONTH;
 import bth.core.exception.HttpConnectionException;
 import bth.core.exception.PlanningCharsetException;
 import bth.core.exception.PlanningConnectionException;
+import bth.core.exception.PlanningDeserializeException;
 import bth.core.exception.PlanningException;
+import bth.core.exception.PlanningSerializeException;
 import bth.core.options.OptionException;
 import bth.core.options.OptionService;
 
@@ -29,6 +31,7 @@ public class PlanningService {
 	private OptionService optionService;
 	private final static Logger logger = LogManager.getLogger();
 	private IPlanningConnection planningConnection;
+	private ISerializePlanningService serializePlanningService;
 	
 	public PlanningService(OptionService p_optionService) throws OptionException
 	{
@@ -42,6 +45,8 @@ public class PlanningService {
 			logger.debug("Protocol file detected, using PlanningFileConnection");
 			planningConnection = new PlanningFileConnection();
 		}
+		
+		serializePlanningService = new JsonPlanningService();
 	}
 
 	public String buildUrl(final String hostname, final MONTH month) {
@@ -54,7 +59,7 @@ public class PlanningService {
 		}
 	}
 	
-	public Planning get(final MONTH month) throws PlanningException, OptionException
+	public Planning get(final MONTH month) throws PlanningException, OptionException, PlanningDeserializeException
 	{
 		logger.info("get(...) -> Request for month: " + month + "...");
 		//Search existing planning in memory
@@ -81,7 +86,7 @@ public class PlanningService {
 		} catch (PlanningConnectionException | PlanningCharsetException e)
 		{
 			logger.error(e.getClass().getName(), e.getMessage());
-			newPlan = deserialize(month);
+			newPlan = serializePlanningService.deserialize(BTHelper.CONF_DIRECTORY + "/" + month.toString() + ".json");
 			if(newPlan != null) { 
 				newPlan.setLocalMode();
 			}
@@ -100,73 +105,17 @@ public class PlanningService {
 		{
 			tecMan.add(newPlan.getTechnicians());
 			planList.add(newPlan);
-			serialize(newPlan);
+			try {
+				serializePlanningService.serialize(newPlan, BTHelper.CONF_DIRECTORY + "/" + month.toString() + ".json");
+			} catch (PlanningSerializeException e) {
+				logger.error("Serialization error: {}", e.getMessage());
+			}
 		} else
 		{
 			throw new PlanningException();
 		}
 	
 		return (newPlan);
-	}
-	
-	private void serialize(final Planning planning) throws PlanningException
-	{
-		ObjectOutputStream oos = null;
-
-		try {
-			final FileOutputStream fichier = new FileOutputStream(BTHelper.CONF_DIRECTORY + "/" + planning.getMonth().toString() + ".ser");
-			oos = new ObjectOutputStream(fichier);
-			oos.writeObject(planning);
-			oos.flush();
-		} catch (final IOException e)
-		{
-			throw new PlanningException(e.getMessage());
-		} finally {
-		
-			try {
-			if (oos != null) {
-				oos.flush();
-				oos.close();
-			}
-			} catch (IOException e)
-			{
-				throw new PlanningException(e.getMessage());
-			}
-		}
-	}
-	
-	/**
-	 * Read the last local save of the month provided
-	 * @param month
-	 * @return Return a Planning object or null if the file is missing
-	 */
-	private final Planning deserialize(final MONTH month) throws PlanningException
-	{
-		String path = BTHelper.CONF_DIRECTORY + "/" + month.toString() + ".ser";
-		logger.debug("Try deserialize " + path);
-		Planning planning = null;
-		ObjectInputStream ois = null;
-		
-		try {	
-			final FileInputStream file = new FileInputStream(path);
-			ois = new ObjectInputStream(file);
-			planning = (Planning)ois.readObject();
-		} catch (IOException | ClassNotFoundException e)
-		{
-			throw new PlanningException(e.getMessage());
-		} finally
-		{
-			try {
-				if(ois != null) ois.close();
-			} catch (IOException e)
-			{
-				throw new PlanningException(e.getMessage());
-			}
-		}
-	
-		logger.debug("Deserialization complete of: " + path);
-		return planning;
-		
 	}
 	
 	

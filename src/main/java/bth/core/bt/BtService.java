@@ -19,6 +19,7 @@ import bth.core.datasource.Datasource;
 import bth.core.datasource.DatasourceException;
 import bth.core.exception.BTException;
 import bth.core.exception.BtAssignmentException;
+import bth.core.exception.PlanningDeserializeException;
 import bth.core.exception.PlanningException;
 import bth.core.exception.SheduleServiceException;
 import bth.core.options.OptionException;
@@ -59,8 +60,9 @@ public class BtService implements Observable{
 	 * @throws BTException
 	 * @throws DatasourceException
 	 * @throws ParseException
+	 * @throws PlanningDeserializeException 
 	 */
-	public final void assign(final String dbFilepath) throws OptionException, BTException, DatasourceException, ParseException
+	public final void assign(final String dbFilepath) throws OptionException, BTException, DatasourceException, ParseException, PlanningDeserializeException
 	{
 		//Clear planning cache
 		planningService.clear();
@@ -101,8 +103,9 @@ public class BtService implements Observable{
 	 * @throws ParseException 
 	 * @throws BtAssignmentException 
 	 * @throws OptionException 
+	 * @throws PlanningDeserializeException 
 	 */
-	public final Technician searchTech(String btDateString, final String btDesc) throws SheduleServiceException, PlanningException, ParseException, BtAssignmentException, OptionException
+	public final Technician searchTech(String btDateString, final String btDesc) throws SheduleServiceException, PlanningException, ParseException, BtAssignmentException, OptionException, PlanningDeserializeException
 	{	
 		//Retrieve the month corresponding to the bt date
 		final GregorianCalendar btDate = new GregorianCalendar();
@@ -141,7 +144,7 @@ public class BtService implements Observable{
 	}
 	
 	public final String getTech(final PlanningService planningService, final MONTH btMonth, final GregorianCalendar btDate, final String assign)
-			throws PlanningException, OptionException
+			throws PlanningException, OptionException, PlanningDeserializeException
 	{	
 		//Get the planning corresponding to the date of BT
 		Planning planning = planningService.get(btMonth);

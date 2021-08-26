@@ -25,6 +25,7 @@ import bth.Observer;
 import bth.core.CoreManager;
 import bth.core.datasource.DatasourceException;
 import bth.core.exception.BTException;
+import bth.core.exception.PlanningDeserializeException;
 import bth.core.exception.RequestException;
 import bth.core.exception.SheduleServiceException;
 import bth.core.options.OptionException;
@@ -117,7 +118,7 @@ public class MWin extends JFrame implements Observer {
 	public void loadBts(final String filepath) {
 		try {
 			corma.bt_assign(filepath);
-		} catch (BTException | SheduleServiceException | ParseException | OptionException | DatasourceException e) {
+		} catch (BTException | SheduleServiceException | ParseException | OptionException | DatasourceException | PlanningDeserializeException e) {
 			showError(e.getClass().getName(), e.getMessage());
 		}
 	}

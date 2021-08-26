@@ -15,6 +15,7 @@ import javax.swing.table.TableModel;
 
 import bth.core.MONTH;
 import bth.core.exception.HttpConnectionException;
+import bth.core.exception.PlanningDeserializeException;
 import bth.core.exception.PlanningException;
 import bth.core.options.OptionException;
 import bth.gui.MWin;
@@ -100,6 +101,12 @@ public class PlanningGui extends JPanel implements ActionListener{
 			lastModified.setText("");
 			info.setVisible(true);
 			info.setText("No data for this planning...");
+		} catch (PlanningDeserializeException e) {
+			table.setVisible(false);
+			lastModified.setText("");
+			info.setVisible(true);
+			info.setText("No backup found for this planning...");
+			e.printStackTrace();
 		}
 		setGraphicPreference();
 	}

@@ -18,6 +18,7 @@ import bth.core.datasource.file.FileManager;
 import bth.core.datasource.sql.SQLManager;
 import bth.core.exception.BTException;
 import bth.core.exception.HttpConnectionException;
+import bth.core.exception.PlanningDeserializeException;
 import bth.core.exception.PlanningException;
 import bth.core.exception.RequestException;
 import bth.core.exception.SheduleServiceException;
@@ -90,7 +91,7 @@ public class CoreManager implements Observable {
 	}
 	
 	public final ArrayList<ArrayList<String>> planning_get_array(final String sMonth)
-			throws HttpConnectionException, IOException, PlanningException, OptionException
+			throws HttpConnectionException, IOException, PlanningException, OptionException, PlanningDeserializeException
 	{
 		MONTH month = MONTH.getByName(sMonth);
 		final Planning plan = planningService.get(month);
@@ -99,7 +100,7 @@ public class CoreManager implements Observable {
 	}
 	
 	public final long planning_get_lastModified(final String sMonth) 
-			throws HttpConnectionException, IOException, PlanningException, OptionException
+			throws HttpConnectionException, IOException, PlanningException, OptionException, PlanningDeserializeException
 	{
 		final MONTH month = MONTH.getByName(sMonth);
 		final Planning plan = planningService.get(month);
@@ -109,7 +110,7 @@ public class CoreManager implements Observable {
 	
 	
 	public final boolean planning_isLocal(final String sMonth) 
-			throws HttpConnectionException, IOException, PlanningException, OptionException
+			throws HttpConnectionException, IOException, PlanningException, OptionException, PlanningDeserializeException
 	{
 		final MONTH month = MONTH.getByName(sMonth);
 		final Planning plan = planningService.get(month);
@@ -157,7 +158,7 @@ public class CoreManager implements Observable {
 		return btArray;
 	}
 	
-	public final void bt_assign(final String dbFilepath) throws BTException, SheduleServiceException, ParseException, OptionException, DatasourceException
+	public final void bt_assign(final String dbFilepath) throws BTException, SheduleServiceException, ParseException, OptionException, DatasourceException, PlanningDeserializeException
 	{
 		btService.assign(dbFilepath);
 	}

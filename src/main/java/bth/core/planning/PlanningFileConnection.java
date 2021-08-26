@@ -9,13 +9,14 @@ import java.nio.file.Paths;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import bth.core.exception.PlanningCharsetException;
 import bth.core.exception.PlanningConnectionException;
 
 public class PlanningFileConnection implements IPlanningConnection {
 	private final static Logger logger = LogManager.getLogger();
 	@Override
 	public PlanningContent getTargetContent(String path, String user, String password, String proxyhost)
-			throws PlanningConnectionException {
+			throws PlanningConnectionException, PlanningCharsetException {
 		String fileContent = "";
 		
 		path = cleanPath(path);
@@ -32,7 +33,7 @@ public class PlanningFileConnection implements IPlanningConnection {
 			}
 		} catch (IOException e) {
 			logger.error("IOException catched: ", e.getMessage());
-			throw new PlanningConnectionException(e.getMessage());
+			throw new PlanningCharsetException(e.getMessage());
 		}
 
 		

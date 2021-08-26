@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import bth.core.exception.PlanningCharsetException;
 import bth.core.exception.PlanningConnectionException;
 import bth.core.planning.PlanningContent;
 import bth.core.planning.PlanningFileConnection;
@@ -12,7 +13,7 @@ import bth.core.planning.PlanningFileConnection;
 public class PlanningFileConnectionTest {
 	
 	@Test
-	public void getTargetContentTest_shouldGetPlanningFile() throws PlanningConnectionException {
+	public void getTargetContentTest_shouldGetPlanningFile() throws PlanningConnectionException, PlanningCharsetException {
 		PlanningFileConnection planningFileConnection = new PlanningFileConnection();
 		
 		PlanningContent content = planningFileConnection.getTargetContent("file://C:/Windows/System32/drivers/etc/hosts", null, null, null);

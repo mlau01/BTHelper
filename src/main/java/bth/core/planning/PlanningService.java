@@ -15,6 +15,7 @@ import org.apache.logging.log4j.Logger;
 import bth.BTHelper;
 import bth.core.MONTH;
 import bth.core.exception.HttpConnectionException;
+import bth.core.exception.PlanningCharsetException;
 import bth.core.exception.PlanningConnectionException;
 import bth.core.exception.PlanningException;
 import bth.core.options.OptionException;
@@ -70,19 +71,16 @@ public class PlanningService {
 		final String passwd = optionService.get(BTHelper.HttpPasswd);
 		final String hostname = optionService.get(BTHelper.HttpUrl);
 		final String useProxy = optionService.get(BTHelper.HttpUseProxy);
-		String proxyHost;
+		String proxyHost = null;
 		if(useProxy.equals("true")) {
 			proxyHost = optionService.get(BTHelper.HttpProxyHost);
-		}
-		else {
-			proxyHost = null;
 		}
 		
 		try {
 			targetData = planningConnection.getTargetContent(buildUrl(hostname, month), user, passwd, proxyHost);
-		} catch (PlanningConnectionException e)
+		} catch (PlanningConnectionException | PlanningCharsetException e)
 		{
-			logger.error("Cannot reach target: {}", e);
+			logger.error(e.getClass().getName(), e.getMessage());
 			newPlan = deserialize(month);
 			if(newPlan != null) { 
 				newPlan.setLocalMode();

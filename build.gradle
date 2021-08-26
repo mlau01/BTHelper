@@ -18,6 +18,9 @@ targetCompatibility = "1.8"
 
 dependencies {
 	implementation (name:'Mack-1.0', ext:'jar')
+	implementation (name:'jackson-core-2.12.4', ext:'jar')
+	implementation (name:'jackson-annotations-2.12.4', ext:'jar')
+	implementation (name:'jackson-databind-2.12.4', ext:'jar')
 	implementation (name:'sqljdbc4', ext:'jar')
 	implementation (name:'mysql-connector-java-5.1.36-bin', ext:'jar')
 	implementation (name:'jsoup-1.14.1', ext:'jar')

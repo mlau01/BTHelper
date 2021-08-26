@@ -114,7 +114,7 @@ public class CoreManager implements Observable {
 		final MONTH month = MONTH.getByName(sMonth);
 		final Planning plan = planningService.get(month);
 		
-		return plan.isLocal();
+		return plan.isLocalMode();
 	}
 	
 	

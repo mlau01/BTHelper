@@ -11,16 +11,29 @@ import bth.core.MONTH;
 
 public class Planning implements Serializable{
 	
-	private final ArrayList<ArrayList<String>> array;
-	private final MONTH month;
-	private final long lastModified;
-	private final int maxCol;
-	private final int maxRow;
-	private final ArrayList<String> technicians;
-	private final Calendar gettedDate;
+	private ArrayList<ArrayList<String>> array;
+	private MONTH month;
+	private long lastModified;
+	private int maxCol;
+	private int maxRow;
+	private ArrayList<String> technicians;
+	private Calendar gettedDate;
 	private boolean localMode = false;
+	
+	
 
-	Planning(final MONTH pMonth, final ArrayList<ArrayList<String>> p_array, final long p_lastModified, final Calendar p_gettedDate)
+	public Planning() {
+		super();
+	}
+
+	/**
+	 * Construct a planning
+	 * @param pMonth Month of the planning
+	 * @param p_array Planning as bidimensional array of string
+	 * @param p_lastModified as timestamp
+	 * @param p_gettedDate date of getting
+	 */
+	public Planning(final MONTH pMonth, final ArrayList<ArrayList<String>> p_array, final long p_lastModified, final Calendar p_gettedDate)
 	{
 		month = pMonth;
 		lastModified = p_lastModified;
@@ -62,11 +75,41 @@ public class Planning implements Serializable{
 	public final ArrayList<ArrayList<String>> getArray() { return this.array; }
 	public final long getLastModified() { return lastModified; }
 	public final Calendar getGettedDate() { return gettedDate; }
-	public final boolean isLocal() { return localMode; }
+	public final boolean isLocalMode() { return localMode; }
 	
 	// ---- Setters ----
 	public void setLocalMode()
 	{
 		localMode = true;
 	}
+
+	public void setArray(ArrayList<ArrayList<String>> array) {
+		this.array = array;
+	}
+
+	public void setMonth(MONTH month) {
+		this.month = month;
+	}
+
+	public void setLastModified(long lastModified) {
+		this.lastModified = lastModified;
+	}
+
+	public void setMaxCol(int maxCol) {
+		this.maxCol = maxCol;
+	}
+
+	public void setMaxRow(int maxRow) {
+		this.maxRow = maxRow;
+	}
+
+	public void setTechnicians(ArrayList<String> technicians) {
+		this.technicians = technicians;
+	}
+
+	public void setGettedDate(Calendar gettedDate) {
+		this.gettedDate = gettedDate;
+	}
+	
+	
 }

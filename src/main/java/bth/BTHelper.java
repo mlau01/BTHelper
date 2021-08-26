@@ -7,7 +7,7 @@ public class BTHelper {
 	public static final String AUTHOR = ("Mathias Lauer");
 	public static final String AUTHORMAIL = ("mathias.lauer.fr@gmail.com");
 	public static final String APP_NAME = ("BT's Helper");
-	public static final String APP_VERSION = ("2.0.0");
+	public static final String APP_VERSION = ("2.0.1.0");
 	
 	public static final String CONF_FOLDER = ".BTHelper";
 	public static final String CONF_NAME = "config";

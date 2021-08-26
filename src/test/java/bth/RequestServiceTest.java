@@ -21,7 +21,7 @@ import bth.core.request.RequestService;
 @ExtendWith(MockitoExtension.class)
 public class RequestServiceTest {
 	
-	private final String TEST_QUERIES_AS_STRING = "Test:SELECT * FROM hello WHERE things='hello';Test2:COUNT * FROM ertty where date='2019-34-45'";
+	private final String TEST_QUERIES_AS_STRING = "Test#SELECT * FROM hello WHERE things='hello';Test2#COUNT * FROM ertty where date='2019-34-45'";
 	
 	@Mock
 	OptionService optionService;
@@ -81,7 +81,7 @@ public class RequestServiceTest {
 		assertEquals("SELECT * FROM hey WHERE tupo='solid'", query1);
 		
 		Mockito.verify(optionService).get("queries");
-		Mockito.verify(optionService).set(BTHelper.Queries,TEST_QUERIES_AS_STRING + ";" + "test3:" + test3);
+		Mockito.verify(optionService).set(BTHelper.Queries,TEST_QUERIES_AS_STRING + ";" + "test3#" + test3);
 	}
 	
 	@Test

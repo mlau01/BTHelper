@@ -35,7 +35,7 @@ public class RequestService {
 		
 		String[] parsedQueries = queriesAsString.split(";");
 		for(String queryFull : parsedQueries) {
-			String[] querySplit = queryFull.split(":");
+			String[] querySplit = queryFull.split("#");
 			String queryTitle = querySplit[0];
 			String queryValue = querySplit[1];
 			queries.add(new Query(queryTitle, queryValue));
@@ -88,8 +88,8 @@ public class RequestService {
 	 */
 	public void writeQuery(String title, String value) throws RequestException, OptionException {
 		Query newQuery = new Query(title, value);
-		if(value.contains(":") || value.contains(";")) {
-			throw new RequestException("forbidden characters found: ';' or ':'");
+		if(value.contains("#") || value.contains(";")) {
+			throw new RequestException("forbidden characters found: ';' or '#'");
 		}
 		for(Query query : queries) {
 			if(query.getTitle().equals(title)) {
@@ -114,7 +114,7 @@ public class RequestService {
 			}
 			
 			queriesAsString += query.getTitle();
-			queriesAsString += ":";
+			queriesAsString += "#";
 			queriesAsString += query.getValue();
 		}
 		

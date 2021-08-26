@@ -34,6 +34,7 @@ public class Toolbar extends JToolBar {
 		
 		this.add(bRefresh);
 		
+		/*
 		if(mWin.getCorma().getProperties().getProperty(BTHelper.FileUsed).equals("true"))
 		{
 			filepath = new JTextField(50);
@@ -57,6 +58,7 @@ public class Toolbar extends JToolBar {
 			});
 			this.add(filepath);
 		}
+		*/
 
 		//#~~~ Event ~~~#
 		

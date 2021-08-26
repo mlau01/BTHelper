@@ -67,6 +67,7 @@ public class PlanningHttpConnection implements IPlanningConnection{
 		try {
 			responseCode = con.getResponseCode();
 		} catch (IOException e) {
+			logger.error("Open Connection failed: {}", e.getMessage());
 			throw new PlanningConnectionException(e.getMessage());
 		}
 		

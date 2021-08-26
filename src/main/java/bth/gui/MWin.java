@@ -54,7 +54,6 @@ public class MWin extends JFrame implements Observer {
 		} catch (Exception e) {
 			e.printStackTrace();
 			showError(e.getClass().getName(), e.getMessage());
-			gui.setStatusText("NOT Connected...");
 		}
 		 
 		 gui = loadGui();

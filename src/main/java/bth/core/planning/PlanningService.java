@@ -33,17 +33,21 @@ public class PlanningService {
 	private IPlanningConnection planningConnection;
 	private ISerializePlanningService serializePlanningService;
 	
-	public PlanningService(OptionService p_optionService) throws OptionException
+	public PlanningService(OptionService p_optionService) throws OptionException, PlanningException
 	{
 		optionService = p_optionService;
 		planList = new ArrayList<Planning>();
 		tecMan = new TechnicianManager();
-		if(optionService.get(BTHelper.HttpUrl).startsWith("http")) {
+		String path = optionService.get(BTHelper.HttpUrl);
+		if(path.startsWith("http")) {
 			logger.debug("Protocol http detected, using PlanningHttpConnection");
 			planningConnection = new PlanningHttpConnection();
-		} else if (optionService.get(BTHelper.HttpUrl).startsWith("file")){
+		} else if (path.startsWith("file")){
 			logger.debug("Protocol file detected, using PlanningFileConnection");
 			planningConnection = new PlanningFileConnection();
+		}
+		else {
+			logger.error("Unknown protocol used in address: {}", path);
 		}
 		
 		serializePlanningService = new JsonPlanningService();
@@ -85,7 +89,7 @@ public class PlanningService {
 			targetData = planningConnection.getTargetContent(buildUrl(hostname, month), user, passwd, proxyHost);
 		} catch (PlanningConnectionException | PlanningCharsetException e)
 		{
-			logger.error(e.getClass().getName(), e.getMessage());
+			logger.error(e.getMessage());
 			newPlan = serializePlanningService.deserialize(BTHelper.CONF_DIRECTORY + "/" + month.toString() + ".json");
 			if(newPlan != null) { 
 				newPlan.setLocalMode();

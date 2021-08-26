@@ -9,6 +9,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import bth.core.MONTH;
+import bth.core.exception.PlanningException;
 import bth.core.options.OptionException;
 import bth.core.options.OptionService;
 import bth.core.planning.PlanningService;
@@ -20,7 +21,7 @@ public class PlanningServiceTest {
 	OptionService optionService;
 	
     @Test
-    public void buildUrlWithHttpProtocolTest_shouldBuildUrlCorrecly() throws OptionException{
+    public void buildUrlWithHttpProtocolTest_shouldBuildUrlCorrecly() throws OptionException, PlanningException{
     	Mockito.doReturn("http://test").when(optionService).get(BTHelper.HttpUrl);
     	
         PlanningService planningService = new PlanningService(optionService);
@@ -33,7 +34,7 @@ public class PlanningServiceTest {
     }
     
     @Test
-    public void buildUrlWithFileProtocolTest_shouldBuildUrlCorrecly() throws OptionException{
+    public void buildUrlWithFileProtocolTest_shouldBuildUrlCorrecly() throws OptionException, PlanningException{
     	Mockito.doReturn("file://test").when(optionService).get(BTHelper.HttpUrl);
     	
         PlanningService planningService = new PlanningService(optionService);

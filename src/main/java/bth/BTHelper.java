@@ -9,9 +9,11 @@ public class BTHelper {
 	public static final String APP_NAME = ("BT's Helper");
 	public static final String APP_VERSION = ("2.0.1.0");
 	
-	public static final String CONF_FOLDER = ".BTHelper";
+	public static final String CONF_FOLDER = "conf";
 	public static final String CONF_NAME = "config";
-	public static final String CONF_DIRECTORY = System.getenv("LOCALAPPDATA") + "/" + CONF_FOLDER;
+	public static final String APP_DIRECTORY = System.getProperties().getProperty("user.dir");
+	public static final String CONF_DIRECTORY = APP_DIRECTORY + "/" + CONF_FOLDER;
+	
 	
 	
 	public static final String iconsPath = ("/icons/");

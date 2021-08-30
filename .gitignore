@@ -18,3 +18,4 @@ bin/
 !**/src/test/**/bin/
 .idea
 logs
+conf

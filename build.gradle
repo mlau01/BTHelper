@@ -12,7 +12,8 @@ repositories {
         dirs 'lib'
     }
 }
-
+compileJava.options.encoding = "UTF-8"
+compileTestJava.options.encoding = "UTF-8"
 sourceCompatibility = "1.8"
 targetCompatibility = "1.8"
 
@@ -35,6 +36,7 @@ dependencies {
     testImplementation 'org.mockito:mockito-junit-jupiter:3.11.2'
 }
 
+
 test {
     useJUnitPlatform()
 }
@@ -46,5 +48,7 @@ launch4j {
 	mainClassName = 'bth.gui.MWin'
     bundledJrePath = './jre'
     jreMinVersion = '1.8.0'
-   jreMaxVersion = '16.0.0'	
+   jreMaxVersion = '16.0.0'
+   jvmOptions = ['-Dfile.encoding=UTF8']
+   language = 'FRENCH'
 }

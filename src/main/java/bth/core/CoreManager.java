@@ -81,44 +81,6 @@ public class CoreManager implements Observable {
 		return optionService;
 	}
 	
-	// ---- Planning methods ----
-	
-	public final ArrayList<String> planning_get_cacheList()
-	{
-		final ArrayList<String> list = new ArrayList<String>();
-		for(final Planning plan : planningService.getCache()) list.add(plan.getMonth().toString());
-		return list;
-	}
-	
-	public final ArrayList<ArrayList<String>> planning_get_array(final String sMonth)
-			throws HttpConnectionException, IOException, PlanningException, OptionException, PlanningDeserializeException
-	{
-		MONTH month = MONTH.getByName(sMonth);
-		final Planning plan = planningService.get(month);
-
-		return plan.getArray();
-	}
-	
-	public final long planning_get_lastModified(final String sMonth) 
-			throws HttpConnectionException, IOException, PlanningException, OptionException, PlanningDeserializeException
-	{
-		final MONTH month = MONTH.getByName(sMonth);
-		final Planning plan = planningService.get(month);
-
-		return plan.getLastModified();
-	}
-	
-	
-	public final boolean planning_isLocal(final String sMonth) 
-			throws HttpConnectionException, IOException, PlanningException, OptionException, PlanningDeserializeException
-	{
-		final MONTH month = MONTH.getByName(sMonth);
-		final Planning plan = planningService.get(month);
-		
-		return plan.isLocalMode();
-	}
-	
-	
 	// ---- Technician methods ----
 	
 	public final ArrayList<String> technician_get_list()
@@ -236,5 +198,9 @@ public class CoreManager implements Observable {
 
 	public RequestService getRequestService() {
 		return requestService;
+	}
+	
+	public PlanningService getPlanningService() {
+		return planningService;
 	}
 }

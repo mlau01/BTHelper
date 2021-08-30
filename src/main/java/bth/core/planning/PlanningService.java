@@ -1,20 +1,13 @@
 package bth.core.planning;
 
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Properties;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import bth.BTHelper;
 import bth.core.MONTH;
-import bth.core.exception.HttpConnectionException;
 import bth.core.exception.PlanningCharsetException;
 import bth.core.exception.PlanningConnectionException;
 import bth.core.exception.PlanningDeserializeException;
@@ -133,10 +126,5 @@ public class PlanningService {
 	{
 		planList.clear();
 		tecMan.clear();
-	}
-	
-	public final ArrayList<Planning> getCache()
-	{
-		return planList;
 	}
 }

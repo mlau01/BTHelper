@@ -18,6 +18,8 @@ import bth.core.exception.HttpConnectionException;
 import bth.core.exception.PlanningDeserializeException;
 import bth.core.exception.PlanningException;
 import bth.core.options.OptionException;
+import bth.core.planning.Planning;
+import bth.core.planning.PlanningService;
 import bth.gui.MWin;
 
 import java.awt.Font;
@@ -34,10 +36,12 @@ public class PlanningGui extends JPanel implements ActionListener{
 	final JLabel lastModified;
 	final JLabel info;
 	private final MWin mWin;
+	private final PlanningService planningService;
 	
 	public PlanningGui(final MWin p_mWin) {
 		
 		mWin = p_mWin;
+		planningService = mWin.getCorma().getPlanningService();
 
 		this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 		
@@ -79,21 +83,23 @@ public class PlanningGui extends JPanel implements ActionListener{
 	public void actionPerformed(ActionEvent ev)
 	{
 		final String sMonth = ((JButton)ev.getSource()).getText();
+		
 		try {
+			Planning planning = planningService.get(MONTH.valueOf(sMonth));
 			lMonth.setText(sMonth);
-			table.setModel(getTableModel(mWin.getCorma().planning_get_array(sMonth)));
+			table.setModel(getTableModel(planning.getArray()));
 			table.setVisible(true);
-			String lastModifiedDate = new SimpleDateFormat("dd/MM/yyyy HH:mm").format(mWin.getCorma().planning_get_lastModified(sMonth));
+			String lastModifiedDate = new SimpleDateFormat("dd/MM/yyyy HH:mm").format(planning.getLastModified());
 			lastModified.setText("Edition: " + lastModifiedDate);
 			lastModified.setVisible(true);
-			if(mWin.getCorma().planning_isLocal(sMonth))
+			if(planning.isLocalMode())
 			{
 				info.setVisible(true);
 				info.setForeground(Color.RED);
 				info.setText("Local Mode");
 			}
 			
-		} catch (HttpConnectionException | OptionException | IOException e) {
+		} catch (OptionException e) {
 			mWin.showError("Http error", e.getMessage());
 		} catch (PlanningException e)
 		{
@@ -106,6 +112,7 @@ public class PlanningGui extends JPanel implements ActionListener{
 			lastModified.setText("");
 			info.setVisible(true);
 			info.setText("No backup found for this planning...");
+			mWin.showError(e.getClass().getName(), "Cannot get this planning, no connection, no backup...: " + e.getMessage());
 			e.printStackTrace();
 		}
 		setGraphicPreference();

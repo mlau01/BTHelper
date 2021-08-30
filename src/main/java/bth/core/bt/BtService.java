@@ -91,6 +91,7 @@ public class BtService implements Observable{
 				tech = searchTech(bt.getDate(), bt.getDesc());
 				logger.info("Tech found: {}", tech.getName());
 			} catch (SheduleServiceException | PlanningException | BtAssignmentException e) {
+				logger.debug("Catched exception: {} - {}", e.getClass().getName(), e.getMessage());
 				logger.info("tech not found for wonum= {}, turn in 'NOT FOUND'", bt.getWonum());
 				tech = planningService.getTechnicianManager().getTechnician("NOT FOUND");
 			} finally {
@@ -124,7 +125,7 @@ public class BtService implements Observable{
 			throw new BtAssignmentException("Cannot parse " + btDateString + " using formatter: " + DBMan.getDateFormat());
 		}
 
-		logger.info("searchTech -> Search technician for bt date: " + new SimpleDateFormat("dd/MM/YYYY HH:mm").format(btDate.getTime()));
+		logger.info("searchTech -> Search technician for bt date: {}", btDate.getTime().toLocaleString());
 		
 		final int btMonthNum = btDate.get(GregorianCalendar.MONTH);
 		final MONTH btMonth = MONTH.getByIndex(btMonthNum);

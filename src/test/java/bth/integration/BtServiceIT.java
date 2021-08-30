@@ -157,7 +157,7 @@ public class BtServiceIT {
 	public void assignTest_shouldAssignVirtualListOfBt() throws OptionException, PlanningException,
 	BTException, DatasourceException, PlanningDeserializeException {
 		Mockito.doReturn(btList).when(btSource).getBts(null);
-		Mockito.doReturn("dd-MM-yyyy HH:mm:ss").when(btSource).getDateFormat();
+		Mockito.doReturn("dd/MM/yyyy HH:mm:ss").when(btSource).getDateFormat();
 		
 		OptionService optionService = new OptionService(BTHelper.CONF_DIRECTORY + "/" + BTHelper.CONF_NAME);
 		optionService.loadConfig();
@@ -168,7 +168,7 @@ public class BtServiceIT {
 		btService.assign(null);
 		
 		Mockito.verify(btSource, Mockito.times(1)).getBts(null);
-		Mockito.verify(btSource, Mockito.times(236)).getDateFormat();
+		Mockito.verify(btSource, Mockito.times(118)).getDateFormat();
 	}
 
 }

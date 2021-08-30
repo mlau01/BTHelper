@@ -1,6 +1,7 @@
 package bth;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
@@ -60,6 +61,20 @@ public class JsonPlanningServiceTest {
 		assertTrue(Files.exists(Paths.get(path), LinkOption.NOFOLLOW_LINKS));
 		Files.delete(Paths.get(path));
 		
+	}
+	
+	@Test
+	public void serializeTestAtForbiddenLocation_shouldThrowException() throws PlanningSerializeException, IOException {
+		ISerializePlanningService jsonPlanningService = new JsonPlanningService();
+		ArrayList<ArrayList<String>> planningArray = new ArrayList<ArrayList<String>>();
+		ArrayList<String> planningRow = new ArrayList<String>();
+		planningArray.add(planningRow);
+		planningRow.add("test");
+
+		Planning planning = new Planning(MONTH.AOUT, planningArray, 23, Calendar.getInstance());
+		String path = "C:/" + planning.getMonth().toString() + ".json";
+		
+		assertThrows(PlanningSerializeException.class, () -> jsonPlanningService.serialize(planning, path));
 	}
 
 }

@@ -284,6 +284,7 @@ public class ScheduleService {
 				btDate.get(GregorianCalendar.MINUTE), 
 				btDate.get(GregorianCalendar.SECOND));
 
+		logger.debug("Checking the assignment in selected schedule table: {}", selectedAssignmentList);
 		for(Assignment assign : selectedAssignmentList) {
 			if(isTimeInAssignment(time, assign)) {
 				return assign.getAssignment();

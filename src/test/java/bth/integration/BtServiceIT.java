@@ -18,7 +18,10 @@ import bth.core.exception.PlanningException;
 import bth.core.options.OptionException;
 import bth.core.options.OptionService;
 import bth.core.planning.PlanningService;
+import bth.core.planning.TechnicianManager;
 import bth.core.schedule.ScheduleService;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -154,8 +157,7 @@ public class BtServiceIT {
 	SQLManager btSource;
 	
 	@Test
-	public void assignTest_shouldAssignVirtualListOfBt() throws OptionException, PlanningException,
-	BTException, DatasourceException, PlanningDeserializeException {
+	public void assignTest_shouldAssignVirtualListOfBt() throws Exception {
 		Mockito.doReturn(btList).when(btSource).getBts(null);
 		Mockito.doReturn("dd/MM/yyyy HH:mm:ss").when(btSource).getDateFormat();
 		
@@ -163,9 +165,28 @@ public class BtServiceIT {
 		optionService.loadConfig();
 		PlanningService planningService = new PlanningService(optionService);
 		ScheduleService scheduleService = new ScheduleService(optionService);
+		scheduleService.load();
 		BtService btService = new BtService(optionService, null, btSource, planningService, scheduleService);
 		
 		btService.assign(null);
+		
+		TechnicianManager technicianManager = planningService.getTechnicianManager();
+		
+		for(Bt bt : technicianManager.getTechnician("C.BARON").getBtList()) {
+			System.out.println(bt);
+		}
+		
+		
+		assertEquals(118, technicianManager.getTechnician("All").getBtList().size());
+		assertEquals(1, technicianManager.getTechnician("NOT FOUND").getBtList().size());
+		assertEquals(1, technicianManager.getTechnician("C,RENIA").getBtList().size());
+		assertEquals(5, technicianManager.getTechnician("J.HUKIC").getBtList().size());
+		assertEquals(32, technicianManager.getTechnician("M.MOSCHINI").getBtList().size());
+		assertEquals(21, technicianManager.getTechnician("C.BARON").getBtList().size());
+		assertEquals(14, technicianManager.getTechnician("A.ELBEJI").getBtList().size());
+		assertEquals(40, technicianManager.getTechnician("C.PUPPO").getBtList().size());
+		assertEquals(1, technicianManager.getTechnician("D.CLOLUS").getBtList().size());
+		assertEquals(2, technicianManager.getTechnician("M.LAUER").getBtList().size());
 		
 		Mockito.verify(btSource, Mockito.times(1)).getBts(null);
 		Mockito.verify(btSource, Mockito.times(118)).getDateFormat();

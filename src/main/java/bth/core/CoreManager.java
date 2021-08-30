@@ -104,70 +104,6 @@ public class CoreManager implements Observable {
 		return tec.getName();
 	}
 	
-	// ---- Bt methods ----
-	
-	public final ArrayList<String[]> bt_get_rawList(final String dbFilepath) throws DatasourceException, OptionException
-	{	
-		final ArrayList<Bt> btList = btService.getRawBt(dbFilepath);
-
-		final ArrayList<String[]> btArray = new ArrayList<String[]>();
-		for(final Bt bt : btList)
-		{
-			final String[] btLine = {bt.getWonum(), bt.getDate(), bt.getDesc()};
-			btArray.add(btLine);
-		}
-		
-		return btArray;
-	}
-	
-	public final void bt_assign(final String dbFilepath) throws BTException, SheduleServiceException, ParseException, OptionException, DatasourceException, PlanningDeserializeException
-	{
-		btService.assign(dbFilepath);
-	}
-	
-	public void w(ArrayList<Bt> btList) throws MaximoConnectionException, IOException, InterruptedException
-	{
-		MackConnection max = new MackConnection(
-				properties.getProperty(BTHelper.MaximoUrl),
-				properties.getProperty(BTHelper.MaximoLogin),
-				properties.getProperty(BTHelper.MaximoPassword)
-		);
-		
-		HttpURLConnection login = max.login();
-		max.extractLoginInformations(login);
-	
-		for(Bt bt : btList)
-		{
-			if(bt.isW()) {
-				max.loadBtContext();
-				System.out.println("Start filling BT:" + bt.getWonum());
-				max.fillBt(bt.getWonum(),
-					bt.getGear(),
-					bt.getDate(),
-					bt.getDesc(),
-					bt.getNewDesc(), 
-					bt.getTravelTime(),
-					bt.getDuration(),
-					bt.getIssue(),
-					bt.getComment());
-				bt.setW(false);
-			}
-		}
-	}
-	public void p(String[] args) throws MaximoConnectionException, IOException, InterruptedException
-	{
-		MackConnection max = new MackConnection(
-				properties.getProperty(BTHelper.MaximoUrl),
-				properties.getProperty(BTHelper.MaximoLogin),
-				properties.getProperty(BTHelper.MaximoPassword)
-		);
-		
-		HttpURLConnection login = max.login();
-		max.extractLoginInformations(login);
-		max.loadBtContext();
-		max.doPrev(args);
-	}
-	
 	
 	// ---- Interfaces methods ----
 
@@ -202,5 +138,9 @@ public class CoreManager implements Observable {
 	
 	public PlanningService getPlanningService() {
 		return planningService;
+	}
+	
+	public BtService getBtService() {
+		return btService;
 	}
 }

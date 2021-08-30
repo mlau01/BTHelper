@@ -68,7 +68,16 @@ public class BtService implements Observable{
 		planningService.clear();
 	
 		//Assign all bts to virtual technician "All"
-		ArrayList<Bt> btList = getRawBt(dbFilepath);
+		String params = null;
+		if(optionService.get(BTHelper.FileUsed).equals("true")) {
+			params = dbFilepath;
+		}
+		else if(optionService.get(BTHelper.SqlUsed).equals("true")) {
+			params = optionService.get(BTHelper.SqlRequest);
+		}
+	
+		//Get datas and create bts
+		ArrayList<Bt> btList = DBMan.getBts(params);
 
 		Technician all = planningService.getTechnicianManager().getTechnician("All");
 		all.getBtList().addAll(btList);
@@ -271,22 +280,6 @@ public class BtService implements Observable{
 			return "NO PLANNING";
 		}
 		return tech;
-	}
-	
-	public final ArrayList<Bt> getRawBt(final String dbFilepath) throws DatasourceException, OptionException
-	{	
-		String params = null;
-		if(optionService.get(BTHelper.FileUsed).equals("true")) {
-			params = dbFilepath;
-		}
-		else if(optionService.get(BTHelper.SqlUsed).equals("true")) {
-			params = optionService.get(BTHelper.SqlRequest);
-		}
-	
-		//Get datas and create bts
-		bts = DBMan.getBts(params);
-
-		return bts;
 	}
 	
 	/**

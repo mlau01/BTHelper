@@ -5,8 +5,8 @@ import org.junit.jupiter.api.Test;
 public class BtServiceTest {
 	
 	@Test
-	public void getTerminalTest_shouldReturnTerminalAsT1orT2() {
-
+	public void assignTest_shouldAssignVirtualListOfBt() {
+		
 	}
 
 }

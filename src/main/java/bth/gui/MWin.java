@@ -116,8 +116,8 @@ public class MWin extends JFrame implements Observer {
 
 	public void loadBts(final String filepath) {
 		try {
-			corma.bt_assign(filepath);
-		} catch (BTException | SheduleServiceException | ParseException | OptionException | DatasourceException | PlanningDeserializeException e) {
+			corma.getBtService().assign(filepath);
+		} catch (BTException | ParseException | OptionException | DatasourceException | PlanningDeserializeException e) {
 			showError(e.getClass().getName(), e.getMessage());
 		}
 	}

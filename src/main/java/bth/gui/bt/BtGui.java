@@ -259,26 +259,12 @@ public class BtGui extends JPanel implements MouseListener, Fillable {
 	
 	private void doW()
 	{
-		mWin.setWait(true);
-		try {
-			mWin.getCorma().w(btButtonSelected.getBts());
-		} catch (MaximoConnectionException | IOException | InterruptedException e) {
-			e.printStackTrace();
-			mWin.showError(e.getClass().getName(), e.getMessage());
-		}
-		mWin.setWait(false);
+
 		
 	}
 	private void doP(String[] args)
 	{
-		mWin.setWait(true);
-		try {
-			mWin.getCorma().p(args);
-		} catch (MaximoConnectionException | IOException | InterruptedException e) {
-			e.printStackTrace();
-			mWin.showError(e.getClass().getName(), e.getMessage());
-		}
-		mWin.setWait(false);
+		//REMOVED	
 	}
 	
 	

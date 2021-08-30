@@ -15,7 +15,7 @@ import bth.Observable;
 import bth.Observer;
 import bth.core.MONTH;
 import bth.core.Utils;
-import bth.core.datasource.Datasource;
+import bth.core.datasource.IBtSource;
 import bth.core.datasource.DatasourceException;
 import bth.core.exception.BTException;
 import bth.core.exception.BtAssignmentException;
@@ -34,14 +34,14 @@ import bth.core.schedule.ScheduleService.SHEDULEMODE;
 public class BtService implements Observable{
 	
 	private ArrayList<Bt> bts;
-	private final Datasource DBMan;
+	private final IBtSource DBMan;
 	private final ArrayList<Observer> observers;
 	private PlanningService planningService;
 	private ScheduleService scheduleService;
 	private OptionService optionService;
 	private final static Logger logger = LogManager.getLogger();
 	
-	public BtService(final OptionService p_optionService, final ArrayList<Observer> p_observers, final Datasource p_DBMan, PlanningService p_planningService, ScheduleService p_scheduleService)
+	public BtService(final OptionService p_optionService, final ArrayList<Observer> p_observers, final IBtSource p_DBMan, PlanningService p_planningService, ScheduleService p_scheduleService)
 	{
 		logger.trace("INIT");
 		this.optionService = p_optionService;
@@ -62,7 +62,7 @@ public class BtService implements Observable{
 	 * @throws ParseException
 	 * @throws PlanningDeserializeException 
 	 */
-	public final void assign(final String dbFilepath) throws OptionException, BTException, DatasourceException, ParseException, PlanningDeserializeException
+	public final void assign(final String dbFilepath) throws OptionException, BTException, DatasourceException, PlanningDeserializeException
 	{
 		//Clear planning cache
 		planningService.clear();
@@ -84,10 +84,10 @@ public class BtService implements Observable{
 		
 		//Assign bt to the target Technician
 		for(final Bt bt : btList) {
-			logger.info(" **** Searching tech for BT {} ... ***", bt.getWonum());
-			
+
 			Technician tech = null;
 			try {
+				logger.info(" **** Searching tech for BT {} ... ***", bt.getWonum());
 				tech = searchTech(bt.getDate(), bt.getDesc());
 				logger.info("Tech found: {}", tech.getName());
 			} catch (SheduleServiceException | PlanningException | BtAssignmentException e) {
@@ -114,12 +114,16 @@ public class BtService implements Observable{
 	 * @throws OptionException 
 	 * @throws PlanningDeserializeException 
 	 */
-	public final Technician searchTech(String btDateString, final String btDesc) throws SheduleServiceException, PlanningException, ParseException, BtAssignmentException, OptionException, PlanningDeserializeException
+	public final Technician searchTech(String btDateString, final String btDesc) throws SheduleServiceException, PlanningException, BtAssignmentException, OptionException, PlanningDeserializeException
 	{	
 		//Retrieve the month corresponding to the bt date
 		final GregorianCalendar btDate = new GregorianCalendar();
-		btDate.setTime(new SimpleDateFormat(DBMan.getDateFormat()).parse(btDateString));
-		
+		try {
+			btDate.setTime(new SimpleDateFormat(DBMan.getDateFormat()).parse(btDateString));
+		} catch (ParseException e) {
+			throw new BtAssignmentException("Cannot parse " + btDateString + " using formatter: " + DBMan.getDateFormat());
+		}
+
 		logger.info("searchTech -> Search technician for bt date: " + new SimpleDateFormat("dd/MM/YYYY HH:mm").format(btDate.getTime()));
 		
 		final int btMonthNum = btDate.get(GregorianCalendar.MONTH);
@@ -319,9 +323,11 @@ public class BtService implements Observable{
 
 	@Override
 	public void notifyObserver(String notification) {
-		for(Observer obs : observers)
-			obs.notify(notification);
-		
+		if(observers != null) {
+			for(Observer obs : observers) {
+				obs.notify(notification);
+			}
+		}
 	}
 
 	@Override

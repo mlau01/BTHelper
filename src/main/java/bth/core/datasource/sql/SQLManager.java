@@ -13,9 +13,9 @@ import bth.Observer;
 import bth.core.datasource.DatasourceException;
 import bth.core.CoreManager;
 import bth.core.bt.Bt;
-import bth.core.datasource.Datasource;
+import bth.core.datasource.IBtSource;
 
-public class SQLManager implements Datasource {
+public class SQLManager implements IBtSource {
 	
 	private short verboseLevel = 0;
 	

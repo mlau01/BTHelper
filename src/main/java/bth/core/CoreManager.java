@@ -13,7 +13,7 @@ import bth.Observer;
 import bth.core.bt.Bt;
 import bth.core.bt.BtService;
 import bth.core.datasource.DatasourceException;
-import bth.core.datasource.Datasource;
+import bth.core.datasource.IBtSource;
 import bth.core.datasource.file.FileManager;
 import bth.core.datasource.sql.SQLManager;
 import bth.core.exception.BTException;
@@ -37,7 +37,7 @@ public class CoreManager implements Observable {
 	private final Properties properties;
 	private final PlanningService planningService;
 	private final BtService btService;
-	private Datasource DBMan;
+	private IBtSource DBMan;
 	private final RequestService requestService;
 	private final ArrayList<Observer> observers;
 	private final OptionService optionService;

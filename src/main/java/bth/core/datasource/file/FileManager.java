@@ -18,9 +18,9 @@ import bth.Observer;
 import bth.core.datasource.DatasourceException;
 import bth.core.CoreManager;
 import bth.core.bt.Bt;
-import bth.core.datasource.Datasource;
+import bth.core.datasource.IBtSource;
 
-public class FileManager implements Datasource {
+public class FileManager implements IBtSource {
 
 	private final Properties properties;
 	private File file;

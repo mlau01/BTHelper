@@ -184,6 +184,9 @@ public class OptionService {
 	 * @throws OptionException If the property name is unknown
 	 */
 	public String get(String optionName) throws OptionException  {
+		if(p == null) {
+			throw new OptionException("Config not loaded ! run loadConfig before use");
+		}
 		String property = p.getProperty(optionName);
 		if(property == null) {
 			property = getDefaultProperties().getProperty(optionName);

@@ -1,5 +1,9 @@
 package bth.integration;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import java.util.ArrayList;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -9,22 +13,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import bth.BTHelper;
 import bth.core.bt.Bt;
 import bth.core.bt.BtService;
-import bth.core.datasource.DatasourceException;
-import bth.core.datasource.IBtSource;
 import bth.core.datasource.sql.SQLManager;
-import bth.core.exception.BTException;
-import bth.core.exception.PlanningDeserializeException;
-import bth.core.exception.PlanningException;
-import bth.core.options.OptionException;
 import bth.core.options.OptionService;
 import bth.core.planning.PlanningService;
 import bth.core.planning.TechnicianManager;
 import bth.core.schedule.ScheduleService;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
-import java.text.ParseException;
-import java.util.ArrayList;
 
 @ExtendWith(MockitoExtension.class)
 public class BtServiceIT {
@@ -150,7 +143,6 @@ public class BtServiceIT {
 		btList.add(new Bt("7871091","18/08/2021 05:14:58","T2.2 PTE A19 PB AFFICHAGE","8770/32","0"));
 		btList.add(new Bt("7869356","13/08/2021 17:02:35","T2 AFFICH APOC PCE PB SIGMA","8770","0"));
 		btList.add(new Bt("7868152","09/08/2021 11:18:59","T1 AFFICH APOC PB BLOC PARKING","8770","0"));
-		btList.add(new Bt("7840663","26/07/2021 08:50:49","E2 BQE C09 PB CAB","8770/31","0"));
 	}
 	
 	@Mock
@@ -172,12 +164,7 @@ public class BtServiceIT {
 		
 		TechnicianManager technicianManager = planningService.getTechnicianManager();
 		
-		for(Bt bt : technicianManager.getTechnician("C.BARON").getBtList()) {
-			System.out.println(bt);
-		}
-		
-		
-		assertEquals(118, technicianManager.getTechnician("All").getBtList().size());
+		assertEquals(117, technicianManager.getTechnician("All").getBtList().size());
 		assertEquals(1, technicianManager.getTechnician("NOT FOUND").getBtList().size());
 		assertEquals(1, technicianManager.getTechnician("C,RENIA").getBtList().size());
 		assertEquals(5, technicianManager.getTechnician("J.HUKIC").getBtList().size());
@@ -189,7 +176,6 @@ public class BtServiceIT {
 		assertEquals(2, technicianManager.getTechnician("M.LAUER").getBtList().size());
 		
 		Mockito.verify(btSource, Mockito.times(1)).getBts(null);
-		Mockito.verify(btSource, Mockito.times(118)).getDateFormat();
+		Mockito.verify(btSource, Mockito.times(117)).getDateFormat();
 	}
-
 }

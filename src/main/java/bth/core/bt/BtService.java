@@ -90,11 +90,11 @@ public class BtService implements Observable{
 				logger.info(" **** Searching tech for BT {} ... ***", bt.getWonum());
 				tech = searchTech(bt.getDate(), bt.getDesc());
 				logger.info("Tech found: {}", tech.getName());
+				tech.getBtList().add(bt);
 			} catch (SheduleServiceException | PlanningException | BtAssignmentException e) {
 				logger.debug("Catched exception: {} - {}", e.getClass().getName(), e.getMessage());
 				logger.info("tech not found for wonum= {}, turn in 'NOT FOUND'", bt.getWonum());
 				tech = planningService.getTechnicianManager().getTechnician("NOT FOUND");
-			} finally {
 				tech.getBtList().add(bt);
 			}
 				
@@ -117,6 +117,7 @@ public class BtService implements Observable{
 	 */
 	public final Technician searchTech(String btDateString, final String btDesc) throws SheduleServiceException, PlanningException, BtAssignmentException, OptionException, PlanningDeserializeException
 	{	
+		logger.info("searchTech -> Search technician for bt date: {}", btDateString);
 		//Retrieve the month corresponding to the bt date
 		final GregorianCalendar btDate = new GregorianCalendar();
 		try {
@@ -124,8 +125,6 @@ public class BtService implements Observable{
 		} catch (ParseException e) {
 			throw new BtAssignmentException("Cannot parse " + btDateString + " using formatter: " + DBMan.getDateFormat());
 		}
-
-		logger.info("searchTech -> Search technician for bt date: {}", btDate.getTime().toLocaleString());
 		
 		final int btMonthNum = btDate.get(GregorianCalendar.MONTH);
 		final MONTH btMonth = MONTH.getByIndex(btMonthNum);
@@ -152,7 +151,7 @@ public class BtService implements Observable{
 			tech = getTech(planningService, btMonth, btDate, assign);
 			
 		}
-		
+		logger.debug("Techncian returned by searchTech: {}", tech);
 		//Return technician model based on the finded String
 		return planningService.getTechnicianManager().getTechnician(tech);
 	}

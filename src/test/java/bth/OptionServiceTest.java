@@ -104,5 +104,32 @@ public class OptionServiceTest {
 		assertFalse(Files.exists(path, LinkOption.NOFOLLOW_LINKS));
 		assertFalse(Files.exists(path.getParent(), LinkOption.NOFOLLOW_LINKS));
 	 }
+	 
+	 @Test
+	 public void mergePropertiesTest_shouldMergeCorrectly() throws OptionException, IOException {
+		 Path path = Paths.get(localdir + "\\.BTHelperTest\\test.conf");
+		 OptionService optionService = new OptionService(path.toString());
+		 optionService.loadConfig();
+		 
+		 assertEquals(BTHelper.defaultHttpUser, optionService.getCurrentProperties().get(BTHelper.HttpUser));
+		 
+		 Properties p = new Properties();
+		 p.setProperty("newkey", "testvalue");
+		 p.setProperty(BTHelper.HttpUser, "newvalue");
+		 
+		 optionService.mergeProperties(p);
+		 
+		 Properties mergedProperties = optionService.getCurrentProperties();
+		 
+		 assertEquals("testvalue", mergedProperties.get("newkey"));
+		 assertEquals("newvalue", mergedProperties.get(BTHelper.HttpUser));
+		 
+		// Clean
+		Files.delete(path);
+		Files.delete(path.getParent());
+		assertFalse(Files.exists(path, LinkOption.NOFOLLOW_LINKS));
+		assertFalse(Files.exists(path.getParent(), LinkOption.NOFOLLOW_LINKS));
+		 
+	 }
 
 }

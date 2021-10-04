@@ -87,9 +87,11 @@ public class OptionService {
 	 * @param p_p
 	 * @throws OptionException
 	 */
-	public void setProperties(final Properties p_p) throws OptionException
+	public void mergeProperties(final Properties p_p) throws OptionException
 	{
-		p = p_p;
+		logger.debug("Merging properties: {}", p);
+		p_p.forEach((k, v) -> p.merge(k, v, (kk, vv) -> vv = v));
+		logger.debug("Save merged properties: {}", p);
 		writePropertiesFile(p);
 	}
 	
@@ -119,10 +121,8 @@ public class OptionService {
 	
 	/**
 	 * Load a properties file found in the local user data
-	 * @param projectName Name of the folder that contains properties file
-	 * @param configName Name of the file that contains properties
-	 * @return Properties object
-	 * @throws OptionException 
+	 * If properties file not exist, create it with default properties
+	 * @throws OptionException when file not exists and failed to create
 	 */
 	public final void loadConfig() throws OptionException
 	{

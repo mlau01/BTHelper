@@ -542,7 +542,7 @@ public class OptionsGui extends JPanel implements Fillable {
 		p.setProperty(BTHelper.SqlRequest, tSqlRequest.getText());
 		
 		try {
-			mWin.getCorma().getOptionService().setProperties(p);
+			mWin.getCorma().getOptionService().mergeProperties(p);
 		} catch (OptionException e) {
 			e.printStackTrace();
 			mWin.showError(e.getClass().getName(), e.getMessage());

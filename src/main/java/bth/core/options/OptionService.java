@@ -13,6 +13,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import bth.BTHelper;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * This class handle properties of the application
@@ -87,19 +88,18 @@ public class OptionService {
 	 * @param p_p
 	 * @throws OptionException
 	 */
-	public void mergeProperties(final Properties p_p) throws OptionException
+	public void mergeProperties(@NotNull final Properties p_p) throws OptionException
 	{
 		logger.debug("Merging properties: {}", p);
-		p_p.forEach((k, v) -> p.merge(k, v, (kk, vv) -> vv = v));
+
+		p_p.forEach((optionKeyToMerge, optionValueToMerge)
+				-> p.merge(optionKeyToMerge, optionValueToMerge, (optionKey, optionValue) -> optionValue = optionValueToMerge));
 		logger.debug("Save merged properties: {}", p);
 		writePropertiesFile(p);
 	}
 	
 	/**
 	 * Write a properties file in the file system
-	 * @param p Properties object to write
-	 * @param projectName Name of the folder that will contains properties file
-	 * @param configName Name of the file that will contains properties
 	 * @throws OptionException if something goes wrong with the write process
 	 */
 	public void writePropertiesFile(Properties properties) throws OptionException {

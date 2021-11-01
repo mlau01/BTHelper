@@ -1,35 +1,29 @@
 package bth.core.bt;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.Properties;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import bth.BTHelper;
 import bth.Observable;
 import bth.Observer;
 import bth.core.MONTH;
 import bth.core.Utils;
-import bth.core.datasource.IBtSource;
 import bth.core.datasource.DatasourceException;
-import bth.core.exception.BTException;
-import bth.core.exception.BtAssignmentException;
-import bth.core.exception.PlanningDeserializeException;
-import bth.core.exception.PlanningException;
-import bth.core.exception.SheduleServiceException;
+import bth.core.datasource.IBtSource;
+import bth.core.exception.*;
 import bth.core.options.OptionException;
 import bth.core.options.OptionService;
 import bth.core.planning.Planning;
-import bth.core.planning.PlanningService;
 import bth.core.planning.PlanningParser;
+import bth.core.planning.PlanningService;
 import bth.core.planning.Technician;
 import bth.core.schedule.ScheduleService;
 import bth.core.schedule.ScheduleService.SHEDULEMODE;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 
 public class BtService implements Observable{
 	
